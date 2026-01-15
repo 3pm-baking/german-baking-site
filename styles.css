@@ -152,7 +152,7 @@ section {
   position: relative;
   text-align: center;
   padding: var(--spacing-xl) 0;
-  min-height: 70vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -197,6 +197,7 @@ section {
    -------------------------------------------------------------------------- */
 .about {
   background-color: var(--color-background);
+  padding: var(--spacing-lg) 0;
 }
 
 .about__content {
@@ -239,13 +240,17 @@ section {
 }
 
 .products__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--spacing-md);
   margin-top: var(--spacing-md);
 }
 
 .product-card {
+  flex: 0 1 calc((100% - 2 * var(--spacing-md)) / 3);
+  min-width: 260px;
+  max-width: 360px;
   background-color: var(--color-background);
   border: 1px solid var(--color-border-light);
   padding: var(--spacing-md);
@@ -357,18 +362,18 @@ section {
    -------------------------------------------------------------------------- */
 .footer {
   background-color: var(--color-background-warm);
-  padding: var(--spacing-lg) 0;
+  padding: var(--spacing-md) 0;
   text-align: center;
   border-top: 1px solid var(--color-border-light);
 }
 
 .footer__logo {
-  height: 120px;
-  margin: 0 auto var(--spacing-md);
+  height: 80px;
+  margin: 0 auto var(--spacing-sm);
 }
 
 .footer__contact {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .footer__email {
@@ -406,7 +411,7 @@ section {
   }
   
   .hero {
-    min-height: 60vh;
+    min-height: 50vh;
   }
   
   .hero__logo {
@@ -417,15 +422,20 @@ section {
     font-size: 1.25rem;
   }
   
+  .about {
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+  }
+  
   .about__text {
     font-size: 1rem;
   }
   
-  .products__grid {
-    grid-template-columns: 1fr;
+  .product-card {
+    flex: 0 1 100%;
     max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
   }
   
   .find-us__message {
