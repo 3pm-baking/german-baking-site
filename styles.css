@@ -493,3 +493,143 @@ section {
   white-space: nowrap;
   border: 0;
 }
+
+/* --------------------------------------------------------------------------
+   Product Card Links (Homepage)
+   -------------------------------------------------------------------------- */
+.product-card__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.product-card__link:hover {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Product Detail Page
+   -------------------------------------------------------------------------- */
+.product-header {
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.product-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-header__back {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+}
+
+.product-header__logo {
+  height: 100px;
+}
+
+.product-detail {
+  padding: var(--spacing-lg) 0;
+}
+
+.product-detail__image-wrapper {
+  max-width: 400px;
+  margin: 0 auto var(--spacing-lg);
+}
+
+.product-detail__image {
+  width: 100%;
+  border: 1px solid var(--color-border-light);
+}
+
+.product-detail__content {
+  text-align: center;
+}
+
+.product-detail__name {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+.product-detail__german {
+  font-style: italic;
+  color: var(--color-text-light);
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.product-detail__badges {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-md);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 2px;
+}
+
+.badge--positive {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.product-detail__description {
+  font-size: 1.125rem;
+  color: var(--color-text-light);
+  max-width: 600px;
+  margin: 0 auto var(--spacing-lg);
+}
+
+.product-detail__section {
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.product-detail__section h2 {
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.product-detail__section p {
+  margin-bottom: 0;
+}
+
+.product-detail__allergens {
+  color: var(--color-text-light);
+}
+
+@media (max-width: 768px) {
+  .product-detail__name {
+    font-size: 2rem;
+  }
+  
+  .product-header__back {
+    font-size: 0.8rem;
+  }
+  
+  .product-header__logo {
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-detail__name {
+    font-size: 1.75rem;
+  }
+  
+  .product-detail__badges {
+    gap: var(--spacing-xs);
+  }
+}
