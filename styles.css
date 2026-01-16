@@ -152,7 +152,7 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-background-warm);
+  background-color: var(--color-background);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -262,7 +262,7 @@ section {
 .product-card__image {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background-color: var(--color-background-warm);
+  background-color: var(--color-background);
   border: 1px solid var(--color-border-light);
   margin-bottom: var(--spacing-sm);
   display: flex;
@@ -303,15 +303,30 @@ section {
 }
 
 /* --------------------------------------------------------------------------
+   Pantry Section (Byproducts)
+   -------------------------------------------------------------------------- */
+.pantry {
+  background-color: var(--color-background);
+}
+
+.pantry__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+/* --------------------------------------------------------------------------
    Find Us Section
    -------------------------------------------------------------------------- */
 .find-us {
-  background-color: var(--color-background);
+  background-color: var(--color-background-warm);
   text-align: center;
 }
 
 .find-us__message {
-  background-color: var(--color-background-warm);
+  background-color: var(--color-background);
   border: 1px solid var(--color-border-light);
   padding: var(--spacing-lg);
   max-width: 600px;
@@ -357,7 +372,7 @@ section {
    Footer
    -------------------------------------------------------------------------- */
 .footer {
-  background-color: var(--color-background-warm);
+  background-color: var(--color-background);
   padding: var(--spacing-md) 0;
   text-align: center;
   border-top: 1px solid var(--color-border-light);
@@ -435,6 +450,7 @@ section {
   }
   
   .find-us__message {
+    background-color: var(--color-background);
     padding: var(--spacing-md);
   }
 }
@@ -507,7 +523,7 @@ section {
    Product Detail Page
    -------------------------------------------------------------------------- */
 .product-header {
-  padding: var(--spacing-md) 0;
+  padding: var(--spacing-sm) 0;
   border-bottom: 1px solid var(--color-border-light);
 }
 
@@ -523,7 +539,7 @@ section {
 }
 
 .product-header__logo {
-  height: 100px;
+  height: 60px;
 }
 
 .product-detail {
