@@ -42,6 +42,10 @@
   padding: 0;
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-body);
   font-size: 16px;
@@ -557,11 +561,15 @@ section {
     font-size: 1.5rem;
   }
   
+  .nav {
+    padding: var(--spacing-sm) 0;
+  }
   .nav__toggle-label {
     display: block;
   }
   
   .nav .container {
+    min-height: 24px;
     justify-content: center;
   }
   
@@ -572,7 +580,7 @@ section {
     right: 0;
     flex-direction: column;
     background-color: var(--color-background);
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: none;
     padding: 0;
     gap: 0;
     max-height: 0;
@@ -583,6 +591,7 @@ section {
   .nav__toggle:checked ~ .nav__list {
     max-height: 300px;
     padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--color-border-light);
   }
   
   .nav__toggle:checked + .nav__toggle-label span {
