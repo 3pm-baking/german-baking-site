@@ -34,6 +34,21 @@
 </head>
 <body>
 
+  <nav class="nav">
+    <div class="container">
+      <input type="checkbox" id="nav-toggle" class="nav__toggle">
+      <label for="nav-toggle" class="nav__toggle-label">
+        <span></span>
+      </label>
+      <ul class="nav__list">
+        <li class="nav__item"><a href="#about" class="nav__link">Our Story</a></li>
+        <li class="nav__item"><a href="#products" class="nav__link">Products</a></li>
+        <li class="nav__item"><a href="#find-us" class="nav__link">Find Us</a></li>
+        <li class="nav__item"><a href="#wholesale" class="nav__link">Wholesale</a></li>
+      </ul>
+    </div>
+  </nav>
+
   <section class="hero hero--with-image">
     <div class="container">
       <div class="hero__content">
@@ -188,7 +203,38 @@
     </div>
   </section>
 
-  <footer class="footer">
+  <section class="wholesale" id="wholesale">
+    <div class="container container--narrow">
+      <h2 class="text-center">Wholesale Options</h2>
+      <div class="divider">
+        <span class="divider__icon">✿</span>
+      </div>
+      <article class="wholesale__content">
+        <p class="wholesale__intro">
+          Bring the authentic taste of Germany to your café, restaurant, or market. We partner with local 
+          businesses to provide fresh, traditional German baked goods made with the same care and quality 
+          you'd find in our kitchen.
+        </p>
+
+        <h3 class="wholesale__subheading">What We Offer</h3>
+        <ul class="wholesale__benefits">
+          <li>Volume pricing available for regular orders</li>
+          <li>Flexible delivery schedule throughout the Asheville area</li>
+          <li>Seasonal specialties and custom requests welcome</li>
+          <li>All products made fresh to order</li>
+        </ul>
+
+        <p class="wholesale__contact-intro">
+          Interested in partnering with us? We'd love to hear from you.
+        </p>
+        <p class="wholesale__contact">
+          <a href="mailto:wholesale@germanbakingasheville.com" class="wholesale__email">wholesale@germanbakingasheville.com</a>
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <footer class="footer footer--warm">
     <div class="container">
       <img src="images/logo.png" alt="3pm German Baking" class="footer__logo">
       <div class="footer__contact">
@@ -198,5 +244,14 @@
       <p class="footer__copyright">All rights reserved.</p>
     </div>
   </footer>
+
+  <script>
+  (function() {
+    var toggle = document.getElementById('nav-toggle');
+    window.addEventListener('scroll', function() {
+      if (toggle.checked) toggle.checked = false;
+    });
+  })();
+  </script>
 </body>
 </html>
