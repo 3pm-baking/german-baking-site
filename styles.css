@@ -324,6 +324,7 @@ section {
 
 /* Product image placeholder - ready for real photos */
 .product-card__image {
+  position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   background-color: var(--color-background);
@@ -364,6 +365,47 @@ section {
   font-size: 0.9rem;
   color: var(--color-text-light);
   margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Dietary Badge Icons
+   -------------------------------------------------------------------------- */
+.product-card__badges {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.badge-icon {
+  min-width: 22px;
+  height: 22px;
+  padding: 2px 5px;
+  background-color: #e8f5e9;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #2e7d32;
+  cursor: help;
+}
+
+/* Dashed border for "option available" variants */
+.badge-icon--gf-option,
+.badge-icon--df-option {
+  border: 1px dashed #a5d6a7;
+}
+
+/* Solid border for "always" variants */
+.badge-icon--gf,
+.badge-icon--df {
+  border: 1px solid #a5d6a7;
 }
 
 /* --------------------------------------------------------------------------
