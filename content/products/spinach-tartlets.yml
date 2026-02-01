@@ -1,0 +1,21 @@
+title: Spinach Tartlets
+german_name: Spinat-Törtchen
+slug: spinach-tartlets
+image: spinat-toertchen.jpg
+description: Savory mini tarts with creamy spinach filling in a golden, flaky crust.
+meta_description: Spinach Tartlets (Spinat-Törtchen) - Savory gluten-free mini tarts with creamy spinach filling in a golden, flaky crust. Authentic German baking in Asheville, NC.
+og_description: Savory gluten-free mini tarts with creamy spinach filling in a golden, flaky crust.
+badges:
+  - gf-option
+  - vegetarian
+
+sections:
+  - title: Origin
+    content: A savory addition to our traditional German baking, these tartlets bring together fresh spinach and herbs in a buttery gluten-free crust.
+  
+  - title: Availability
+    content: Available at all markets
+  
+  - title: Allergen Information
+    type: allergens
+    content: Dairy, Eggs
