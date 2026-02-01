@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="3pm German Baking - Authentic German cakes and pastries at Asheville's farmer's markets. Traditional recipes from Cologne, Germany.">
+  <meta name="keywords" content="German bakery, Asheville, farmer's market, Käsekuchen, cheesecake, German cakes, authentic German baking">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="3pm German Baking | Authentic German Cakes in Asheville">
+  <meta property="og:description" content="Authentic German cakes and pastries at Asheville's farmer's markets. Traditional recipes from Cologne, Germany. Coming soon.">
+  <meta property="og:url" content="https://germanbakingasheville.com/">
+  <meta property="og:site_name" content="3pm German Baking">
+  <meta property="og:image" content="https://germanbakingasheville.com/images/logo.png">
+  <meta property="og:image:alt" content="3pm German Baking logo">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="3pm German Baking | Authentic German Cakes in Asheville">
+  <meta name="twitter:description" content="Authentic German cakes and pastries at Asheville's farmer's markets. Traditional recipes from Cologne. Coming soon.">
+  <meta name="twitter:image" content="https://germanbakingasheville.com/images/logo.png">
+
+  <link rel="canonical" href="https://germanbakingasheville.com/">
+  
+  <title>3pm German Baking | Authentic German Cakes in Asheville</title>
+  
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container">
+      <input type="checkbox" id="nav-toggle" class="nav__toggle">
+      <label for="nav-toggle" class="nav__toggle-label">
+        <span></span>
+      </label>
+      <ul class="nav__list">
+        <li class="nav__item"><a href="#about" class="nav__link">Our Story</a></li>
+        <li class="nav__item"><a href="#products" class="nav__link">Products</a></li>
+        <li class="nav__item"><a href="#wholesale" class="nav__link">Wholesale</a></li>
+        <li class="nav__item"><a href="#find-us" class="nav__link">Find Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero hero--with-image">
+    <div class="container">
+      <div class="hero__content">
+        <h1 class="sr-only">3pm German Baking — Authentic German Cakes & Pastries in Asheville, NC</h1>
+        <img src="images/logo.png" alt="3pm German Baking - Est. 2026" class="hero__logo">
+        <p class="hero__tagline">Authentic German Baking in Asheville</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="container container--narrow">
+      <div class="about__content">
+        <h2>Our Story</h2>
+        <div class="divider">
+          <span class="divider__icon">✿</span>
+        </div>
+        <p class="about__text">
+          Born in Cologne, Germany, I grew up surrounded by the rich traditions of German baking—afternoon 
+          coffee and cake, seasonal treats, and recipes passed down through generations. Now in Asheville, 
+          I'm bringing these authentic flavors to the mountains.
+        </p>
+        <br>
+        <p class="about__text">
+          As someone who is <strong>gluten-free</strong>, I understand the joy of finding delicious treats that fit your 
+          dietary needs. That's why I offer <strong>gluten-free and dairy-free options</strong> for many of our German 
+          classics—without compromising on taste or tradition. Every cake is made with care, using 
+          traditional techniques and locally-sourced ingredients whenever possible.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="products" id="products">
+    <div class="container">
+      <h2 class="text-center">From Our Oven</h2>
+      <div class="divider">
+        <span class="divider__icon">✿</span>
+      </div>
+      <div class="products__grid">
+        {% for product in oven_products %}
+        {% include 'partials/product-card.html' %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="pantry" id="pantry">
+    <div class="container">
+      <h2 class="text-center">From Our Pantry</h2>
+      <div class="divider">
+        <span class="divider__icon">✿</span>
+      </div>
+      <div class="pantry__grid">
+        {% for product in pantry_products %}
+        {% include 'partials/product-card.html' %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="wholesale" id="wholesale">
+    <div class="container container--narrow">
+      <h2 class="text-center">Wholesale Options</h2>
+      <div class="divider">
+        <span class="divider__icon">✿</span>
+      </div>
+      <article class="wholesale__content">
+        <p class="wholesale__intro">
+          Bring the authentic taste of Germany to your café, restaurant, or market. We partner with local 
+          businesses to provide fresh, traditional German baked goods made with the same care and quality 
+          you'd find in our kitchen.
+        </p>
+
+        <h3 class="wholesale__subheading">What We Offer</h3>
+        <ul class="wholesale__benefits">
+          <li>Volume pricing available for regular orders</li>
+          <li>Flexible delivery schedule throughout the Asheville area</li>
+          <li>Seasonal specialties and custom requests welcome</li>
+          <li>All products made fresh to order</li>
+        </ul>
+
+        <p class="wholesale__contact-intro">
+          Interested in partnering with us? Contact us for pricing information and to discuss your needs—we'd love to hear from you.
+        </p>
+        <p class="wholesale__contact">
+          <a href="mailto:wholesale@germanbakingasheville.com" class="wholesale__email">wholesale@germanbakingasheville.com</a>
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="find-us" id="find-us">
+    <div class="container">
+      <h2>Find Us</h2>
+      <div class="divider">
+        <span class="divider__icon">✿</span>
+      </div>
+      <div class="find-us__message">
+        <h3 class="find-us__heading">Coming Soon</h3>
+        <p class="find-us__text">
+          We're excited to announce that 3pm German Baking will be coming to Asheville's farmer's markets soon. 
+          Check back here for updates on where you can find us!
+        </p>
+        <div class="find-us__social">
+          <a href="https://instagram.com/3pmgermanbaking" 
+             class="social-icon social-icon--instagram"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Follow us on Instagram @3pmgermanbaking"
+             title="Follow us on Instagram">
+            <img src="images/instagram.svg" alt="" width="24" height="24">
+            <span class="social-icon__text">@3pmgermanbaking</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer footer--warm">
+    <div class="container">
+      <img src="images/logo.png" alt="3pm German Baking" class="footer__logo">
+      <div class="footer__contact">
+        <a href="mailto:info@germanbakingasheville.com" class="footer__email">info@germanbakingasheville.com</a>
+      </div>
+      <div class="footer__social">
+        <a href="https://instagram.com/3pmgermanbaking" 
+           class="social-icon social-icon--instagram"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Follow us on Instagram @3pmgermanbaking"
+           title="Follow us on Instagram">
+          <img src="images/instagram.svg" alt="" width="24" height="24">
+          <span class="social-icon__text">@3pmgermanbaking</span>
+        </a>
+      </div>
+      <p class="footer__copyright">© 2026 3pm German Baking.</p>
+      <p class="footer__copyright">All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    var toggle = document.getElementById('nav-toggle');
+    window.addEventListener('scroll', function() {
+      if (toggle.checked) toggle.checked = false;
+    });
+  })();
+  </script>
+</body>
+</html>

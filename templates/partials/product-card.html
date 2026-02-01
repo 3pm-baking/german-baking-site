@@ -1,0 +1,21 @@
+<article class="product-card" id="{{ product.slug }}">
+  <a href="products/{{ product.slug }}.html" class="product-card__link">
+    <div class="product-card__image">
+      <img src="images/{{ product.image }}" alt="{{ product.title }} - {{ product.german_name }}" loading="lazy">
+      {% if product.badges %}
+      <div class="product-card__badges">
+        {% for badge in product.badges %}
+          {% if badge_icons[badge] %}
+        <span class="badge-icon badge-icon--{{ badge }}" role="img" aria-label="{{ badge_labels[badge] }}" title="{{ badge_labels[badge] }}">{{ badge_icons[badge] }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <h3 class="product-card__name">{{ product.title }}</h3>
+    <p class="product-card__german">{{ product.german_name }}</p>
+    <p class="product-card__description">
+      {{ product.description }}
+    </p>
+  </a>
+</article>
