@@ -6,15 +6,7 @@ description: Warmly spiced traditional cake with hints of cinnamon, cardamom, an
 meta_description: "Oma Christa's Spiced Cake (Gewürzkuchen) - Warmly spiced traditional cake with hints of cinnamon, cardamom, and cloves. Authentic German baking in Asheville, NC."
 badges:
   - gf-option
-  - vegetarian
 
 sections:
   - title: Origin
     content: A treasured family recipe from Oma Christa, this traditional German spiced cake brings together warming spices that have been beloved in German baking for generations.
-  
-  - title: Availability
-    content: Available seasonally
-  
-  - title: Allergen Information
-    type: allergens
-    content: Dairy, Eggs, Wheat
