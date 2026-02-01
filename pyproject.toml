@@ -1,0 +1,12 @@
+[project]
+name = "german-baking-site"
+version = "0.1.0"
+description = "Static site generator for 3pm German Baking"
+requires-python = ">=3.14"
+dependencies = [
+    "jinja2>=3.1.0",
+    "pyyaml>=6.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = []
