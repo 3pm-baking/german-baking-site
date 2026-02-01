@@ -89,127 +89,9 @@
         <span class="divider__icon">✿</span>
       </div>
       <div class="products__grid">
-        
-        <article class="product-card" id="german-cheesecake">
-  <a href="products/german-cheesecake.html" class="product-card__link">
-    <div class="product-card__image">
-      <img src="images/cheese-cake.jpg" alt="German Cheesecake - Käsekuchen" loading="lazy">
-      
-      <div class="product-card__badges">
-        
-          
-        <span class="badge-icon badge-icon--gf-option" role="img" aria-label="Gluten-Free option available" title="Gluten-Free option available">GF</span>
-          
-        
-      </div>
-      
-    </div>
-    <h3 class="product-card__name">German Cheesecake</h3>
-    <p class="product-card__german">Käsekuchen</p>
-    <p class="product-card__description">
-      Light and creamy quark cheesecake with a tender crust—the authentic German classic.
-    </p>
-  </a>
-</article>
-        
-        <article class="product-card" id="russian-pull-cake">
-  <a href="products/russian-pull-cake.html" class="product-card__link">
-    <div class="product-card__image">
-      <img src="images/pull-cake.jpg" alt="Russian Pull Cake - Russischer Zupfkuchen" loading="lazy">
-      
-      <div class="product-card__badges">
-        
-          
-        <span class="badge-icon badge-icon--gf-option" role="img" aria-label="Gluten-Free option available" title="Gluten-Free option available">GF</span>
-          
-        
-      </div>
-      
-    </div>
-    <h3 class="product-card__name">Russian Pull Cake</h3>
-    <p class="product-card__german">Russischer Zupfkuchen</p>
-    <p class="product-card__description">
-      Rich chocolate base topped with creamy cheesecake and signature chocolate crumbles.
-    </p>
-  </a>
-</article>
-        
-        <article class="product-card" id="lemon-cake">
-  <a href="products/lemon-cake.html" class="product-card__link">
-    <div class="product-card__image">
-      <img src="images/seasonal-cake.jpg" alt="Oma Anneliese&#39;s Lemon Cake - Zitronenkuchen" loading="lazy">
-      
-      <div class="product-card__badges">
-        
-          
-        <span class="badge-icon badge-icon--gf-option" role="img" aria-label="Gluten-Free option available" title="Gluten-Free option available">GF</span>
-          
-        
-          
-        <span class="badge-icon badge-icon--lf-option" role="img" aria-label="Lactose-Free option available" title="Lactose-Free option available">LF</span>
-          
-        
-          
-        <span class="badge-icon badge-icon--dairy-free-option" role="img" aria-label="Dairy-Free option available" title="Dairy-Free option available">DF</span>
-          
-        
-      </div>
-      
-    </div>
-    <h3 class="product-card__name">Oma Anneliese&#39;s Lemon Cake</h3>
-    <p class="product-card__german">Zitronenkuchen</p>
-    <p class="product-card__description">
-      Moist and fresh lemon cake.
-    </p>
-  </a>
-</article>
-        
-        <article class="product-card" id="spinach-tartlets">
-  <a href="products/spinach-tartlets.html" class="product-card__link">
-    <div class="product-card__image">
-      <img src="images/spinat-toertchen.jpg" alt="Spinach Tartlets - Spinat-Törtchen" loading="lazy">
-      
-      <div class="product-card__badges">
-        
-          
-        <span class="badge-icon badge-icon--gf" role="img" aria-label="Gluten-Free" title="Gluten-Free">GF</span>
-          
-        
-          
-        
-      </div>
-      
-    </div>
-    <h3 class="product-card__name">Spinach Tartlets</h3>
-    <p class="product-card__german">Spinat-Törtchen</p>
-    <p class="product-card__description">
-      Savory mini tarts with creamy spinach filling in a golden, flaky crust.
-    </p>
-  </a>
-</article>
-        
-        <article class="product-card" id="seasonal-cakes">
-  <a href="products/seasonal-cakes.html" class="product-card__link">
-    <div class="product-card__image">
-      <img src="images/spiced-cake.jpeg" alt="Oma Christa&#39;s Spiced Cake - Gewürzkuchen" loading="lazy">
-      
-      <div class="product-card__badges">
-        
-          
-        <span class="badge-icon badge-icon--gf-option" role="img" aria-label="Gluten-Free option available" title="Gluten-Free option available">GF</span>
-          
-        
-      </div>
-      
-    </div>
-    <h3 class="product-card__name">Oma Christa&#39;s Spiced Cake</h3>
-    <p class="product-card__german">Gewürzkuchen</p>
-    <p class="product-card__description">
-      Warmly spiced traditional cake with hints of cinnamon, cardamom, and cloves.
-    </p>
-  </a>
-</article>
-        
+        {% for product in oven_products %}
+        {% include 'partials/product-card.html' %}
+        {% endfor %}
       </div>
     </div>
   </section>
@@ -221,59 +103,9 @@
         <span class="divider__icon">✿</span>
       </div>
       <div class="pantry__grid">
-        
-        <article class="product-card" id="pudding-powder">
-  <a href="products/pudding-powder.html" class="product-card__link">
-    <div class="product-card__image">
-      <img src="images/pudding-powder.png" alt="Pudding Powder - Puddingpulver" loading="lazy">
-      
-      <div class="product-card__badges">
-        
-          
-        <span class="badge-icon badge-icon--gf" role="img" aria-label="Gluten-Free" title="Gluten-Free">GF</span>
-          
-        
-          
-        <span class="badge-icon badge-icon--dairy-free" role="img" aria-label="Dairy-Free" title="Dairy-Free">DF</span>
-          
-        
-      </div>
-      
-    </div>
-    <h3 class="product-card__name">Pudding Powder</h3>
-    <p class="product-card__german">Puddingpulver</p>
-    <p class="product-card__description">
-      Traditional German pudding mix for creating rich, creamy desserts at home. Simply combine with milk and sugar for an authentic German pudding experience.
-    </p>
-  </a>
-</article>
-        
-        <article class="product-card" id="vanilla-sugar">
-  <a href="products/vanilla-sugar.html" class="product-card__link">
-    <div class="product-card__image">
-      <img src="images/vanilla-sugar.jpg" alt="Vanilla Sugar - Vanillezucker" loading="lazy">
-      
-      <div class="product-card__badges">
-        
-          
-        <span class="badge-icon badge-icon--gf" role="img" aria-label="Gluten-Free" title="Gluten-Free">GF</span>
-          
-        
-          
-        <span class="badge-icon badge-icon--dairy-free" role="img" aria-label="Dairy-Free" title="Dairy-Free">DF</span>
-          
-        
-      </div>
-      
-    </div>
-    <h3 class="product-card__name">Vanilla Sugar</h3>
-    <p class="product-card__german">Vanillezucker</p>
-    <p class="product-card__description">
-      Fragrant vanilla-infused sugar, a staple in German baking. Perfect for adding authentic flavor to cakes, cookies, and whipped cream.
-    </p>
-  </a>
-</article>
-        
+        {% for product in pantry_products %}
+        {% include 'partials/product-card.html' %}
+        {% endfor %}
       </div>
     </div>
   </section>

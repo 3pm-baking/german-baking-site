@@ -398,13 +398,15 @@ section {
 
 /* Dashed border for "option available" variants */
 .badge-icon--gf-option,
-.badge-icon--df-option {
+.badge-icon--df-option,
+.badge-icon--lf-option {
   border: 1px dashed #a5d6a7;
 }
 
 /* Solid border for "always" variants */
 .badge-icon--gf,
-.badge-icon--df {
+.badge-icon--df,
+.badge-icon--lf {
   border: 1px solid #a5d6a7;
 }
 
@@ -911,7 +913,8 @@ section {
 /* Dashed border for "option" badges on product pages */
 .badge--gf-option,
 .badge--dairy-free-option,
-.badge--lactose-free-option {
+.badge--lactose-free-option,
+.badge--lf-option {
   border: 1px dashed #a5d6a7;
 }
 
