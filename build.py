@@ -12,17 +12,18 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 # Badge mappings
 BADGE_NAMES = {
-    "gf-option": "Gluten Free Option",
-    "gf": "Gluten Free ✓",
-    "dairy-free-option": "Dairy Free Option",
-    "dairy-free": "Dairy Free ✓",
+    "gf-option": "Gluten-Free Option",
+    "gf": "Gluten-Free ✓",
+    "lf": "Lactose-Free ✓",
+    "lf-option": "Lactose-Free Option",
+    "dairy-free-option": "Dairy-Free Option",
+    "dairy-free": "Dairy-Free ✓",
     "vegetarian": "Vegetarian ✓",
 }
 
 
 def parse_product(filepath: Path) -> dict:
-    """
-    Parse a YAML file with product data.
+    """Parse a YAML file with product data.
 
     Returns:
         dict with product metadata
@@ -60,7 +61,7 @@ def parse_product(filepath: Path) -> dict:
     if "badges" not in metadata:
         metadata["badges"] = []
 
-    if "sections" not in metadata:
+    if "sections" not in metadata or metadata["sections"] is None:
         metadata["sections"] = []
 
     return metadata

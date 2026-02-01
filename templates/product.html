@@ -23,7 +23,7 @@
         {% if page.badges %}
         <div class="product-detail__badges">
           {% for badge_key in page.badges %}
-          <span class="badge badge--positive">{{ badge_names[badge_key] }}</span>
+          <span class="badge badge--positive badge--{{ badge_key }}">{{ badge_names[badge_key] }}</span>
           {% endfor %}
         </div>
         {% endif %}
