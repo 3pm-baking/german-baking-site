@@ -27,6 +27,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
   
+  <!-- Enhanced Product Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -38,7 +39,69 @@
     "brand": {
       "@type": "Brand",
       "name": "3pm German Baking"
-    }
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "itemCondition": "https://schema.org/NewCondition",
+      "url": "https://germanbakingasheville.com/products/spinach-tartlets.html",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "priceCurrency": "USD",
+        "description": "Contact for wholesale pricing"
+      },
+      "seller": {
+        "@type": "Organization",
+        "name": "3pm German Baking",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Asheville",
+          "addressRegion": "NC",
+          "postalCode": "28806",
+          "addressCountry": "US"
+        }
+      },
+      "areaServed": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": "35.5951",
+          "longitude": "-82.5515"
+        },
+        "geoRadius": "50000"
+      }
+    },
+    "category": "Bakery Products",
+    "inLanguage": "en-US"
+  }
+  </script>
+  
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://germanbakingasheville.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Products",
+        "item": "https://germanbakingasheville.com/#products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Spinach Tartlets",
+        "item": "https://germanbakingasheville.com/products/spinach-tartlets.html"
+      }
+    ]
   }
   </script>
 </head>
@@ -92,6 +155,17 @@
           
         </section>
         
+        
+        <!-- Where to Buy / Wholesale CTA -->
+        <section class="product-detail__section">
+          <h2>Where to Buy</h2>
+          <p>
+            Spinach Tartlets is available through our wholesale program for coffee shops, 
+            markets, and restaurants throughout the Asheville, NC area. 
+            <a href="../index.html#wholesale" style="text-decoration: underline;">Learn more about wholesale partnerships</a> 
+            or <a href="mailto:wholesale@germanbakingasheville.com" style="text-decoration: underline;">contact us directly</a>.
+          </p>
+        </section>
         
       </div>
     </div>

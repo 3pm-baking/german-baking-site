@@ -7,14 +7,14 @@
   
   <meta property="og:type" content="product">
   <meta property="og:title" content="Oma Anneliese&#39;s Lemon Cake | 3pm German Baking">
-  <meta property="og:description" content="Moist and fresh lemon cake.">
+  <meta property="og:description" content="A gluten-free spin on Oma Anneliese&#39;s beloved family recipe. This bright, moist lemon cake brings authentic German flavor with modern dietary flexibility—perfect for your coffee shop or market.">
   <meta property="og:url" content="https://germanbakingasheville.com/products/lemon-cake.html">
   <meta property="og:image" content="https://germanbakingasheville.com/images/seasonal-cake.jpg">
   <meta property="og:locale" content="en_US">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Oma Anneliese&#39;s Lemon Cake | 3pm German Baking">
-  <meta name="twitter:description" content="Moist and fresh lemon cake.">
+  <meta name="twitter:description" content="A gluten-free spin on Oma Anneliese&#39;s beloved family recipe. This bright, moist lemon cake brings authentic German flavor with modern dietary flexibility—perfect for your coffee shop or market.">
   <meta name="twitter:image" content="https://germanbakingasheville.com/images/seasonal-cake.jpg">
 
   <link rel="canonical" href="https://germanbakingasheville.com/products/lemon-cake.html">
@@ -27,18 +27,81 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
   
+  <!-- Enhanced Product Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": "Oma Anneliese&#39;s Lemon Cake",
     "alternateName": "Zitronenkuchen",
-    "description": "Moist and fresh lemon cake.",
+    "description": "A gluten-free spin on Oma Anneliese&#39;s beloved family recipe. This bright, moist lemon cake brings authentic German flavor with modern dietary flexibility—perfect for your coffee shop or market.",
     "image": "https://germanbakingasheville.com/images/seasonal-cake.jpg",
     "brand": {
       "@type": "Brand",
       "name": "3pm German Baking"
-    }
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "itemCondition": "https://schema.org/NewCondition",
+      "url": "https://germanbakingasheville.com/products/lemon-cake.html",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "priceCurrency": "USD",
+        "description": "Contact for wholesale pricing"
+      },
+      "seller": {
+        "@type": "Organization",
+        "name": "3pm German Baking",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Asheville",
+          "addressRegion": "NC",
+          "postalCode": "28806",
+          "addressCountry": "US"
+        }
+      },
+      "areaServed": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": "35.5951",
+          "longitude": "-82.5515"
+        },
+        "geoRadius": "50000"
+      }
+    },
+    "category": "Bakery Products",
+    "inLanguage": "en-US"
+  }
+  </script>
+  
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://germanbakingasheville.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Products",
+        "item": "https://germanbakingasheville.com/#products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Oma Anneliese&#39;s Lemon Cake",
+        "item": "https://germanbakingasheville.com/products/lemon-cake.html"
+      }
+    ]
   }
   </script>
 </head>
@@ -81,7 +144,7 @@
         
         
         <p class="product-detail__description">
-          Moist and fresh lemon cake.
+          A gluten-free spin on Oma Anneliese&#39;s beloved family recipe. This bright, moist lemon cake brings authentic German flavor with modern dietary flexibility—perfect for your coffee shop or market.
         </p>
         
         
@@ -89,11 +152,31 @@
           <h2>Origin</h2>
           
           <p>
-            A gluten-free spin on a classic recipe from Oma Anneliese, this beloved family favorite has been cherished by generations. The same delicious taste that everyone loves, now accessible to all.
+            A gluten-free spin on a classic recipe from Oma Anneliese, this beloved family favorite has been cherished by generations. This traditional Zitronenkuchen brings bright citrus flavor with a tender, moist crumb—proof that gluten-free German baking can be just as delicious as the original.
           </p>
           
         </section>
         
+        <section class="product-detail__section">
+          <h2>Perfect For</h2>
+          
+          <p>
+            Ideal for coffee shops and markets seeking gluten-free dessert options that don&#39;t compromise on authentic flavor. A crowd-pleaser for all dietary needs.
+          </p>
+          
+        </section>
+        
+        
+        <!-- Where to Buy / Wholesale CTA -->
+        <section class="product-detail__section">
+          <h2>Where to Buy</h2>
+          <p>
+            Oma Anneliese&#39;s Lemon Cake is available through our wholesale program for coffee shops, 
+            markets, and restaurants throughout the Asheville, NC area. 
+            <a href="../index.html#wholesale" style="text-decoration: underline;">Learn more about wholesale partnerships</a> 
+            or <a href="mailto:wholesale@germanbakingasheville.com" style="text-decoration: underline;">contact us directly</a>.
+          </p>
+        </section>
         
       </div>
     </div>

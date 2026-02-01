@@ -2,7 +2,7 @@ title: "Oma Anneliese's Lemon Cake"
 german_name: Zitronenkuchen
 slug: lemon-cake
 image: seasonal-cake.jpg
-description: Moist and fresh lemon cake.
+description: A gluten-free spin on Oma Anneliese's beloved family recipe. This bright, moist lemon cake brings authentic German flavor with modern dietary flexibility—perfect for your coffee shop or market.
 meta_description: "Oma Anneliese's Lemon Cake (Zitronenkuchen) - Moist and fresh lemon cake. Authentic German baking in Asheville, NC."
 badges:
   - gf-option
@@ -11,4 +11,7 @@ badges:
 
 sections:
   - title: Origin
-    content: A gluten-free spin on a classic recipe from Oma Anneliese, this beloved family favorite has been cherished by generations. The same delicious taste that everyone loves, now accessible to all.
+    content: A gluten-free spin on a classic recipe from Oma Anneliese, this beloved family favorite has been cherished by generations. This traditional Zitronenkuchen brings bright citrus flavor with a tender, moist crumb—proof that gluten-free German baking can be just as delicious as the original.
+  
+  - title: Perfect For
+    content: Ideal for coffee shops and markets seeking gluten-free dessert options that don't compromise on authentic flavor. A crowd-pleaser for all dietary needs.
