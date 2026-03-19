@@ -1,6 +1,8 @@
 name: Build & Deploy
 
 on:
+  pull_request:
+    branches: [main]
   schedule:
     - cron: '0 5 * * *'  # midnight ET (UTC-5)
 
