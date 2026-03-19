@@ -3,90 +3,220 @@
 Static site generator for 3pm German Baking product pages.
 
 Reads YAML files from content/products/ and generates static HTML pages in products/
+Reads YAML files from content/locations/ and passes them to the landing page template.
 """
 
+import re
 import sys
+from datetime import date
+from enum import StrEnum
 from pathlib import Path
 import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from pydantic import BaseModel, field_validator, model_validator
 
-# Badge icon mappings for landing page (2-letter codes)
-BADGE_ICONS = {
-    "gf-option": "GF",
-    "gf": "GF",
-    "dairy-free-option": "DF",
-    "dairy-free": "DF",
-    "lf-option": "LF",
-    "lf": "LF",
-    "vegetarian": None,  # Hidden on landing page
-}
 
-# Badge aria labels for accessibility
-BADGE_LABELS = {
-    "gf-option": "Gluten-Free option available",
-    "gf": "Gluten-Free",
-    "dairy-free-option": "Dairy-Free option available",
-    "dairy-free": "Dairy-Free",
-    "lf-option": "Lactose-Free option available",
-    "lf": "Lactose-Free",
-    "vegetarian": "Vegetarian",
-}
+class Badge(StrEnum):
+    """Food sensitivity / dietary badges.
 
-# Badge full names for product pages
-BADGE_NAMES = {
-    "gf-option": "Gluten-Free Option",
-    "gf": "Gluten-Free ✓",
-    "lf": "Lactose-Free ✓",
-    "lf-option": "Lactose-Free Option",
-    "dairy-free-option": "Dairy-Free Option",
-    "dairy-free": "Dairy-Free ✓",
-    "vegetarian": "Vegetarian ✓",
-}
+    Values match the CSS class suffixes used in templates
+    (e.g. ``badge--gf-option``, ``badge-icon--gf``).
+    """
+
+    GF_OPTION = "gf-option"
+    GF = "gf"
+    DAIRY_FREE_OPTION = "dairy-free-option"
+    DAIRY_FREE = "dairy-free"
+    LF_OPTION = "lf-option"
+    LF = "lf"
+    VEGETARIAN = "vegetarian"
+
+    @property
+    def icon(self) -> str | None:
+        """2-letter icon shown on the landing page product card, or None to hide."""
+        return {
+            Badge.GF_OPTION: "GF",
+            Badge.GF: "GF",
+            Badge.DAIRY_FREE_OPTION: "DF",
+            Badge.DAIRY_FREE: "DF",
+            Badge.LF_OPTION: "LF",
+            Badge.LF: "LF",
+            Badge.VEGETARIAN: None,
+        }[self]
+
+    @property
+    def aria_label(self) -> str:
+        """Accessible label used in ``aria-label`` / ``title`` attributes."""
+        return {
+            Badge.GF_OPTION: "Gluten-Free option available",
+            Badge.GF: "Gluten-Free",
+            Badge.DAIRY_FREE_OPTION: "Dairy-Free option available",
+            Badge.DAIRY_FREE: "Dairy-Free",
+            Badge.LF_OPTION: "Lactose-Free option available",
+            Badge.LF: "Lactose-Free",
+            Badge.VEGETARIAN: "Vegetarian",
+        }[self]
+
+    @property
+    def display_name(self) -> str:
+        """Full human-readable name shown on product detail pages."""
+        return {
+            Badge.GF_OPTION: "Gluten-Free Option",
+            Badge.GF: "Gluten-Free ✓",
+            Badge.DAIRY_FREE_OPTION: "Dairy-Free Option",
+            Badge.DAIRY_FREE: "Dairy-Free ✓",
+            Badge.LF_OPTION: "Lactose-Free Option",
+            Badge.LF: "Lactose-Free ✓",
+            Badge.VEGETARIAN: "Vegetarian ✓",
+        }[self]
+
+
+class ProductSection(BaseModel):
+    title: str
+    content: str
+    type: str | None = None
+
+
+class Product(BaseModel):
+    title: str
+    german_name: str
+    slug: str
+    image: str
+    description: str
+    meta_description: str
+    page_title: str | None = None
+    og_description: str | None = None
+    badges: list[Badge] = []
+    sections: list[ProductSection] = []
+
+    @field_validator("sections", mode="before")
+    @classmethod
+    def coerce_null_sections(cls, v: object) -> object:
+        return v if v is not None else []
+
+    @model_validator(mode="after")
+    def set_derived_defaults(self) -> "Product":
+        if self.page_title is None:
+            self.page_title = f"{self.title} | 3pm German Baking"
+        if self.og_description is None:
+            self.og_description = self.description
+        return self
+
+
+class Location(BaseModel):
+    name: str
+    schedule: str
+    address: str | None = None
+    url: str | None = None
+    note: str | None = None
+    start_date: date | None = None
+    end_date: date | None = None
+    # Computed at validation time — not read from YAML
+    upcoming: bool = False
+    active: bool = True
+    stale: bool = False
+
+    @model_validator(mode="after")
+    def compute_status(self) -> "Location":
+        if self.start_date and self.end_date:
+            today = date.today()
+            self.upcoming = self.start_date > today
+            self.active = self.start_date <= today <= self.end_date
+            self.stale = self.end_date < today
+        return self
+
+
+# Badge lookup dicts for templates — derived from the Badge enum so there is
+# a single source of truth.
+BADGE_ICONS = {b.value: b.icon for b in Badge}
+BADGE_LABELS = {b.value: b.aria_label for b in Badge}
+BADGE_NAMES = {b.value: b.display_name for b in Badge}
+
+
+def parse_location(filepath: Path) -> dict:
+    """Parse a YAML file with farmers market / location data.
+
+    Validates with the Location Pydantic model and computes upcoming/active/stale
+    flags from start_date and end_date.
+
+    Returns:
+        dict with location metadata
+    """
+    raw = yaml.safe_load(filepath.read_text(encoding="utf-8"))
+    if not raw:
+        raise ValueError(f"File {filepath} is empty or invalid YAML")
+    location = Location.model_validate(raw)
+    return location.model_dump()
+
+
+def load_locations(content_dir: Path) -> list:
+    """Load farmers market / location data from content/locations/.
+
+    Stale locations (past end_date) are excluded from the returned list.
+
+    Returns:
+        list of active/upcoming location dicts, sorted by filename
+        (01-, 02- prefix = display order)
+    """
+    locations_dir = content_dir.parent / "locations"
+    if not locations_dir.exists():
+        print(f"Warning: {locations_dir} not found, skipping locations")
+        return []
+
+    yaml_files = sorted(locations_dir.glob("*.yml"))
+    locations = []
+
+    for yaml_file in yaml_files:
+        try:
+            location_data = parse_location(yaml_file)
+            if location_data["stale"]:
+                print(f"  (skipping stale location: {location_data['name']})")
+                continue
+            locations.append(location_data)
+        except Exception as e:
+            print(f"✗ Error loading {yaml_file.name}: {e}")
+
+    print(f"Loaded {len(locations)} location(s) from locations/")
+    return locations
+
+
+def update_sitemap(base_dir: Path) -> None:
+    """Update the lastmod date for the index.html entry in sitemap.xml."""
+    sitemap_path = base_dir / "sitemap.xml"
+    if not sitemap_path.exists():
+        print("Warning: sitemap.xml not found, skipping sitemap update")
+        return
+
+    today_str = date.today().isoformat()
+    content = sitemap_path.read_text(encoding="utf-8")
+
+    # Replace lastmod only for the homepage entry (germanbakingasheville.com/)
+    updated = re.sub(
+        r"(<loc>https://germanbakingasheville\.com/</loc>\s*<lastmod>)[^<]*(</lastmod>)",
+        rf"\g<1>{today_str}\g<2>",
+        content,
+    )
+
+    if updated == content:
+        print("  sitemap.xml unchanged")
+    else:
+        sitemap_path.write_text(updated, encoding="utf-8")
+        print(f"✓ sitemap.xml → index lastmod updated to {today_str}")
 
 
 def parse_product(filepath: Path) -> dict:
     """Parse a YAML file with product data.
 
+    Validates with the Product Pydantic model.
+
     Returns:
         dict with product metadata
     """
-    content = filepath.read_text(encoding="utf-8")
-
-    # Parse YAML (entire file is YAML)
-    metadata = yaml.safe_load(content)
-
-    if not metadata:
+    raw = yaml.safe_load(filepath.read_text(encoding="utf-8"))
+    if not raw:
         raise ValueError(f"File {filepath} is empty or invalid YAML")
-
-    # Validate required fields
-    required = [
-        "title",
-        "german_name",
-        "slug",
-        "image",
-        "description",
-        "meta_description",
-    ]
-    missing = [f for f in required if f not in metadata]
-    if missing:
-        raise ValueError(
-            f"File {filepath} missing required fields: {', '.join(missing)}"
-        )
-
-    # Set defaults
-    if "page_title" not in metadata:
-        metadata["page_title"] = f"{metadata['title']} | 3pm German Baking"
-
-    if "og_description" not in metadata:
-        metadata["og_description"] = metadata["description"]
-
-    if "badges" not in metadata:
-        metadata["badges"] = []
-
-    if "sections" not in metadata or metadata["sections"] is None:
-        metadata["sections"] = []
-
-    return metadata
+    product = Product.model_validate(raw)
+    return product.model_dump(mode="json")
 
 
 def load_products_by_category(content_dir: Path) -> dict:
@@ -126,13 +256,14 @@ def load_products_by_category(content_dir: Path) -> dict:
     return categories
 
 
-def build_landing_page(env, categories):
+def build_landing_page(env, categories, locations):
     """Generate the landing page (index.html) from template."""
     template = env.get_template("index.html")
 
     html = template.render(
         oven_products=categories["oven"],
         pantry_products=categories["pantry"],
+        locations=locations,
         badge_icons=BADGE_ICONS,
         badge_labels=BADGE_LABELS,
     )
@@ -202,6 +333,9 @@ def build_all():
     # Load products by category
     categories = load_products_by_category(content_dir)
 
+    # Load farmers market locations
+    locations = load_locations(content_dir)
+
     # Setup Jinja2
     env = Environment(
         loader=FileSystemLoader(templates_dir),
@@ -211,7 +345,10 @@ def build_all():
     print()  # Blank line
 
     # Build landing page
-    build_landing_page(env, categories)
+    build_landing_page(env, categories, locations)
+
+    # Update sitemap lastmod for index.html
+    update_sitemap(base_dir)
 
     # Build product pages
     built_count, errors = build_product_pages(env, categories)

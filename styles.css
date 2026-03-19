@@ -429,26 +429,54 @@ section {
    Find Us Section
    -------------------------------------------------------------------------- */
 .find-us {
-  background-color: var(--color-background);
+  background-color: var(--color-background-warm);
   text-align: center;
 }
 
-.find-us__message {
-  background-color: var(--color-background-warm);
-  border: 1px solid var(--color-border-light);
-  padding: var(--spacing-lg);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.find-us__heading {
+.find-us__subheading {
+  font-family: var(--font-heading);
   font-size: 1.5rem;
   margin-bottom: var(--spacing-sm);
 }
 
-.find-us__text {
+.locations-grid + .find-us__subheading,
+.find-us__options + .find-us__subheading {
+  margin-top: var(--spacing-xl);
+}
+
+.find-us__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  text-align: left;
+}
+
+.find-us__option {
+  border: 1px solid var(--color-border-light);
+  background-color: var(--color-background);
+  padding: var(--spacing-md);
+}
+
+.find-us__option-heading {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.find-us__option-text {
+  font-size: 0.95rem;
   color: var(--color-text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.find-us__option-text:last-child {
   margin-bottom: 0;
+}
+
+.find-us__email {
+  color: var(--color-text);
+  font-weight: 500;
 }
 
 .find-us__social {
@@ -483,18 +511,44 @@ section {
   font-weight: 500;
 }
 
-/* Future: Location cards for when markets are added */
+/* Location cards for farmers markets */
 .locations-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-md);
   margin-top: var(--spacing-md);
 }
 
 .location-card {
   border: 1px solid var(--color-border-light);
+  background-color: var(--color-background);
   padding: var(--spacing-md);
   text-align: left;
+  position: relative;
+}
+
+.location-card--upcoming {
+  border-style: dashed;
+}
+
+.location-card--upcoming .location-card__name {
+  padding-right: 6rem;
+}
+
+.location-card__badge {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  border: 1px dashed var(--color-border-light);
+  padding: 0.2em 0.5em;
+  line-height: 1;
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
 }
 
 .location-card__name {
@@ -503,16 +557,32 @@ section {
   margin-bottom: var(--spacing-xs);
 }
 
+.location-card__name a {
+  text-decoration: none;
+  color: var(--color-text);
+  transition: opacity 0.2s ease;
+}
+
+.location-card__name a:hover {
+  opacity: 0.6;
+}
+
 .location-card__details {
   font-size: 0.9rem;
   color: var(--color-text-light);
+}
+
+.location-card__map-link {
+  color: var(--color-text-light);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* --------------------------------------------------------------------------
    Wholesale Section
    -------------------------------------------------------------------------- */
 .wholesale {
-  background-color: var(--color-background-warm);
+  background-color: var(--color-background);
   padding: var(--spacing-lg) 0;
 }
 
@@ -740,11 +810,6 @@ section {
     max-width: 400px;
   }
   
-  .find-us__message {
-    background-color: var(--color-background);
-    padding: var(--spacing-md);
-  }
-  
   .wholesale__intro {
     font-size: 1rem;
   }
@@ -756,6 +821,10 @@ section {
   .wholesale__benefits {
     text-align: left;
     padding: 0;
+  }
+
+  .locations-grid {
+    grid-template-columns: 1fr;
   }
 }
 
