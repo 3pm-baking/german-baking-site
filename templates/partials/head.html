@@ -6,16 +6,19 @@
   <meta name="description" content="{{ page.meta_description }}">
   
   <meta property="og:type" content="product">
+  <meta property="og:site_name" content="3pm German Baking">
   <meta property="og:title" content="{{ page.page_title }}">
   <meta property="og:description" content="{{ page.og_description }}">
   <meta property="og:url" content="https://germanbakingasheville.com/products/{{ page.slug }}.html">
   <meta property="og:image" content="https://germanbakingasheville.com/images/{{ page.image }}">
+  <meta property="og:image:alt" content="{{ page.title }} ({{ page.german_name }}) — authentic German baking in Asheville, NC">
   <meta property="og:locale" content="en_US">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ page.page_title }}">
   <meta name="twitter:description" content="{{ page.og_description }}">
   <meta name="twitter:image" content="https://germanbakingasheville.com/images/{{ page.image }}">
+  <meta name="twitter:image:alt" content="{{ page.title }} ({{ page.german_name }}) — authentic German baking in Asheville, NC">
 
   <link rel="canonical" href="https://germanbakingasheville.com/products/{{ page.slug }}.html">
   
@@ -32,9 +35,9 @@
   {
     "@context": "https://schema.org",
     "@type": "Product",
-    "name": "{{ page.title }}",
-    "alternateName": "{{ page.german_name }}",
-    "description": "{{ page.description }}",
+    "name": {{ page.title | tojson }},
+    "alternateName": {{ page.german_name | tojson }},
+    "description": {{ page.description | tojson }},
     "image": "https://germanbakingasheville.com/images/{{ page.image }}",
     "brand": {
       "@type": "Brand",
@@ -43,14 +46,11 @@
     "offers": {
       "@type": "Offer",
       "priceCurrency": "USD",
+      "price": "{{ page.price if page.price is not none else 0 }}",
+      "priceValidUntil": "2099-12-31",
       "availability": "https://schema.org/InStock",
       "itemCondition": "https://schema.org/NewCondition",
       "url": "https://germanbakingasheville.com/products/{{ page.slug }}.html",
-      "priceSpecification": {
-        "@type": "PriceSpecification",
-        "priceCurrency": "USD",
-        "description": "Contact for wholesale pricing"
-      },
       "seller": {
         "@type": "Organization",
         "name": "3pm German Baking",
@@ -98,7 +98,7 @@
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "{{ page.title }}",
+        "name": {{ page.title | tojson }},
         "item": "https://germanbakingasheville.com/products/{{ page.slug }}.html"
       }
     ]

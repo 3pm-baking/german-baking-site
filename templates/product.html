@@ -41,7 +41,7 @@
           </p>
           {% else %}
           <p>
-            {{ section.content }}
+            {{ section.content | safe }}
           </p>
           {% endif %}
         </section>

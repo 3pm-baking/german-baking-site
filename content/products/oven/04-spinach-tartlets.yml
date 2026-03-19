@@ -5,10 +5,25 @@ image: spinat-toertchen.jpg
 description: Savory mini tarts with creamy spinach filling in a golden, flaky crust.
 meta_description: Spinach Tartlets (Spinat-Törtchen) - Savory gluten-free mini tarts with creamy spinach filling in a golden, flaky crust. Authentic German baking in Asheville, NC.
 og_description: Savory gluten-free mini tarts with creamy spinach filling in a golden, flaky crust.
+page_title: "Spinach Tartlets / Spinat-Törtchen | 3pm German Baking — Asheville, NC"
+price: 5
 badges:
   - gf
   - vegetarian
 
 sections:
   - title: Origin
-    content: A savory addition to our traditional German baking, these tartlets bring together fresh spinach and herbs in a buttery gluten-free crust.
+    content: A savory addition to our traditional German baking, these Spinat-Törtchen bring together fresh spinach and herbs in a buttery gluten-free crust. Savory tarts are a time-honored part of German café and market culture—a satisfying alternative to sweet pastries for those who prefer something more herbaceous and filling.
+
+  - title: Perfect For
+    content: A standout item at farmers markets, brunch tables, and events. Ideal for guests who want something savory alongside coffee or tea. Naturally gluten-free—no substitutions needed—making them a reliable choice for mixed dietary groups.
+
+  - title: Pricing
+    content: $5 per tartlet.
+
+  - title: Availability
+    content: Available at <a href="../index.html#find-us">local Asheville-area farmers markets</a>. Contact us for direct orders, event catering quantities, or wholesale inquiries.
+
+  - title: Allergen Information
+    type: allergens
+    content: Dairy, Eggs. Naturally gluten-free. Contains spinach and herbs.

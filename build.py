@@ -86,6 +86,7 @@ class Product(BaseModel):
     meta_description: str
     page_title: str | None = None
     og_description: str | None = None
+    price: float | None = None
     badges: list[Badge] = []
     sections: list[ProductSection] = []
 
@@ -181,7 +182,10 @@ def load_locations(content_dir: Path) -> list:
 
 
 def update_sitemap(base_dir: Path) -> None:
-    """Update the lastmod date for the index.html entry in sitemap.xml."""
+    """Update the lastmod date for all entries in sitemap.xml.
+
+    Updates the homepage entry and all product page entries to today's date.
+    """
     sitemap_path = base_dir / "sitemap.xml"
     if not sitemap_path.exists():
         print("Warning: sitemap.xml not found, skipping sitemap update")
@@ -190,9 +194,9 @@ def update_sitemap(base_dir: Path) -> None:
     today_str = date.today().isoformat()
     content = sitemap_path.read_text(encoding="utf-8")
 
-    # Replace lastmod only for the homepage entry (germanbakingasheville.com/)
+    # Replace lastmod for every <url> entry on the site
     updated = re.sub(
-        r"(<loc>https://germanbakingasheville\.com/</loc>\s*<lastmod>)[^<]*(</lastmod>)",
+        r"(<loc>https://germanbakingasheville\.com/[^<]*</loc>\s*<lastmod>)[^<]*(</lastmod>)",
         rf"\g<1>{today_str}\g<2>",
         content,
     )
@@ -201,7 +205,7 @@ def update_sitemap(base_dir: Path) -> None:
         print("  sitemap.xml unchanged")
     else:
         sitemap_path.write_text(updated, encoding="utf-8")
-        print(f"✓ sitemap.xml → index lastmod updated to {today_str}")
+        print(f"✓ sitemap.xml → all lastmod dates updated to {today_str}")
 
 
 def parse_product(filepath: Path) -> dict:

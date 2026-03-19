@@ -3,7 +3,9 @@ german_name: Zitronenkuchen
 slug: lemon-cake
 image: seasonal-cake.jpg
 description: A gluten-free spin on Oma Anneliese's beloved family recipe. This bright, moist lemon cake brings authentic German flavor with modern dietary flexibility—perfect for your coffee shop or market.
-meta_description: "Oma Anneliese's Lemon Cake (Zitronenkuchen) - Moist and fresh lemon cake. Authentic German baking in Asheville, NC."
+meta_description: "Oma Anneliese's Lemon Cake (Zitronenkuchen) - Moist, bright lemon cake with gluten-free and dairy-free options. Authentic German baking in Asheville, NC."
+page_title: "Lemon Cake / Zitronenkuchen | 3pm German Baking — Asheville, NC"
+price: 5
 badges:
   - gf-option
   - lf-option
@@ -13,5 +15,11 @@ sections:
   - title: Origin
     content: A gluten-free spin on a classic recipe from Oma Anneliese, this beloved family favorite has been cherished by generations. This traditional Zitronenkuchen brings bright citrus flavor with a tender, moist crumb—proof that gluten-free German baking can be just as delicious as the original.
   
+  - title: Pricing
+    content: $5 per slice / item.
+
+  - title: Availability
+    content: Available at <a href="../index.html#find-us">local Asheville-area farmers markets</a>. Contact us for direct orders or wholesale inquiries.
+
   - title: Perfect For
     content: Ideal for coffee shops and markets seeking gluten-free dessert options that don't compromise on authentic flavor. A crowd-pleaser for all dietary needs.
