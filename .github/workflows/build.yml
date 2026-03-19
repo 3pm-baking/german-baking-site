@@ -1,14 +1,14 @@
 name: Build & Deploy
 
 on:
-  pull_request:
-    branches: [main]
   schedule:
     - cron: '0 5 * * *'  # midnight ET (UTC-5)
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -20,10 +20,8 @@ jobs:
       - name: Build site
         run: uv run python build.py
 
-      - name: Verify build is up to date
+      - name: Commit and push if changed
         run: |
-          if ! git diff --quiet; then
-            echo "ERROR: Generated files are out of date. Run 'uv run python build.py' locally and commit the results."
-            git diff --stat
-            exit 1
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (git add index.html sitemap.xml products/ && git commit -m "chore: rebuild site [skip ci]" && git push)
