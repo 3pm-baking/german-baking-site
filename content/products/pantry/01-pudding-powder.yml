@@ -5,7 +5,7 @@ image: pudding-powder.png
 description: Traditional German pudding mix for creating rich, creamy desserts at home. Simply combine with milk and sugar for an authentic German pudding experience.
 meta_description: Pudding Powder (Puddingpulver) - Traditional German pudding mix, naturally gluten-free and dairy-free. Create authentic German pudding at home. 3pm German Baking, Asheville, NC.
 og_description: Traditional German pudding mix for creating rich, creamy desserts at home. Naturally gluten-free and dairy-free.
-price: 5
+price: 6
 badges:
   - gf
   - dairy-free
@@ -16,9 +16,6 @@ sections:
 
   - title: How to Use
     content: Combine one packet with cold milk (or oat/almond milk for a dairy-free version) and sugar, bring to a boil while stirring, and pour into cups or a mold to set. Serve warm or chilled. Also works beautifully as a filling layer in German layer cakes and tortes.
-
-  - title: Pricing
-    content: From $5 — available in multiple sizes at the market.
 
   - title: Availability
     content: Available at <a href="../index.html#find-us">local Asheville-area farmers markets</a> while supplies last. Contact us for direct orders or wholesale inquiries.

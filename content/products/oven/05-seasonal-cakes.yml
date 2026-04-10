@@ -5,7 +5,7 @@ image: spiced-cake.jpeg
 description: Warmly spiced traditional cake with hints of cinnamon, cardamom, and cloves.
 meta_description: "Oma Christa's Spiced Cake (Gewürzkuchen) - Warmly spiced traditional German cake with cinnamon, cardamom, and cloves. Gluten-free option available. Authentic German baking in Asheville, NC."
 page_title: "Spiced Cake / Gewürzkuchen | 3pm German Baking — Asheville, NC"
-price: 5
+price: 6
 badges:
   - gf-option
   - vegetarian
@@ -16,9 +16,6 @@ sections:
 
   - title: Perfect For
     content: Ideal for autumn and winter gatherings, holiday tables, and anyone who loves warming spice flavors. Also a distinctive offering for coffee shops looking to add something genuinely different to their pastry case. Gluten-free option available.
-
-  - title: Pricing
-    content: $5 per slice / item.
 
   - title: Availability
     content: Available seasonally at <a href="../index.html#find-us">local Asheville-area farmers markets</a>. Contact us for direct orders or wholesale inquiries when in season.

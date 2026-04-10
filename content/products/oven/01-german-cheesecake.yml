@@ -5,7 +5,7 @@ image: cheese-cake.jpg
 description: Light and creamy quark cheesecake with a tender crust—the authentic German classic.
 meta_description: German Cheesecake (Käsekuchen) - Light and creamy quark cheesecake with a tender crust. Gluten-free option available. Authentic German baking in Asheville, NC.
 page_title: "German Cheesecake (Käsekuchen) | 3pm German Baking — Asheville, NC"
-price: 5
+price: 7
 badges:
   - gf-option
   - vegetarian
@@ -16,9 +16,6 @@ sections:
 
   - title: Perfect For
     content: A crowd-pleaser at any gathering, afternoon coffee, birthday celebration, or farmers market. The familiar creaminess of cheesecake combined with its distinctly European character makes it approachable for all ages. Gluten-free option available—just ask at the market.
-
-  - title: Pricing
-    content: $5 per slice / item.
 
   - title: Availability
     content: Available at <a href="../index.html#find-us">local Asheville-area farmers markets</a>. Contact us for direct orders, custom sizing for events, or wholesale inquiries.

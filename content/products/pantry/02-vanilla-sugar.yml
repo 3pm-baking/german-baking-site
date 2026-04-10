@@ -5,7 +5,7 @@ image: vanilla-sugar.jpg
 description: Fragrant vanilla-infused sugar, a staple in German baking. Perfect for adding authentic flavor to cakes, cookies, and whipped cream.
 meta_description: Vanilla Sugar (Vanillezucker) - Fragrant vanilla-infused sugar, a staple in German baking. Naturally gluten-free and dairy-free. 3pm German Baking, Asheville, NC.
 og_description: Fragrant vanilla-infused sugar, a staple in German baking. Naturally gluten-free and dairy-free.
-price: 5
+price: 6
 badges:
   - gf
   - dairy-free
@@ -16,9 +16,6 @@ sections:
 
   - title: How to Use
     content: Use anywhere you would add vanilla extract or plain sugar in a baking recipe. Especially at home in Plätzchen (German Christmas cookies), whipped cream, Streusel toppings, and cake batters. One standard German packet (typically 8g) is equivalent to roughly one teaspoon of vanilla extract.
-
-  - title: Pricing
-    content: From $5 — available in multiple sizes at the market.
 
   - title: Availability
     content: Available at <a href="../index.html#find-us">local Asheville-area farmers markets</a> while supplies last. Contact us for direct orders or wholesale inquiries.
