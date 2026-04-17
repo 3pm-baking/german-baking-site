@@ -1,0 +1,17 @@
+{
+  "name": "3pm German Baking",
+  "short_name": "3pm Baking",
+  "description": "Authentic German cakes, pastries, and pantry goods in Asheville, NC.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#f9f7f4",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
