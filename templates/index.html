@@ -204,6 +204,9 @@
         {% include 'partials/product-card.html' %}
         {% endfor %}
       </div>
+      {% if oven_listed_only %}
+      {% include 'partials/also-available-card.html' %}
+      {% endif %}
     </div>
   </section>
 

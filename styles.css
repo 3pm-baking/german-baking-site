@@ -368,8 +368,66 @@ section {
 }
 
 /* --------------------------------------------------------------------------
-   Dietary Badge Icons
+   Also Available Section
    -------------------------------------------------------------------------- */
+.also-available {
+  margin-top: var(--spacing-lg);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--max-width-narrow);
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border-light);
+  text-align: center;
+}
+
+.also-available__heading {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+.also-available__list {
+  list-style: none;
+  padding: 0;
+  margin: var(--spacing-md) 0 0;
+}
+
+.also-available__item {
+  padding: var(--spacing-sm) 0;
+}
+
+.also-available__separator {
+  list-style: none;
+}
+
+.also-available__name {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--color-text);
+  margin-bottom: 2px;
+}
+
+.also-available__german {
+  display: block;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.also-available__description {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.divider--small {
+  margin: var(--spacing-xs) 0;
+}
+
+
 .product-card__badges {
   position: absolute;
   top: var(--spacing-xs);

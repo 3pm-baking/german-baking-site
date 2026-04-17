@@ -80,10 +80,10 @@ class ProductSection(BaseModel):
 class Product(BaseModel):
     title: str
     german_name: str
-    slug: str
-    image: str
+    slug: str | None = None
+    image: str | None = None
     description: str
-    meta_description: str
+    meta_description: str | None = None
     page_title: str | None = None
     og_description: str | None = None
     price: float | None = None
@@ -132,6 +132,35 @@ class Location(BaseModel):
 BADGE_ICONS = {b.value: b.icon for b in Badge}
 BADGE_LABELS = {b.value: b.aria_label for b in Badge}
 BADGE_NAMES = {b.value: b.display_name for b in Badge}
+
+
+def load_also_available(content_dir: Path) -> list[dict]:
+    """Load 'Also Available' items from content/products/also-available/.
+
+    Returns:
+        list of dicts with keys: title, german_name, description
+    """
+    also_available_dir = content_dir / "also-available"
+    if not also_available_dir.exists():
+        print(f"Warning: {also_available_dir} not found, skipping")
+        return []
+
+    items = []
+    for yaml_file in sorted(also_available_dir.glob("*.yml")):
+        raw = yaml.safe_load(yaml_file.read_text(encoding="utf-8"))
+        if not raw:
+            print(f"  (skipping empty file: {yaml_file.name})")
+            continue
+        items.append(
+            {
+                "title": raw["title"],
+                "german_name": raw.get("german_name", ""),
+                "description": raw.get("description", ""),
+            }
+        )
+
+    print(f"Loaded {len(items)} item(s) for 'Also Available'")
+    return items
 
 
 def parse_location(filepath: Path) -> dict:
@@ -260,12 +289,13 @@ def load_products_by_category(content_dir: Path) -> dict:
     return categories
 
 
-def build_landing_page(env, categories, locations):
+def build_landing_page(env, categories, locations, market_items):
     """Generate the landing page (index.html) from template."""
     template = env.get_template("index.html")
 
     html = template.render(
         oven_products=categories["oven"],
+        oven_listed_only=market_items,
         pantry_products=categories["pantry"],
         locations=locations,
         badge_icons=BADGE_ICONS,
@@ -346,10 +376,13 @@ def build_all():
         autoescape=select_autoescape(["html", "xml"]),
     )
 
+    # Load "Also Available" items
+    market_items = load_also_available(content_dir)
+
     print()  # Blank line
 
     # Build landing page
-    build_landing_page(env, categories, locations)
+    build_landing_page(env, categories, locations, market_items)
 
     # Update sitemap lastmod for index.html
     update_sitemap(base_dir)

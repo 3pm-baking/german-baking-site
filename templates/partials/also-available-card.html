@@ -1,0 +1,20 @@
+<div class="also-available">
+  <h3 class="also-available__heading">Also Available</h3>
+  <div class="divider"><span class="divider__icon">✿</span></div>
+  <ul class="also-available__list">
+    {% for item in oven_listed_only %}
+    <li class="also-available__item">
+      <span class="also-available__name">{{ item.title }}</span>
+      <span class="also-available__german">{{ item.german_name }}</span>
+      {% if item.description %}
+      <p class="also-available__description">{{ item.description }}</p>
+      {% endif %}
+    </li>
+    {% if not loop.last %}
+    <li class="also-available__separator" aria-hidden="true">
+      <div class="divider divider--small"><span class="divider__icon">✿</span></div>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</div>
