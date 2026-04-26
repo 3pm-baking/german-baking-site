@@ -1,0 +1,110 @@
+name: Sync Recipes from Finances
+
+on:
+  repository_dispatch:
+    types: [sync-recipes]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write product stubs
+        id: write
+        run: |
+          python3 - <<'EOF'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = json.loads(os.environ["PAYLOAD"])
+          products = payload["products"]
+          out_dir = Path("content/products/also-available")
+          out_dir.mkdir(parents=True, exist_ok=True)
+
+          created, updated, skipped = [], [], []
+
+          for product in products:
+              slug = product["slug"]
+              path = out_dir / f"{slug}.yml"
+
+              lines = [f"title: {product['title']}"]
+              if product.get("german_name"):
+                  lines.append(f"german_name: {product['german_name']}")
+              if product.get("description"):
+                  lines.append(f"description: {product['description']}")
+              if product.get("price") is not None:
+                  lines.append(f"price: {product['price']}")
+              if product.get("badges"):
+                  lines.append("badges:")
+                  for badge in product["badges"]:
+                      lines.append(f"  - {badge}")
+              content = "\n".join(lines) + "\n"
+
+              if path.exists() and path.read_text() == content:
+                  skipped.append(slug)
+              elif path.exists():
+                  path.write_text(content)
+                  updated.append(slug)
+              else:
+                  path.write_text(content)
+                  created.append(slug)
+
+          print(f"created={len(created)} updated={len(updated)} skipped={len(skipped)}")
+          for s in created:
+              print(f"  created: {s}")
+          for s in updated:
+              print(f"  updated: {s}")
+
+          # Write summary for PR body
+          summary_lines = []
+          if created:
+              summary_lines.append("**Created:**")
+              summary_lines += [f"- `{s}`" for s in created]
+          if updated:
+              summary_lines.append("**Updated:**")
+              summary_lines += [f"- `{s}`" for s in updated]
+          if skipped:
+              summary_lines.append(f"**Unchanged:** {len(skipped)} product(s)")
+
+          Path("/tmp/pr-summary.md").write_text("\n".join(summary_lines) + "\n")
+
+          # Signal whether there are changes
+          has_changes = bool(created or updated)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"has_changes={'true' if has_changes else 'false'}\n")
+          EOF
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+
+      - name: Create PR
+        if: steps.write.outputs.has_changes == 'true'
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          BRANCH="sync/recipes-${DATE}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add content/products/also-available/
+          git commit -m "sync: update product stubs ${DATE}"
+          git push origin "$BRANCH"
+
+          BODY=$(cat /tmp/pr-summary.md)
+          gh pr create \
+            --title "sync: update product stubs ${DATE}" \
+            --body "$BODY" \
+            --base main \
+            --head "$BRANCH"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: No changes
+        if: steps.write.outputs.has_changes != 'true'
+        run: echo "All product stubs are up to date — no PR needed."
