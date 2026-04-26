@@ -1,7 +1,9 @@
 title: King's Cake
 german_name: Königskuchen
-description: A 450-year-old recipe from Mary's grandmother's 60-year-old cookbook. Rich German butter cake with rum-soaked raisins, walnuts, and a lemon glaze — fit for a king.
-price: 6.0
+description: A 450-year-old recipe from Mary's grandmother's 60-year-old cookbook.
+  Rich German butter cake with rum-soaked raisins, walnuts, and a lemon glaze — fit
+  for a king.
+price: 6
 badges:
-  - gf
-  - dairy-free
+- gf
+- dairy-free

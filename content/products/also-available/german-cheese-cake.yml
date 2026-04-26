@@ -1,6 +1,6 @@
 title: German Cheese Cake
 german_name: Käsekuchen
 description: The classic German cheese cake
-price: 7.0
+price: 7
 badges:
-  - gf
+- gf
