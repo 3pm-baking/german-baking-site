@@ -1,3 +1,7 @@
 title: Banana Squares
 german_name: Bananenkuchen
-description: A delicious vegan banana cake with chocolate chips.
+description: A delicious vegan banana cake with chocolate chips
+price: 6.0
+badges:
+  - gf
+  - dairy-free
