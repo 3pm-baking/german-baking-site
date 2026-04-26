@@ -101,6 +101,8 @@ jobs:
 
           git checkout -b "$BRANCH"
           git add content/products/
+          # Only commit product content — never workflow files
+          git restore --staged .github/ 2>/dev/null || true
           git commit -m "sync: update products from recipes ${DATE}"
           git push origin "$BRANCH"
 
