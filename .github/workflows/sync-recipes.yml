@@ -94,7 +94,7 @@ jobs:
         if: steps.write.outputs.has_changes == 'true'
         run: |
           DATE=$(date +%Y-%m-%d)
-          BRANCH="sync/recipes-${DATE}"
+          BRANCH="sync/recipes-${DATE}-${{ github.run_id }}"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
