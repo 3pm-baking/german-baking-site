@@ -14,45 +14,55 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Write product stubs
+      - name: Write product files from payload
         id: write
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
         run: |
           python3 - <<'EOF'
           import json
           import os
+          import yaml
           from pathlib import Path
 
           payload = json.loads(os.environ["PAYLOAD"])
           products = payload["products"]
-          out_dir = Path("content/products/also-available")
-          out_dir.mkdir(parents=True, exist_ok=True)
+          base = Path("content/products")
 
           created, updated, skipped = [], [], []
 
           for product in products:
               slug = product["slug"]
-              path = out_dir / f"{slug}.yml"
+              update = {k: v for k, v in product.items() if k != "slug"}
 
-              lines = [f"title: {product['title']}"]
-              if product.get("german_name"):
-                  lines.append(f"german_name: {product['german_name']}")
-              if product.get("description"):
-                  lines.append(f"description: {product['description']}")
-              if product.get("price") is not None:
-                  lines.append(f"price: {product['price']}")
-              if product.get("badges"):
-                  lines.append("badges:")
-                  for badge in product["badges"]:
-                      lines.append(f"  - {badge}")
-              content = "\n".join(lines) + "\n"
+              # Search all directories for an existing file matching this slug.
+              # A product will only ever live in one directory, never both.
+              existing_path = None
+              for search_dir in ["oven", "pantry", "also-available"]:
+                  for f in sorted((base / search_dir).glob("*.yml")):
+                      if slug in f.stem:
+                          existing_path = f
+                          break
+                  if existing_path:
+                      break
 
-              if path.exists() and path.read_text() == content:
-                  skipped.append(slug)
-              elif path.exists():
-                  path.write_text(content)
-                  updated.append(slug)
+              if existing_path:
+                  # Merge into the existing file wherever it lives.
+                  # Preserve all existing fields; overwrite with incoming fields.
+                  existing = yaml.safe_load(existing_path.read_text()) or {}
+                  merged = {**existing, **update}
+                  content = yaml.dump(merged, allow_unicode=True, default_flow_style=False, sort_keys=False)
+                  if existing_path.read_text() == content:
+                      skipped.append(slug)
+                  else:
+                      existing_path.write_text(content)
+                      updated.append(slug)
               else:
-                  path.write_text(content)
+                  # New product — create in also-available by default.
+                  write_path = base / "also-available" / f"{slug}.yml"
+                  write_path.parent.mkdir(parents=True, exist_ok=True)
+                  content = yaml.dump(update, allow_unicode=True, default_flow_style=False, sort_keys=False)
+                  write_path.write_text(content)
                   created.append(slug)
 
           print(f"created={len(created)} updated={len(updated)} skipped={len(skipped)}")
@@ -79,8 +89,6 @@ jobs:
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"has_changes={'true' if has_changes else 'false'}\n")
           EOF
-        env:
-          PAYLOAD: ${{ toJson(github.event.client_payload) }}
 
       - name: Create PR
         if: steps.write.outputs.has_changes == 'true'
@@ -92,13 +100,13 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git checkout -b "$BRANCH"
-          git add content/products/also-available/
-          git commit -m "sync: update product stubs ${DATE}"
+          git add content/products/
+          git commit -m "sync: update products from recipes ${DATE}"
           git push origin "$BRANCH"
 
           BODY=$(cat /tmp/pr-summary.md)
           gh pr create \
-            --title "sync: update product stubs ${DATE}" \
+            --title "sync: update products from recipes ${DATE}" \
             --body "$BODY" \
             --base main \
             --head "$BRANCH"
@@ -107,4 +115,4 @@ jobs:
 
       - name: No changes
         if: steps.write.outputs.has_changes != 'true'
-        run: echo "All product stubs are up to date — no PR needed."
+        run: echo "All products are up to date — no PR needed."
