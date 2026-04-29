@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [sync-recipes]
 
+concurrency:
+  group: sync-recipes
+  cancel-in-progress: true
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -97,6 +101,22 @@ jobs:
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"has_changes={'true' if has_changes else 'false'}\n")
           EOF
+
+      - name: Close stale sync PRs
+        if: steps.write.outputs.has_changes == 'true'
+        run: |
+          # Find and close any open sync PRs, deleting their branches
+          gh pr list \
+            --search "sync: update products from recipes in:title" \
+            --state open \
+            --json number,headRefName \
+            --jq '.[] | "\(.number) \(.headRefName)"' \
+          | while read -r number branch; do
+              echo "Closing stale sync PR #${number} (branch: ${branch})"
+              gh pr close "$number" --delete-branch
+            done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create PR
         if: steps.write.outputs.has_changes == 'true'
