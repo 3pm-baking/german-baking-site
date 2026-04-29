@@ -7,6 +7,7 @@ Slugs are derived by stripping the numeric ordering prefix from filenames
 (e.g. "02-russian-pull-cake" -> "russian-pull-cake").
 """
 import sys
+import yaml
 from pathlib import Path
 
 CONTENT_DIR = Path("content/products")
@@ -35,6 +36,9 @@ def collect_slugs() -> dict[str, list[Path]]:
         if not directory.exists():
             continue
         for f in sorted(directory.glob("*.yml")):
+            raw = yaml.safe_load(f.read_text()) or {}
+            if raw.get("website") is False:
+                continue
             slug = normalize_slug(f.stem)
             slug_to_files.setdefault(slug, []).append(f)
 

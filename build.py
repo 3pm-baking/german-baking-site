@@ -151,6 +151,9 @@ def load_also_available(content_dir: Path) -> list[dict]:
         if not raw:
             print(f"  (skipping empty file: {yaml_file.name})")
             continue
+        if raw.get("website") is False:
+            print(f"  (skipping website: false — {yaml_file.name})")
+            continue
         items.append(
             {
                 "title": raw["title"],

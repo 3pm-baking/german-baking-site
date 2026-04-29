@@ -41,11 +41,13 @@ jobs:
           products = payload["products"]
           base = Path("content/products")
 
-          created, updated, skipped = [], [], []
+          created, updated, skipped, deleted = [], [], [], []
 
           for product in products:
               slug = product["slug"]
-              update = {k: v for k, v in product.items() if k != "slug"}
+              website = product.get("website", True)
+              # Strip upstream-only keys — never write these to the website repo
+              update = {k: v for k, v in product.items() if k not in ("slug", "website")}
 
               # Search all directories for an existing file matching this slug.
               # A product will only ever live in one directory, never both.
@@ -57,6 +59,15 @@ jobs:
                           break
                   if existing_path:
                       break
+
+              # Upstream controls what appears on the site via website: false
+              if not website:
+                  if existing_path:
+                      existing_path.unlink()
+                      deleted.append(slug)
+                  else:
+                      skipped.append(slug)
+                  continue
 
               if existing_path:
                   # Merge into the existing file wherever it lives.
@@ -77,11 +88,13 @@ jobs:
                   write_path.write_text(content)
                   created.append(slug)
 
-          print(f"created={len(created)} updated={len(updated)} skipped={len(skipped)}")
+          print(f"created={len(created)} updated={len(updated)} skipped={len(skipped)} deleted={len(deleted)}")
           for s in created:
               print(f"  created: {s}")
           for s in updated:
               print(f"  updated: {s}")
+          for s in deleted:
+              print(f"  deleted: {s}")
 
           # Write summary for PR body
           summary_lines = []
@@ -91,13 +104,16 @@ jobs:
           if updated:
               summary_lines.append("**Updated:**")
               summary_lines += [f"- `{s}`" for s in updated]
+          if deleted:
+              summary_lines.append("**Deleted** (`website: false`):")
+              summary_lines += [f"- `{s}`" for s in deleted]
           if skipped:
               summary_lines.append(f"**Unchanged:** {len(skipped)} product(s)")
 
           Path("/tmp/pr-summary.md").write_text("\n".join(summary_lines) + "\n")
 
           # Signal whether there are changes
-          has_changes = bool(created or updated)
+          has_changes = bool(created or updated or deleted)
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"has_changes={'true' if has_changes else 'false'}\n")
           EOF
