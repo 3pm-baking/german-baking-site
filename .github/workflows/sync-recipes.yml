@@ -14,6 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Check for duplicate products
+        run: uv run pre-commit run check-duplicate-products --all-files
+
       - name: Write product files from payload
         id: write
         env:
@@ -104,6 +112,12 @@ jobs:
           # Only commit product content — never workflow files
           git restore --staged .github/ 2>/dev/null || true
           git commit -m "sync: update products from recipes ${DATE}"
+
+          # Rebuild site from updated product files
+          uv run python build.py
+          git add index.html sitemap.xml products/
+          git diff --staged --quiet || git commit -m "chore: rebuild site after sync ${DATE}"
+
           git push origin "$BRANCH"
 
           BODY=$(cat /tmp/pr-summary.md)

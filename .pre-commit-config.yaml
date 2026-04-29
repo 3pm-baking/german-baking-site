@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: check-duplicate-products
+        name: Check for duplicate products across directories
+        entry: uv run python scripts/check_duplicate_products.py
+        language: system
+        pass_filenames: false
+        files: ^content/products/
