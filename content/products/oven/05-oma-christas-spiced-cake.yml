@@ -1,25 +1,30 @@
-title: "Oma Christa's Spiced Cake"
+title: Oma Christa's Spiced Cake
 german_name: Gewürzkuchen
 slug: oma-christas-spiced-cake
 image: spiced-cake.jpeg
-description: Warmly spiced traditional cake with hints of cinnamon, cardamom, and cloves.
-meta_description: "Oma Christa's Spiced Cake (Gewürzkuchen) - Warmly spiced traditional German cake with cinnamon, cardamom, and cloves. Gluten-free option available. Authentic German baking in Asheville, NC."
-page_title: "Spiced Cake / Gewürzkuchen | 3pm German Baking — Asheville, NC"
-price: 6
-badges:
-  - gf-option
-  - vegetarian
-
+description: A holiday chocolate cake right from Grandma's kitchen
+meta_description: Oma Christa's Spiced Cake (Gewürzkuchen) - Warmly spiced traditional
+  German cake with cinnamon, cardamom, and cloves. Gluten-free option available. Authentic
+  German baking in Asheville, NC.
+page_title: Spiced Cake / Gewürzkuchen | 3pm German Baking — Asheville, NC
+price: 7
+badges: []
 sections:
-  - title: Origin
-    content: A treasured family recipe from Oma Christa, this traditional German Gewürzkuchen brings together warming spices that have been beloved in German baking for generations. Cinnamon, cardamom, and cloves combine in a tender, fragrant cake that fills the kitchen with the unmistakable scent of a German Weihnachtsbäckerei—Christmas bakery—even in other seasons. A piece of this cake alongside an afternoon coffee is pure comfort.
-
-  - title: Perfect For
-    content: Ideal for autumn and winter gatherings, holiday tables, and anyone who loves warming spice flavors. Also a distinctive offering for coffee shops looking to add something genuinely different to their pastry case. Gluten-free option available.
-
-  - title: Availability
-    content: Available seasonally at <a href="../index.html#find-us">local Asheville-area farmers markets</a>. Contact us for direct orders or wholesale inquiries when in season.
-
-  - title: Allergen Information
-    type: allergens
-    content: Dairy, Eggs, Wheat. Gluten-free option available on request.
+- title: Origin
+  content: A treasured family recipe from Oma Christa, this traditional German Gewürzkuchen
+    brings together warming spices that have been beloved in German baking for generations.
+    Cinnamon, cardamom, and cloves combine in a tender, fragrant cake that fills the
+    kitchen with the unmistakable scent of a German Weihnachtsbäckerei—Christmas bakery—even
+    in other seasons. A piece of this cake alongside an afternoon coffee is pure comfort.
+- title: Perfect For
+  content: Ideal for autumn and winter gatherings, holiday tables, and anyone who
+    loves warming spice flavors. Also a distinctive offering for coffee shops looking
+    to add something genuinely different to their pastry case. Gluten-free option
+    available.
+- title: Availability
+  content: Available seasonally at <a href="../index.html#find-us">local Asheville-area
+    farmers markets</a>. Contact us for direct orders or wholesale inquiries when
+    in season.
+- title: Allergen Information
+  type: allergens
+  content: Dairy, Eggs, Wheat. Gluten-free option available on request.
