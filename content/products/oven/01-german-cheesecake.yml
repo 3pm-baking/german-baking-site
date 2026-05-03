@@ -2,24 +2,30 @@ title: German Cheesecake
 german_name: Käsekuchen
 slug: german-cheesecake
 image: cheese-cake.jpg
-description: Light and creamy quark cheesecake with a tender crust—the authentic German classic.
-meta_description: German Cheesecake (Käsekuchen) - Light and creamy quark cheesecake with a tender crust. Gluten-free option available. Authentic German baking in Asheville, NC.
-page_title: "German Cheesecake (Käsekuchen) | 3pm German Baking — Asheville, NC"
+description: The classic German cheese cake
+meta_description: German Cheesecake (Käsekuchen) - Light and creamy quark cheesecake
+  with a tender crust. Gluten-free option available. Authentic German baking in Asheville,
+  NC.
+page_title: German Cheesecake (Käsekuchen) | 3pm German Baking — Asheville, NC
 price: 7
 badges:
-  - gf-option
-  - vegetarian
-
+- gf
 sections:
-  - title: Origin
-    content: A beloved classic from German café culture, Käsekuchen has been a centerpiece of afternoon coffee and cake—Kaffee und Kuchen—for generations. Unlike American cheesecake, the German version uses quark, a fresh dairy product, which gives it a lighter, creamier texture and a delicate tang. This recipe follows the traditional method Oma used, perfected over decades.
-
-  - title: Perfect For
-    content: A crowd-pleaser at any gathering, afternoon coffee, birthday celebration, or farmers market. The familiar creaminess of cheesecake combined with its distinctly European character makes it approachable for all ages. Gluten-free option available—just ask at the market.
-
-  - title: Availability
-    content: Available at <a href="../index.html#find-us">local Asheville-area farmers markets</a>. Contact us for direct orders, custom sizing for events, or wholesale inquiries.
-
-  - title: Allergen Information
-    type: allergens
-    content: Dairy, Eggs, Wheat. Gluten-free crust option available on request.
+- title: Origin
+  content: A beloved classic from German café culture, Käsekuchen has been a centerpiece
+    of afternoon coffee and cake—Kaffee und Kuchen—for generations. Unlike American
+    cheesecake, the German version uses quark, a fresh dairy product, which gives
+    it a lighter, creamier texture and a delicate tang. This recipe follows the traditional
+    method Oma used, perfected over decades.
+- title: Perfect For
+  content: A crowd-pleaser at any gathering, afternoon coffee, birthday celebration,
+    or farmers market. The familiar creaminess of cheesecake combined with its distinctly
+    European character makes it approachable for all ages. Gluten-free option available—just
+    ask at the market.
+- title: Availability
+  content: Available at <a href="../index.html#find-us">local Asheville-area farmers
+    markets</a>. Contact us for direct orders, custom sizing for events, or wholesale
+    inquiries.
+- title: Allergen Information
+  type: allergens
+  content: Dairy, Eggs, Wheat. Gluten-free crust option available on request.
