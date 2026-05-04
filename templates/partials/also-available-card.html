@@ -4,7 +4,18 @@
   <ul class="also-available__list">
     {% for item in oven_listed_only %}
     <li class="also-available__item">
-      <span class="also-available__name">{{ item.title }}</span>
+      <div class="also-available__name-row">
+        <span class="also-available__name">{{ item.title }}</span>
+        {% if item.badges %}
+        <div class="also-available__badges">
+          {% for badge in item.badges %}
+            {% if badge_icons[badge] %}
+          <span class="badge-icon badge-icon--{{ badge }}" role="img" aria-label="{{ badge_labels[badge] }}" title="{{ badge_labels[badge] }}">{{ badge_icons[badge] }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
       <span class="also-available__german">{{ item.german_name }}</span>
       {% if item.description %}
       <p class="also-available__description">{{ item.description }}</p>

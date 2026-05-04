@@ -40,6 +40,10 @@ EXCLUDED: set[str] = {
     "Vanilla Sugar 100g",
     # Explicitly skipped
     "Terrazzo Cheesecake",
+    "Cake Pops",
+    "Königskuchen",
+    "Poppyseed Streusel Cheese Cake",
+    "Vanilla Pudding Powder 200g",
 }
 
 

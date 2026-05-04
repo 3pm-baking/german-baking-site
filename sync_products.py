@@ -76,10 +76,12 @@ def sync_products(products: list[dict], base: Path) -> dict:
             write_path.write_text(content)
             created.append(slug)
 
-    # Delete products absent from the payload entirely (treat payload as source of truth)
+    # Delete products absent from the payload entirely (treat payload as source of truth).
+    # Only applies to sync-managed directories (oven/, also-available/) — pantry/ is managed separately.
+    SYNC_MANAGED_DIRS = {"oven", "also-available"}
     payload_slugs = {p["slug"] for p in products}
     for slug, path in slug_index.items():
-        if slug not in payload_slugs:
+        if path.parent.name in SYNC_MANAGED_DIRS and slug not in payload_slugs:
             path.unlink()
             deleted.append(slug)
 

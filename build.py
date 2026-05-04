@@ -30,6 +30,7 @@ class Badge(StrEnum):
     LF_OPTION = "lf-option"
     LF = "lf"
     VEGETARIAN = "vegetarian"
+    VEGAN = "vegan"
 
     @property
     def icon(self) -> str | None:
@@ -42,6 +43,7 @@ class Badge(StrEnum):
             Badge.LF_OPTION: "LF",
             Badge.LF: "LF",
             Badge.VEGETARIAN: None,
+            Badge.VEGAN: "V",
         }[self]
 
     @property
@@ -55,6 +57,7 @@ class Badge(StrEnum):
             Badge.LF_OPTION: "Lactose-Free option available",
             Badge.LF: "Lactose-Free",
             Badge.VEGETARIAN: "Vegetarian",
+            Badge.VEGAN: "Vegan",
         }[self]
 
     @property
@@ -68,6 +71,7 @@ class Badge(StrEnum):
             Badge.LF_OPTION: "Lactose-Free Option",
             Badge.LF: "Lactose-Free ✓",
             Badge.VEGETARIAN: "Vegetarian ✓",
+            Badge.VEGAN: "Vegan ✓",
         }[self]
 
 
@@ -159,6 +163,7 @@ def load_also_available(content_dir: Path) -> list[dict]:
                 "title": raw["title"],
                 "german_name": raw.get("german_name", ""),
                 "description": raw.get("description", ""),
+                "badges": raw.get("badges", []),
             }
         )
 

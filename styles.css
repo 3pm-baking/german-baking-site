@@ -402,11 +402,23 @@ section {
 }
 
 .also-available__name {
-  display: block;
   font-family: var(--font-heading);
   font-size: 1.1rem;
   color: var(--color-text);
+}
+
+.also-available__name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 2px;
+}
+
+.also-available__badges {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
 }
 
 .also-available__german {
@@ -456,15 +468,16 @@ section {
 
 /* Dashed border for "option available" variants */
 .badge-icon--gf-option,
-.badge-icon--df-option,
+.badge-icon--dairy-free-option,
 .badge-icon--lf-option {
   border: 1px dashed #a5d6a7;
 }
 
 /* Solid border for "always" variants */
 .badge-icon--gf,
-.badge-icon--df,
-.badge-icon--lf {
+.badge-icon--dairy-free,
+.badge-icon--lf,
+.badge-icon--vegan {
   border: 1px solid #a5d6a7;
 }
 
