@@ -76,6 +76,13 @@ def sync_products(products: list[dict], base: Path) -> dict:
             write_path.write_text(content)
             created.append(slug)
 
+    # Delete products absent from the payload entirely (treat payload as source of truth)
+    payload_slugs = {p["slug"] for p in products}
+    for slug, path in slug_index.items():
+        if slug not in payload_slugs:
+            path.unlink()
+            deleted.append(slug)
+
     return {"created": created, "updated": updated, "skipped": skipped, "deleted": deleted}
 
 
@@ -91,7 +98,7 @@ def build_summary(results: dict) -> str:
         lines.append("**Updated:**")
         lines += [f"- `{s}`" for s in updated]
     if deleted:
-        lines.append("**Deleted** (`website: false`):")
+        lines.append("**Deleted:**")
         lines += [f"- `{s}`" for s in deleted]
     if skipped:
         lines.append(f"**Unchanged:** {len(skipped)} product(s)")
