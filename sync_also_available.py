@@ -32,7 +32,7 @@ EXCLUDED: set[str] = {
     "Russischer Zupfkuchen",
     "Lemon Cake",
     "Spinach Tartlets",
-    # "Vegan Kraut Strudel",
+    "Vegan Kraut Strudel",
     # Pantry items
     "Chocolate Pudding Powder 200g",
     "Chocolate Pudding Powder 300g",

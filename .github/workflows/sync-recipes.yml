@@ -27,13 +27,30 @@ jobs:
         run: uv run pre-commit run check-duplicate-products --all-files
 
       - name: Write product files from payload
-        id: write
+        id: write_products
         env:
           PAYLOAD: ${{ toJson(github.event.client_payload) }}
         run: uv run python sync_products.py
 
+      - name: Write location files from payload
+        id: write_locations
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: uv run python sync_locations.py
+
+      - name: Determine if any changes
+        id: changes
+        run: |
+          products="${{ steps.write_products.outputs.has_changes }}"
+          locations="${{ steps.write_locations.outputs.locations_has_changes }}"
+          if [[ "$products" == "true" || "$locations" == "true" ]]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Close stale sync PRs
-        if: steps.write.outputs.has_changes == 'true'
+        if: steps.changes.outputs.has_changes == 'true'
         run: |
           # Find and close any open sync PRs, deleting their branches
           gh pr list \
@@ -49,7 +66,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create PR
-        if: steps.write.outputs.has_changes == 'true'
+        if: steps.changes.outputs.has_changes == 'true'
         run: |
           DATE=$(date +%Y-%m-%d)
           BRANCH="sync/recipes-${DATE}-${{ github.run_id }}"
@@ -58,12 +75,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git checkout -b "$BRANCH"
-          git add content/products/
-          # Only commit product content — never workflow files
+          git add content/products/ content/locations/
+          # Only commit content — never workflow files
           git restore --staged .github/ 2>/dev/null || true
-          git commit -m "sync: update products from recipes ${DATE}"
+          git commit -m "sync: update products and locations ${DATE}"
 
-          # Rebuild site from updated product files
+          # Rebuild site from updated content files
           uv run python build.py
           git add index.html sitemap.xml products/
           git diff --staged --quiet || git commit -m "chore: rebuild site after sync ${DATE}"
@@ -72,7 +89,7 @@ jobs:
 
           BODY=$(cat /tmp/pr-summary.md)
           gh pr create \
-            --title "sync: update products from recipes ${DATE}" \
+            --title "sync: update products and locations ${DATE}" \
             --body "$BODY" \
             --base main \
             --head "$BRANCH" \
@@ -81,5 +98,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: No changes
-        if: steps.write.outputs.has_changes != 'true'
-        run: echo "All products are up to date — no PR needed."
+        if: steps.changes.outputs.has_changes != 'true'
+        run: echo "All products and locations are up to date — no PR needed."
