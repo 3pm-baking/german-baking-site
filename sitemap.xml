@@ -48,4 +48,18 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- BLOG_START -->
+  <url>
+    <loc>https://germanbakingasheville.com/blog/</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://germanbakingasheville.com/blog/what-is-quark.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- BLOG_END -->
 </urlset>

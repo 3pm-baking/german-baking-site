@@ -153,6 +153,7 @@
       <ul class="nav__list">
         <li class="nav__item"><a href="#about" class="nav__link">Our Story</a></li>
         <li class="nav__item"><a href="#products" class="nav__link">Products</a></li>
+        <li class="nav__item"><a href="#blog" class="nav__link">Blog</a></li>
         <li class="nav__item"><a href="#find-us" class="nav__link">Find Us</a></li>
         <li class="nav__item"><a href="#wholesale" class="nav__link">Wholesale</a></li>
       </ul>
@@ -223,6 +224,28 @@
         {% include 'partials/product-card.html' %}
         {% endfor %}
       </div>
+    </div>
+  </section>
+
+  <section class="blog-recent" id="blog">
+    <div class="container">
+      <h2 class="text-center">Recently on the Blog</h2>
+      <div class="divider">
+        <span class="divider__icon">✿</span>
+      </div>
+
+      {% if recent_posts %}
+      <div class="blog-recent__grid">
+        {% for post in recent_posts %}
+        {% include 'partials/blog-recent-card.html' %}
+        {% endfor %}
+      </div>
+      <p class="blog-recent__more">
+        <a href="blog/">View all posts &rarr;</a>
+      </p>
+      {% else %}
+      <p class="blog-recent__empty">Check back soon for recipes, stories, and baking traditions from our kitchen.</p>
+      {% endif %}
     </div>
   </section>
 
@@ -337,7 +360,7 @@
     </div>
   </section>
 
-  <footer class="footer footer--warm">
+  <footer class="footer">
     <div class="container">
       <img src="images/logo.png" alt="3pm German Baking" class="footer__logo">
       <div class="footer__contact">

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Static site generator for 3pm German Baking product pages.
+Static site generator for 3pm German Baking.
 
 Reads YAML files from content/products/ and generates static HTML pages in products/
 Reads YAML files from content/locations/ and passes them to the landing page template.
+Reads markdown files from content/blog/ and generates blog/index.html + blog/*.html
 """
 
 import re
@@ -11,6 +12,8 @@ import sys
 from datetime import date
 from enum import StrEnum
 from pathlib import Path
+
+import markdown as md
 import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pydantic import BaseModel, field_validator, model_validator
@@ -131,6 +134,34 @@ class Location(BaseModel):
         return self
 
 
+class BlogPost(BaseModel):
+    title: str
+    date: date
+    slug: str | None = None
+    author: str = "3pm German Baking Team"
+    excerpt: str
+    image: str | None = None
+    meta_description: str | None = None
+    page_title: str | None = None
+    og_description: str | None = None
+    tags: list[str] = []
+    content_html: str = ""
+    display_date: str = ""
+
+    @model_validator(mode="after")
+    def set_derived_defaults(self) -> "BlogPost":
+        if self.page_title is None:
+            self.page_title = f"{self.title} | 3pm German Baking Blog"
+        if self.og_description is None:
+            self.og_description = self.excerpt
+        if self.slug is None:
+            slug = re.sub(r"[^a-z0-9\s-]", "", self.title.lower())
+            slug = re.sub(r"\s+", "-", slug)
+            self.slug = slug.strip("-")
+        self.display_date = self.date.strftime("%B %d, %Y")
+        return self
+
+
 # Badge lookup dicts for templates — derived from the Badge enum so there is
 # a single source of truth.
 BADGE_ICONS = {b.value: b.icon for b in Badge}
@@ -218,10 +249,87 @@ def load_locations(content_dir: Path) -> list:
     return locations
 
 
-def update_sitemap(base_dir: Path) -> None:
-    """Update the lastmod date for all entries in sitemap.xml.
+def load_blog_posts(content_dir: Path) -> list[dict]:
+    """Load blog posts from content/blog/*.md.
 
-    Updates the homepage entry and all product page entries to today's date.
+    Each file has YAML frontmatter followed by markdown content.
+    Posts are returned sorted by date (newest first).
+
+    Returns:
+        list of blog post dicts
+    """
+    blog_dir = content_dir.parent / "blog"
+    if not blog_dir.exists():
+        print("Warning: content/blog/ not found, skipping blog")
+        return []
+
+    posts = []
+    for md_file in sorted(blog_dir.glob("*.md"), reverse=True):
+        raw_text = md_file.read_text(encoding="utf-8")
+        parts = raw_text.split("---", 2)
+        if len(parts) < 3:
+            print(f"  (skipping {md_file.name}: no valid frontmatter)")
+            continue
+
+        frontmatter_raw = parts[1].strip()
+        markdown_body = parts[2].strip()
+
+        raw = yaml.safe_load(frontmatter_raw)
+        if not raw:
+            print(f"  (skipping empty file: {md_file.name})")
+            continue
+
+        raw["content_html"] = md.markdown(markdown_body, extensions=["extra"])
+        post = BlogPost.model_validate(raw)
+        posts.append(post.model_dump(mode="json"))
+
+    posts.sort(key=lambda p: p["date"], reverse=True)
+    print(f"Loaded {len(posts)} blog post(s) from blog/")
+    return posts
+
+
+def build_blog_index(env: Environment, posts: list[dict]) -> None:
+    """Generate the blog listing page (blog/index.html)."""
+    template = env.get_template("blog-index.html")
+    html = template.render(posts=posts)
+
+    output_dir = Path(__file__).parent / "blog"
+    output_dir.mkdir(exist_ok=True)
+    output_file = output_dir / "index.html"
+    output_file.write_text(html, encoding="utf-8")
+    print("✓ templates/blog-index.html → blog/index.html")
+
+
+def build_blog_pages(env: Environment, posts: list[dict]) -> tuple[int, list]:
+    """Generate individual blog post pages in blog/."""
+    output_dir = Path(__file__).parent / "blog"
+    output_dir.mkdir(exist_ok=True)
+
+    template = env.get_template("blog-post.html")
+    built_count = 0
+    errors = []
+
+    for post in posts:
+        try:
+            html = template.render(post=post)
+            output_file = output_dir / f"{post['slug']}.html"
+            output_file.write_text(html, encoding="utf-8")
+            print(f"✓ {post['slug']}.md → blog/{output_file.name}")
+            built_count += 1
+        except Exception as e:
+            error_msg = f"✗ {post['slug']}: {str(e)}"
+            print(error_msg)
+            errors.append(error_msg)
+
+    return built_count, errors
+
+
+def update_sitemap(base_dir: Path, blog_posts: list[dict] | None = None) -> None:
+    """Update lastmod dates and auto-generate blog post sitemap entries.
+
+    Updates the homepage and all existing <url> entries to today's date.
+    If blog_posts is provided, replaces content between <!-- BLOG_START -->
+    and <!-- BLOG_END --> markers with generated entries.
     """
     sitemap_path = base_dir / "sitemap.xml"
     if not sitemap_path.exists():
@@ -231,18 +339,50 @@ def update_sitemap(base_dir: Path) -> None:
     today_str = date.today().isoformat()
     content = sitemap_path.read_text(encoding="utf-8")
 
-    # Replace lastmod for every <url> entry on the site
     updated = re.sub(
         r"(<loc>https://germanbakingasheville\.com/[^<]*</loc>\s*<lastmod>)[^<]*(</lastmod>)",
         rf"\g<1>{today_str}\g<2>",
         content,
     )
 
+    if blog_posts is not None:
+        blog_entries = _generate_blog_sitemap_entries(blog_posts, today_str)
+        if "<!-- BLOG_START -->" in updated and "<!-- BLOG_END -->" in updated:
+            updated = re.sub(
+                r"<!-- BLOG_START -->.*<!-- BLOG_END -->",
+                f"<!-- BLOG_START -->\n{blog_entries}\n  <!-- BLOG_END -->",
+                updated,
+                flags=re.DOTALL,
+            )
+            print(f"  sitemap.xml → blog entries updated ({len(blog_posts)} post(s))")
+        else:
+            print("  Warning: BLOG_START/BLOG_END markers not found in sitemap.xml")
+
     if updated == content:
         print("  sitemap.xml unchanged")
     else:
         sitemap_path.write_text(updated, encoding="utf-8")
         print(f"✓ sitemap.xml → all lastmod dates updated to {today_str}")
+
+
+def _generate_blog_sitemap_entries(posts: list[dict], today_str: str) -> str:
+    """Generate sitemap <url> entries for blog index and all blog posts."""
+    entries = [
+        "  <url>",
+        "    <loc>https://germanbakingasheville.com/blog/</loc>",
+        f"    <lastmod>{today_str}</lastmod>",
+        "    <changefreq>weekly</changefreq>",
+        "    <priority>0.7</priority>",
+        "  </url>",
+    ]
+    for post in posts:
+        entries.append("  <url>")
+        entries.append(f"    <loc>https://germanbakingasheville.com/blog/{post['slug']}.html</loc>")
+        entries.append(f"    <lastmod>{today_str}</lastmod>")
+        entries.append("    <changefreq>monthly</changefreq>")
+        entries.append("    <priority>0.7</priority>")
+        entries.append("  </url>")
+    return "\n".join(entries)
 
 
 def parse_product(filepath: Path) -> dict:
@@ -297,9 +437,11 @@ def load_products_by_category(content_dir: Path) -> dict:
     return categories
 
 
-def build_landing_page(env, categories, locations, market_items):
+def build_landing_page(env, categories, locations, market_items, blog_posts):
     """Generate the landing page (index.html) from template."""
     template = env.get_template("index.html")
+
+    recent_posts = blog_posts[:3] if blog_posts else []
 
     html = template.render(
         oven_products=categories["oven"],
@@ -308,6 +450,7 @@ def build_landing_page(env, categories, locations, market_items):
         locations=locations,
         badge_icons=BADGE_ICONS,
         badge_labels=BADGE_LABELS,
+        recent_posts=recent_posts,
     )
 
     # Write to root directory
@@ -378,6 +521,9 @@ def build_all():
     # Load farmers market locations
     locations = load_locations(content_dir)
 
+    # Load blog posts
+    blog_posts = load_blog_posts(content_dir)
+
     # Setup Jinja2
     env = Environment(
         loader=FileSystemLoader(templates_dir),
@@ -390,19 +536,27 @@ def build_all():
     print()  # Blank line
 
     # Build landing page
-    build_landing_page(env, categories, locations, market_items)
+    build_landing_page(env, categories, locations, market_items, blog_posts)
 
-    # Update sitemap lastmod for index.html
+    # Update sitemap lastmod for all existing entries
     update_sitemap(base_dir)
 
     # Build product pages
     built_count, errors = build_product_pages(env, categories)
 
-    print(f"\nBuild complete! Landing page + {built_count} product pages generated.")
+    # Build blog
+    build_blog_index(env, blog_posts)
+    blog_count, blog_errors = build_blog_pages(env, blog_posts)
 
-    if errors:
-        print(f"\n{len(errors)} error(s) occurred:")
-        for error in errors:
+    # Update sitemap with blog entries
+    update_sitemap(base_dir, blog_posts)
+
+    print(f"\nBuild complete! Landing page + {built_count} product pages + {blog_count} blog posts generated.")
+
+    total_errors = errors + blog_errors
+    if total_errors:
+        print(f"\n{len(total_errors)} error(s) occurred:")
+        for error in total_errors:
             print(f"  {error}")
         sys.exit(1)
 
