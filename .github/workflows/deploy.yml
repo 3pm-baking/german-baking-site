@@ -27,9 +27,6 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Sync also-available
-        run: uv run python sync_also_available.py
-
       - name: Build site
         run: uv run python build.py
 
