@@ -82,7 +82,7 @@ jobs:
 
           # Rebuild site from updated content files
           uv run python build.py
-          git add index.html sitemap.xml products/
+          git add index.html sitemap.xml products/ blog/
           git diff --staged --quiet || git commit -m "chore: rebuild site after sync ${DATE}"
 
           git push origin "$BRANCH"
