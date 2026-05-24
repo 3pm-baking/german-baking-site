@@ -1,9 +1,11 @@
 <article class="blog-card">
   <a href="{{ post.slug }}.html" class="blog-card__link">
     {% if post.image %}
-    <div class="blog-card__image">
-      <img src="../images/{{ post.image }}" alt="{{ post.title }}" loading="lazy">
-    </div>
+      <div class="blog-card__image">
+        <img src="../images/{{ post.image }}"
+             alt="{{ post.title }}"
+             loading="lazy">
+      </div>
     {% endif %}
     <div class="blog-card__content">
       <time class="blog-card__date" datetime="{{ post.date }}">{{ post.display_date }}</time>

@@ -1,9 +1,44 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^(products/.*|blog/.*|feed\.xml|index\.html|sitemap\.xml)$
+      - id: end-of-file-fixer
+        exclude: ^(products/.*|blog/.*|feed\.xml|index\.html|sitemap\.xml)$
+      - id: check-yaml
+        args: [-m]
+        files: ^content/
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=500]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.14
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
   - repo: local
     hooks:
+      - id: build-site
+        name: Build site
+        entry: uv run python build.py
+        language: system
+        pass_filenames: false
+        always_run: true
+
       - id: check-duplicate-products
-        name: Check for duplicate products across directories
+        name: Check for duplicate products
         entry: uv run python scripts/check_duplicate_products.py
         language: system
         pass_filenames: false
         files: ^content/products/
+
+      - id: djlint-format
+        name: Format HTML templates
+        entry: uv run djlint --reformat
+        language: system
+        types: [html]
+        files: ^templates/

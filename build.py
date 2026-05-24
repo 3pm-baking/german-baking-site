@@ -9,7 +9,7 @@ Reads markdown files from content/blog/ and generates blog/index.html + blog/*.h
 
 import re
 import sys
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from email.utils import format_datetime
 from enum import StrEnum
 from pathlib import Path
@@ -104,7 +104,7 @@ class Product(BaseModel):
         return v if v is not None else []
 
     @model_validator(mode="after")
-    def set_derived_defaults(self) -> "Product":
+    def set_derived_defaults(self) -> Product:
         if self.page_title is None:
             self.page_title = f"{self.title} | 3pm German Baking"
         if self.og_description is None:
@@ -126,7 +126,7 @@ class Location(BaseModel):
     stale: bool = False
 
     @model_validator(mode="after")
-    def compute_status(self) -> "Location":
+    def compute_status(self) -> Location:
         if self.start_date and self.end_date:
             today = date.today()
             self.upcoming = self.start_date > today
@@ -150,7 +150,7 @@ class BlogPost(BaseModel):
     display_date: str = ""
 
     @model_validator(mode="after")
-    def set_derived_defaults(self) -> "BlogPost":
+    def set_derived_defaults(self) -> BlogPost:
         if self.page_title is None:
             self.page_title = f"{self.title} | 3pm German Baking Blog"
         if self.og_description is None:
@@ -161,9 +161,7 @@ class BlogPost(BaseModel):
             self.slug = slug.strip("-")
         self.display_date = self.date.strftime("%B %d, %Y")
         if self.author not in AUTHOR_EMAILS:
-            raise ValueError(
-                f"Unknown author '{self.author}' — add email to AUTHOR_EMAILS in build.py"
-            )
+            raise ValueError(f"Unknown author '{self.author}' — add email to AUTHOR_EMAILS in build.py")
         return self
 
 
@@ -304,17 +302,15 @@ def _rfc822_filter(value: str) -> str:
     """Jinja2 filter: convert ISO date/datetime string to RFC 822 format."""
     dt = datetime.fromisoformat(value)
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
     return format_datetime(dt)
 
 
 def build_rss_feed(env: Environment, posts: list[dict]) -> None:
     """Generate the RSS 2.0 feed (feed.xml) from blog posts."""
     template = env.get_template("rss.xml")
-    build_date = posts[0]["date"] if posts else datetime.now(timezone.utc).isoformat()
-    enriched_posts = [
-        {**post, "author_email": AUTHOR_EMAILS.get(post["author"])} for post in posts
-    ]
+    build_date = posts[0]["date"] if posts else datetime.now(UTC).isoformat()
+    enriched_posts = [{**post, "author_email": AUTHOR_EMAILS.get(post["author"])} for post in posts]
     xml = template.render(posts=enriched_posts, build_date=build_date)
 
     output_file = Path(__file__).parent / "feed.xml"
@@ -358,7 +354,11 @@ def build_blog_pages(env: Environment, posts: list[dict]) -> tuple[int, list]:
     return built_count, errors
 
 
-def update_sitemap(base_dir: Path, product_slugs: list[str] | None = None, blog_posts: list[dict] | None = None) -> None:
+def update_sitemap(
+    base_dir: Path,
+    product_slugs: list[str] | None = None,
+    blog_posts: list[dict] | None = None,
+) -> None:
     """Update lastmod dates and auto-generate sitemap entries.
 
     Updates the homepage lastmod to today's date.
@@ -588,9 +588,7 @@ def build_all():
     blog_posts = load_blog_posts(content_dir)
 
     # Collect product slugs for sitemap
-    all_product_slugs = [
-        p["slug"] for p in categories.get("oven", []) + categories.get("pantry", [])
-    ]
+    all_product_slugs = [p["slug"] for p in categories.get("oven", []) + categories.get("pantry", [])]
 
     # Setup Jinja2
     env = Environment(

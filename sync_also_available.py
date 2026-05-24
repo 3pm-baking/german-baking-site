@@ -18,6 +18,7 @@ script (i.e. a sibling directory of the baking site repo).
 """
 
 from pathlib import Path
+
 import yaml
 
 # ---------------------------------------------------------------------------
@@ -49,14 +50,7 @@ EXCLUDED: set[str] = {
 
 def slugify(name: str) -> str:
     """Convert a recipe name to a filename slug."""
-    return (
-        name.lower()
-        .replace("ö", "oe")
-        .replace("ä", "ae")
-        .replace("ü", "ue")
-        .replace("ß", "ss")
-        .replace(" ", "-")
-    )
+    return name.lower().replace("ö", "oe").replace("ä", "ae").replace("ü", "ue").replace("ß", "ss").replace(" ", "-")
 
 
 def main() -> None:
@@ -123,10 +117,7 @@ def main() -> None:
         print(f"  ✓ created {out_file.name}")
         created += 1
 
-    print(
-        f"\nDone. {created} created, {skipped_existing} already existed, "
-        f"{skipped_excluded} excluded."
-    )
+    print(f"\nDone. {created} created, {skipped_existing} already existed, {skipped_excluded} excluded.")
     if created:
         print("Review new files in content/products/also-available/, then run:")
         print("  uv run python build.py")

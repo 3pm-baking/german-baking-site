@@ -1,31 +1,36 @@
 <div class="also-available">
   <h3 class="also-available__heading">Also Available</h3>
-  <div class="divider"><span class="divider__icon">✿</span></div>
+  <div class="divider">
+    <span class="divider__icon">✿</span>
+  </div>
   <ul class="also-available__list">
     {% for item in oven_listed_only %}
-    <li class="also-available__item">
-      <div class="also-available__name-row">
-        <span class="also-available__name">{{ item.title }}</span>
-        {% if item.badges %}
-        <div class="also-available__badges">
-          {% for badge in item.badges %}
-            {% if badge_icons[badge] %}
-          <span class="badge-icon badge-icon--{{ badge }}" role="img" aria-label="{{ badge_labels[badge] }}" title="{{ badge_labels[badge] }}">{{ badge_icons[badge] }}</span>
-            {% endif %}
-          {% endfor %}
+      <li class="also-available__item">
+        <div class="also-available__name-row">
+          <span class="also-available__name">{{ item.title }}</span>
+          {% if item.badges %}
+            <div class="also-available__badges">
+              {% for badge in item.badges %}
+                {% if badge_icons[badge] %}
+                  <span class="badge-icon badge-icon--{{ badge }}"
+                        role="img"
+                        aria-label="{{ badge_labels[badge] }}"
+                        title="{{ badge_labels[badge] }}">{{ badge_icons[badge] }}</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
-        {% endif %}
-      </div>
-      <span class="also-available__german">{{ item.german_name }}</span>
-      {% if item.description %}
-      <p class="also-available__description">{{ item.description }}</p>
+        <span class="also-available__german">{{ item.german_name }}</span>
+        {% if item.description %}<p class="also-available__description">{{ item.description }}</p>{% endif %}
+      </li>
+      {% if not loop.last %}
+        <li class="also-available__separator" aria-hidden="true">
+          <div class="divider divider--small">
+            <span class="divider__icon">✿</span>
+          </div>
+        </li>
       {% endif %}
-    </li>
-    {% if not loop.last %}
-    <li class="also-available__separator" aria-hidden="true">
-      <div class="divider divider--small"><span class="divider__icon">✿</span></div>
-    </li>
-    {% endif %}
     {% endfor %}
   </ul>
 </div>

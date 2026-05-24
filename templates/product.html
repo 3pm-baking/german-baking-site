@@ -1,68 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-{% include 'partials/head.html' %}
-<body>
-
-{% include 'partials/product-header.html' %}
-
-  <main class="product-detail">
-    <div class="container container--narrow">
-      
-      <div class="product-detail__image-wrapper">
-        <img src="../images/{{ page.image }}" alt="{{ page.title }} - {{ page.german_name }}" class="product-detail__image">
-      </div>
-      
-      <div class="product-detail__content">
-        <h1 class="product-detail__name">{{ page.title }}</h1>
-        <p class="product-detail__german">{{ page.german_name }}</p>
-        
-        <div class="divider">
-          <span class="divider__icon">✿</span>
+  {% include 'partials/head.html' %}
+  <body>
+    {% include 'partials/product-header.html' %}
+    <main class="product-detail">
+      <div class="container container--narrow">
+        <div class="product-detail__image-wrapper">
+          <img src="../images/{{ page.image }}"
+               alt="{{ page.title }} - {{ page.german_name }}"
+               class="product-detail__image">
         </div>
-        
-        {% if page.badges %}
-        <div class="product-detail__badges">
-          {% for badge_key in page.badges %}
-          <span class="badge badge--positive badge--{{ badge_key }}">{{ badge_names[badge_key] }}</span>
-          {% endfor %}
-        </div>
-        {% endif %}
-        
-        <p class="product-detail__description">
-          {{ page.description }}
-        </p>
-        
-        {% for section in page.sections %}
-        <section class="product-detail__section">
-          <h2>{{ section.title }}</h2>
-          {% if section.type == 'allergens' %}
-          <p class="product-detail__allergens">
-            <strong>Contains:</strong> {{ section.content }}
-          </p>
-          {% else %}
-          <p>
-            {{ section.content | safe }}
-          </p>
+        <div class="product-detail__content">
+          <h1 class="product-detail__name">{{ page.title }}</h1>
+          <p class="product-detail__german">{{ page.german_name }}</p>
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
+          {% if page.badges %}
+            <div class="product-detail__badges">
+              {% for badge_key in page.badges %}
+                <span class="badge badge--positive badge--{{ badge_key }}">{{ badge_names[badge_key] }}</span>
+              {% endfor %}
+            </div>
           {% endif %}
-        </section>
-        {% endfor %}
-        
-        <!-- Where to Buy / Wholesale CTA -->
-        <section class="product-detail__section">
-          <h2>Where to Buy</h2>
-          <p>
-            {{ page.title }} is available through our wholesale program for coffee shops, 
-            markets, and restaurants throughout the Asheville, NC area. 
-            <a href="../index.html#wholesale" style="text-decoration: underline;">Learn more about wholesale partnerships</a> 
-            or <a href="mailto:wholesale@germanbakingasheville.com" style="text-decoration: underline;">contact us directly</a>.
-          </p>
-        </section>
-        
+          <p class="product-detail__description">{{ page.description }}</p>
+          {% for section in page.sections %}
+            <section class="product-detail__section">
+              <h2>{{ section.title }}</h2>
+              {% if section.type == 'allergens' %}
+                <p class="product-detail__allergens">
+                  <strong>Contains:</strong> {{ section.content }}
+                </p>
+              {% else %}
+                <p>{{ section.content | safe }}</p>
+              {% endif %}
+            </section>
+          {% endfor %}
+          <!-- Where to Buy / Wholesale CTA -->
+          <section class="product-detail__section">
+            <h2>Where to Buy</h2>
+            <p>
+              {{ page.title }} is available through our wholesale program for coffee shops,
+              markets, and restaurants throughout the Asheville, NC area.
+              <a href="../index.html#wholesale" style="text-decoration: underline;">Learn more about wholesale partnerships</a>
+              or <a href="mailto:wholesale@germanbakingasheville.com"
+    style="text-decoration: underline">contact us directly</a>.
+            </p>
+          </section>
+        </div>
       </div>
-    </div>
-  </main>
-
-{% include 'partials/footer.html' %}
-
-</body>
+    </main>
+    {% include 'partials/footer.html' %}
+  </body>
 </html>

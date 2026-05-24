@@ -6,9 +6,11 @@ A product must exist in exactly one of: oven/, pantry/, or also-available/.
 Slugs are derived by stripping the numeric ordering prefix from filenames
 (e.g. "02-russian-pull-cake" -> "russian-pull-cake").
 """
+
 import sys
-import yaml
 from pathlib import Path
+
+import yaml
 
 CONTENT_DIR = Path("content/products")
 SEARCH_DIRS = ["oven", "pantry", "also-available"]
@@ -48,11 +50,7 @@ def collect_slugs() -> dict[str, list[Path]]:
 def main() -> int:
     slug_to_files = collect_slugs()
 
-    duplicates = {
-        slug: paths
-        for slug, paths in slug_to_files.items()
-        if len(paths) > 1
-    }
+    duplicates = {slug: paths for slug, paths in slug_to_files.items() if len(paths) > 1}
 
     if not duplicates:
         print("check-duplicate-products: OK", file=sys.stderr)
@@ -66,8 +64,7 @@ def main() -> int:
         print(file=sys.stderr)
 
     print(
-        "Remove the also-available/ entry when a product is promoted to oven/ or pantry/.\n"
-        "Commit aborted.",
+        "Remove the also-available/ entry when a product is promoted to oven/ or pantry/.\nCommit aborted.",
         file=sys.stderr,
     )
     return 1

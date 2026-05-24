@@ -13,8 +13,9 @@ import json
 import os
 import re
 import sys
-import yaml
 from pathlib import Path
+
+import yaml
 
 
 def build_slug_index(base: Path) -> dict[str, Path]:
@@ -27,7 +28,7 @@ def build_slug_index(base: Path) -> dict[str, Path]:
     for search_dir in ["oven", "pantry", "also-available"]:
         for f in sorted((base / search_dir).glob("*.yml")):
             data = yaml.safe_load(f.read_text()) or {}
-            key = data.get("slug") or re.sub(r'^\d+-', '', f.stem)
+            key = data.get("slug") or re.sub(r"^\d+-", "", f.stem)
             slug_index[key] = f
     return slug_index
 
@@ -85,12 +86,20 @@ def sync_products(products: list[dict], base: Path) -> dict:
             path.unlink()
             deleted.append(slug)
 
-    return {"created": created, "updated": updated, "skipped": skipped, "deleted": deleted}
+    return {
+        "created": created,
+        "updated": updated,
+        "skipped": skipped,
+        "deleted": deleted,
+    }
 
 
 def build_summary(results: dict) -> str:
     created, updated, skipped, deleted = (
-        results["created"], results["updated"], results["skipped"], results["deleted"]
+        results["created"],
+        results["updated"],
+        results["skipped"],
+        results["deleted"],
     )
     lines = []
     if created:
@@ -123,7 +132,10 @@ def main():
     # --- Run sync ---
     results = sync_products(products, base)
     created, updated, skipped, deleted = (
-        results["created"], results["updated"], results["skipped"], results["deleted"]
+        results["created"],
+        results["updated"],
+        results["skipped"],
+        results["deleted"],
     )
 
     # --- Print results ---

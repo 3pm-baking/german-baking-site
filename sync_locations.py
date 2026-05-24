@@ -13,9 +13,9 @@ import json
 import os
 import re
 import sys
-import yaml
 from pathlib import Path
 
+import yaml
 
 LOCATIONS_DIR = Path("content/locations")
 
@@ -56,9 +56,7 @@ def sync_locations(locations: list[dict], base: Path) -> dict:
             existing = yaml.safe_load(existing_path.read_text()) or {}
             # Merge: preserve site-specific fields, overwrite with incoming fields
             merged = {**existing, **update}
-            content = yaml.dump(
-                merged, allow_unicode=True, default_flow_style=False, sort_keys=False
-            )
+            content = yaml.dump(merged, allow_unicode=True, default_flow_style=False, sort_keys=False)
             if existing_path.read_text() == content:
                 skipped.append(slug)
             else:
@@ -66,9 +64,7 @@ def sync_locations(locations: list[dict], base: Path) -> dict:
                 updated.append(slug)
         else:
             write_path = base / f"{slug}.yml"
-            content = yaml.dump(
-                update, allow_unicode=True, default_flow_style=False, sort_keys=False
-            )
+            content = yaml.dump(update, allow_unicode=True, default_flow_style=False, sort_keys=False)
             write_path.write_text(content)
             created.append(slug)
 
@@ -79,7 +75,12 @@ def sync_locations(locations: list[dict], base: Path) -> dict:
             path.unlink()
             deleted.append(slug)
 
-    return {"created": created, "updated": updated, "skipped": skipped, "deleted": deleted}
+    return {
+        "created": created,
+        "updated": updated,
+        "skipped": skipped,
+        "deleted": deleted,
+    }
 
 
 def build_summary(results: dict) -> str:
@@ -125,10 +126,7 @@ def main():
         results["deleted"],
     )
 
-    print(
-        f"created={len(created)} updated={len(updated)} "
-        f"skipped={len(skipped)} deleted={len(deleted)}"
-    )
+    print(f"created={len(created)} updated={len(updated)} skipped={len(skipped)} deleted={len(deleted)}")
     for s in created:
         print(f"  created: {s}")
     for s in updated:

@@ -17,3 +17,24 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = []
+
+[tool.djlint]
+indent = 2
+profile = "jinja"
+ignore = "H021"
+max_line_length = 140
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+indent-style = "space"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[dependency-groups]
+dev = [
+    "djlint>=1.36.4",
+    "ruff>=0.15.14",
+]
