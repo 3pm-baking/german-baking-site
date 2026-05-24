@@ -10,14 +10,14 @@
   <meta property="og:title" content="{{ page.page_title }}">
   <meta property="og:description" content="{{ page.og_description }}">
   <meta property="og:url" content="https://germanbakingasheville.com/products/{{ page.slug }}.html">
-  <meta property="og:image" content="https://germanbakingasheville.com/images/logo.png">
+  <meta property="og:image" content="https://germanbakingasheville.com/images/{{ page.image if page.image else 'logo.png' }}">
   <meta property="og:image:alt" content="3pm German Baking logo — authentic German baking in Asheville, NC">
   <meta property="og:locale" content="en_US">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ page.page_title }}">
   <meta name="twitter:description" content="{{ page.og_description }}">
-  <meta name="twitter:image" content="https://germanbakingasheville.com/images/logo.png">
+  <meta name="twitter:image" content="https://germanbakingasheville.com/images/{{ page.image if page.image else 'logo.png' }}">
   <meta name="twitter:image:alt" content="3pm German Baking logo — authentic German baking in Asheville, NC">
 
   <link rel="canonical" href="https://germanbakingasheville.com/products/{{ page.slug }}.html">

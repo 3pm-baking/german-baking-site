@@ -1118,6 +1118,10 @@ section {
   margin-bottom: var(--spacing-md);
 }
 
+.blog-post__header .divider {
+  margin: var(--spacing-sm) 0;
+}
+
 .blog-post__title {
   font-family: var(--font-heading);
   font-size: 2.5rem;
@@ -1131,6 +1135,10 @@ section {
 }
 
 .blog-post__date {
+  color: var(--color-text-light);
+}
+
+.blog-post__author {
   color: var(--color-text-light);
 }
 

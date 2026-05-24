@@ -9,7 +9,8 @@ Reads markdown files from content/blog/ and generates blog/index.html + blog/*.h
 
 import re
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
+from email.utils import format_datetime
 from enum import StrEnum
 from pathlib import Path
 
@@ -159,6 +160,10 @@ class BlogPost(BaseModel):
             slug = re.sub(r"\s+", "-", slug)
             self.slug = slug.strip("-")
         self.display_date = self.date.strftime("%B %d, %Y")
+        if self.author not in AUTHOR_EMAILS:
+            raise ValueError(
+                f"Unknown author '{self.author}' — add email to AUTHOR_EMAILS in build.py"
+            )
         return self
 
 
@@ -167,6 +172,13 @@ class BlogPost(BaseModel):
 BADGE_ICONS = {b.value: b.icon for b in Badge}
 BADGE_LABELS = {b.value: b.aria_label for b in Badge}
 BADGE_NAMES = {b.value: b.display_name for b in Badge}
+
+# Author emails for RSS feed attribution (single source of truth)
+AUTHOR_EMAILS = {
+    "William": "william@germanbakingasheville.com",
+    "Mary": "mary@germanbakingasheville.com",
+    "3pm German Baking Team": "info@germanbakingasheville.com",
+}
 
 
 def load_also_available(content_dir: Path) -> list[dict]:
@@ -288,6 +300,28 @@ def load_blog_posts(content_dir: Path) -> list[dict]:
     return posts
 
 
+def _rfc822_filter(value: str) -> str:
+    """Jinja2 filter: convert ISO date/datetime string to RFC 822 format."""
+    dt = datetime.fromisoformat(value)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return format_datetime(dt)
+
+
+def build_rss_feed(env: Environment, posts: list[dict]) -> None:
+    """Generate the RSS 2.0 feed (feed.xml) from blog posts."""
+    template = env.get_template("rss.xml")
+    build_date = posts[0]["date"] if posts else datetime.now(timezone.utc).isoformat()
+    enriched_posts = [
+        {**post, "author_email": AUTHOR_EMAILS.get(post["author"])} for post in posts
+    ]
+    xml = template.render(posts=enriched_posts, build_date=build_date)
+
+    output_file = Path(__file__).parent / "feed.xml"
+    output_file.write_text(xml, encoding="utf-8")
+    print(f"✓ templates/rss.xml → feed.xml ({len(posts[:20])} post(s))")
+
+
 def build_blog_index(env: Environment, posts: list[dict]) -> None:
     """Generate the blog listing page (blog/index.html)."""
     template = env.get_template("blog-index.html")
@@ -324,12 +358,14 @@ def build_blog_pages(env: Environment, posts: list[dict]) -> tuple[int, list]:
     return built_count, errors
 
 
-def update_sitemap(base_dir: Path, blog_posts: list[dict] | None = None) -> None:
-    """Update lastmod dates and auto-generate blog post sitemap entries.
+def update_sitemap(base_dir: Path, product_slugs: list[str] | None = None, blog_posts: list[dict] | None = None) -> None:
+    """Update lastmod dates and auto-generate sitemap entries.
 
-    Updates the homepage and all existing <url> entries to today's date.
+    Updates the homepage lastmod to today's date.
+    If product_slugs is provided, replaces content between <!-- PRODUCT_START -->
+    and <!-- PRODUCT_END --> markers with generated product entries.
     If blog_posts is provided, replaces content between <!-- BLOG_START -->
-    and <!-- BLOG_END --> markers with generated entries.
+    and <!-- BLOG_END --> markers with generated blog entries.
     """
     sitemap_path = base_dir / "sitemap.xml"
     if not sitemap_path.exists():
@@ -339,11 +375,25 @@ def update_sitemap(base_dir: Path, blog_posts: list[dict] | None = None) -> None
     today_str = date.today().isoformat()
     content = sitemap_path.read_text(encoding="utf-8")
 
+    # Update homepage lastmod
     updated = re.sub(
-        r"(<loc>https://germanbakingasheville\.com/[^<]*</loc>\s*<lastmod>)[^<]*(</lastmod>)",
+        r"(<loc>https://germanbakingasheville\.com/</loc>\s*<lastmod>)[^<]*(</lastmod>)",
         rf"\g<1>{today_str}\g<2>",
         content,
     )
+
+    if product_slugs is not None:
+        product_entries = _generate_product_sitemap_entries(product_slugs, today_str)
+        if "<!-- PRODUCT_START -->" in updated and "<!-- PRODUCT_END -->" in updated:
+            updated = re.sub(
+                r"<!-- PRODUCT_START -->.*<!-- PRODUCT_END -->",
+                f"<!-- PRODUCT_START -->\n{product_entries}\n  <!-- PRODUCT_END -->",
+                updated,
+                flags=re.DOTALL,
+            )
+            print(f"  sitemap.xml → product entries regenerated ({len(product_slugs)} product(s))")
+        else:
+            print("  Warning: PRODUCT_START/PRODUCT_END markers not found in sitemap.xml")
 
     if blog_posts is not None:
         blog_entries = _generate_blog_sitemap_entries(blog_posts, today_str)
@@ -363,6 +413,19 @@ def update_sitemap(base_dir: Path, blog_posts: list[dict] | None = None) -> None
     else:
         sitemap_path.write_text(updated, encoding="utf-8")
         print(f"✓ sitemap.xml → all lastmod dates updated to {today_str}")
+
+
+def _generate_product_sitemap_entries(slugs: list[str], today_str: str) -> str:
+    """Generate sitemap <url> entries for all product pages."""
+    entries = []
+    for slug in sorted(slugs):
+        entries.append("  <url>")
+        entries.append(f"    <loc>https://germanbakingasheville.com/products/{slug}.html</loc>")
+        entries.append(f"    <lastmod>{today_str}</lastmod>")
+        entries.append("    <changefreq>monthly</changefreq>")
+        entries.append("    <priority>0.8</priority>")
+        entries.append("  </url>")
+    return "\n".join(entries)
 
 
 def _generate_blog_sitemap_entries(posts: list[dict], today_str: str) -> str:
@@ -524,11 +587,17 @@ def build_all():
     # Load blog posts
     blog_posts = load_blog_posts(content_dir)
 
+    # Collect product slugs for sitemap
+    all_product_slugs = [
+        p["slug"] for p in categories.get("oven", []) + categories.get("pantry", [])
+    ]
+
     # Setup Jinja2
     env = Environment(
         loader=FileSystemLoader(templates_dir),
         autoescape=select_autoescape(["html", "xml"]),
     )
+    env.filters["rfc822"] = _rfc822_filter
 
     # Load "Also Available" items
     market_items = load_also_available(content_dir)
@@ -538,8 +607,8 @@ def build_all():
     # Build landing page
     build_landing_page(env, categories, locations, market_items, blog_posts)
 
-    # Update sitemap lastmod for all existing entries
-    update_sitemap(base_dir)
+    # Update sitemap lastmod for homepage and regenerate product entries
+    update_sitemap(base_dir, product_slugs=all_product_slugs)
 
     # Build product pages
     built_count, errors = build_product_pages(env, categories)
@@ -547,9 +616,10 @@ def build_all():
     # Build blog
     build_blog_index(env, blog_posts)
     blog_count, blog_errors = build_blog_pages(env, blog_posts)
+    build_rss_feed(env, blog_posts)
 
     # Update sitemap with blog entries
-    update_sitemap(base_dir, blog_posts)
+    update_sitemap(base_dir, product_slugs=all_product_slugs, blog_posts=blog_posts)
 
     print(f"\nBuild complete! Landing page + {built_count} product pages + {blog_count} blog posts generated.")
 

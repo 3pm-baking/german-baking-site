@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>3pm German Baking Blog</title>
+    <link>https://germanbakingasheville.com/blog/</link>
+    <description>Authentic German recipes, baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
+    <language>en-us</language>
+    <lastBuildDate>{{ build_date | rfc822 }}</lastBuildDate>
+    <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
+    {% for post in posts[:20] %}
+    <item>
+      <title>{{ post.title }}</title>
+      <link>https://germanbakingasheville.com/blog/{{ post.slug }}.html</link>
+      <guid isPermaLink="true">https://germanbakingasheville.com/blog/{{ post.slug }}.html</guid>
+      <pubDate>{{ post.date | rfc822 }}</pubDate>
+      <author>{% if post.author_email %}{{ post.author_email }} ({{ post.author }}){% else %}{{ post.author }}{% endif %}</author>
+      <description><![CDATA[{{ post.content_html | safe }}]]></description>
+    </item>
+    {% endfor %}
+  </channel>
+</rss>

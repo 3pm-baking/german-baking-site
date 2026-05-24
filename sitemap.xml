@@ -6,14 +6,9 @@
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
+  <!-- PRODUCT_START -->
   <url>
     <loc>https://germanbakingasheville.com/products/german-cheesecake.html</loc>
-    <lastmod>2026-05-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://germanbakingasheville.com/products/russian-pull-cake.html</loc>
     <lastmod>2026-05-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -25,13 +20,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://germanbakingasheville.com/products/seasonal-cakes.html</loc>
-    <lastmod>2026-05-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://germanbakingasheville.com/products/spinach-tartlets.html</loc>
+    <loc>https://germanbakingasheville.com/products/oma-christas-spiced-cake.html</loc>
     <lastmod>2026-05-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -43,11 +32,24 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://germanbakingasheville.com/products/russian-pull-cake.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://germanbakingasheville.com/products/spinach-tartlets.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://germanbakingasheville.com/products/vanilla-sugar.html</loc>
     <lastmod>2026-05-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- PRODUCT_END -->
   <!-- BLOG_START -->
   <url>
     <loc>https://germanbakingasheville.com/blog/</loc>
