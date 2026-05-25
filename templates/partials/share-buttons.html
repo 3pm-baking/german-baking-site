@@ -1,0 +1,118 @@
+<div class="share-bar" aria-label="Share this article">
+  <div class="share-bar__buttons">
+    <span class="share-bar__label">Share</span>
+    <a href="https://twitter.com/intent/tweet?text={{ post.title | urlencode }}&url=https://germanbakingasheville.com/blog/{{ post.slug }}.html"
+       class="share-bar__button share-bar__button--twitter"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Share on X (Twitter)">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https://germanbakingasheville.com/blog/{{ post.slug }}.html"
+       class="share-bar__button share-bar__button--facebook"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Share on Facebook">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+    </a>
+    {% if post.image %}
+      <a href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/{{ post.slug }}.html&description={{ post.title | urlencode }}&media=https://germanbakingasheville.com/images/{{ post.image }}"
+         class="share-bar__button share-bar__button--pinterest"
+         target="_blank"
+         rel="noopener noreferrer"
+         aria-label="Pin on Pinterest">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.372 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.442.218-.935 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.17-2.914 1.023 0 1.517.768 1.517 1.688 0 1.029-.655 2.568-.993 3.992-.282 1.195.597 2.168 1.775 2.168 2.13 0 3.768-2.247 3.768-5.488 0-2.87-2.061-4.876-5.007-4.876-3.41 0-5.41 2.558-5.41 5.202 0 1.027.395 2.132.89 2.732a.36.36 0 01.082.344c-.09.377-.293 1.193-.332 1.36-.053.218-.174.264-.4.159-1.492-.694-2.424-2.875-2.424-4.628 0-3.77 2.737-7.233 7.892-7.233 4.144 0 7.365 2.953 7.365 6.9 0 4.119-2.595 7.434-6.198 7.434-1.21 0-2.348-.629-2.737-1.372 0 0-.599 2.281-.744 2.84-.27 1.039-1 2.34-1.487 3.135A11.948 11.948 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z" />
+        </svg>
+      </a>
+    {% endif %}
+    <a href="mailto:?subject={{ post.title | urlencode }}&body=https://germanbakingasheville.com/blog/{{ post.slug }}.html"
+       class="share-bar__button share-bar__button--email"
+       aria-label="Share via email">
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="1.5"
+           stroke-linecap="round"
+           stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="M22 4L12 13 2 4" />
+      </svg>
+    </a>
+    <button type="button"
+            class="share-bar__button share-bar__button--copy"
+            aria-label="Copy link"
+            title="Copy link">
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="1.5"
+           stroke-linecap="round"
+           stroke-linejoin="round">
+        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+      </svg>
+      <span class="share-bar__copied">Copied!</span>
+    </button>
+    <button type="button"
+            class="share-bar__button share-bar__button--native"
+            aria-label="Share"
+            title="Share">
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="1.5"
+           stroke-linecap="round"
+           stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3" />
+        <circle cx="6" cy="12" r="3" />
+        <circle cx="18" cy="19" r="3" />
+        <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98" />
+      </svg>
+    </button>
+  </div>
+  <p class="share-bar__instagram">
+    Share on Instagram? Tag us <a href="https://instagram.com/3pmgermanbaking"
+    target="_blank"
+    rel="noopener noreferrer">@3pmgermanbaking</a>, we'd love to see it!
+  </p>
+</div>
+<script>
+(function() {
+  var copyBtn = document.querySelector('.share-bar__button--copy');
+  var nativeBtn = document.querySelector('.share-bar__button--native');
+  var url = 'https://germanbakingasheville.com/blog/{{ post.slug }}.html';
+  var title = {{ post.title | tojson }};
+
+  if (navigator.share) {
+    nativeBtn.style.display = '';
+    nativeBtn.addEventListener('click', function() {
+      navigator.share({ title: title, url: url }).catch(function() {});
+    });
+  }
+
+  copyBtn.addEventListener('click', function() {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function() {
+        copyBtn.classList.add('share-bar__button--copied');
+        setTimeout(function() { copyBtn.classList.remove('share-bar__button--copied'); }, 2000);
+      });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      copyBtn.classList.add('share-bar__button--copied');
+      setTimeout(function() { copyBtn.classList.remove('share-bar__button--copied'); }, 2000);
+    }
+  });
+})();
+</script>

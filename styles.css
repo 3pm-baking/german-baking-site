@@ -1143,10 +1143,37 @@ section {
 }
 
 .blog-post__featured-image {
+  position: relative;
   max-width: 100%;
   margin: 0 auto var(--spacing-lg);
   overflow: hidden;
   border: 1px solid var(--color-border-light);
+}
+
+.blog-post__pin {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: #e60023;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+  text-decoration: none;
+}
+
+.blog-post__pin:hover {
+  opacity: 1;
+}
+
+.blog-post__featured-image:hover .blog-post__pin {
+  opacity: 1;
 }
 
 .blog-post__featured-image img {
@@ -1259,6 +1286,122 @@ section {
   border: 1px solid var(--color-border-light);
   padding: 0.25rem 0.75rem;
   border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Share Bar
+   -------------------------------------------------------------------------- */
+.share-bar {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+  text-align: center;
+}
+
+.share-bar__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.share-bar__instagram {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  margin-top: var(--spacing-xs);
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+.share-bar__instagram a {
+  color: var(--color-text-light);
+  font-style: italic;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.share-bar__instagram a:hover {
+  opacity: 0.7;
+  border-bottom-color: var(--color-text-light);
+}
+
+.share-bar__label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  margin-right: var(--spacing-xs);
+}
+
+.share-bar__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 50%;
+  background: var(--color-background);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.share-bar__button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.share-bar__button:hover {
+  opacity: 0.7;
+  transform: scale(1.08);
+}
+
+.share-bar__button--native {
+  display: none;
+}
+
+.share-bar__copied {
+  display: none;
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-background);
+  background: var(--color-text);
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.share-bar__button--copy {
+  position: relative;
+}
+
+.share-bar__button--copied .share-bar__copied {
+  display: block;
+}
+
+.share-bar__button--copied {
+  border-color: var(--color-border);
+  background-color: var(--color-text);
+  color: var(--color-background);
+}
+
+.share-bar__button--copied svg {
+  opacity: 0.3;
 }
 
 /* --------------------------------------------------------------------------

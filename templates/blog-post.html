@@ -18,7 +18,15 @@
           </header>
           {% if post.image %}
             <div class="blog-post__featured-image">
-              <img src="../images/{{ post.image }}" alt="{{ post.title }}">
+              <img src="../images/{{ post.image }}"
+                   alt="{{ post.title }}"
+                   data-pin-description="{{ post.meta_description }}"
+                   data-pin-url="https://germanbakingasheville.com/blog/{{ post.slug }}.html">
+              <a class="blog-post__pin"
+                 href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/{{ post.slug }}.html&description={{ post.title | urlencode }}&media=https://germanbakingasheville.com/images/{{ post.image }}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Save to Pinterest">Save</a>
             </div>
           {% endif %}
           <div class="blog-post__content">{{ post.content_html | safe }}</div>
@@ -27,6 +35,7 @@
               {% for tag in post.tags %}<span class="blog-post__tag">{{ tag }}</span>{% endfor %}
             </div>
           {% endif %}
+          {% include 'partials/share-buttons.html' %}
         </article>
       </div>
     </main>
