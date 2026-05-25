@@ -16,7 +16,7 @@ It wasn't yogurt. It wasn't sour cream. It wasn't cream cheese. It was an entire
 
 ## So What Actually Is Quark?
 
-Quark is a fresh dairy product made by warming soured milk until it curdles, then straining the curds. Think of it as the space between yogurt and cream cheese: it has yogurt's tang and cream cheese's richness, but a texture entirely its own.
+Quark is a fresh dairy product made by warming soured milk until it curdles, then straining the curds. I didn't have a reference point for it at first. Yogurt's too thin, cream cheese is too heavy. Quark sits in between, but with a tang of its own.
 
 What German cheesecake recipes call for specifically is *Magerquark*, fat-free quark. Unlike cream cheese, which relies on gums and stabilizers for body, quark is just milk, culture, and time. That simplicity is why it behaves differently when you bake with it.
 
@@ -32,7 +32,7 @@ When Mary started 3pm German Baking, one of the first things we tackled was find
 
 We experimented with what we could find. Fat-free yogurt and sour cream got us in the ballpark, close enough to work with while we kept searching for something better.
 
-Before we moved back to the US, we sat around the kitchen table in Germany with Mary's parents and did a blind taste test. Real quark versus the yogurt and sour cream combination. Since you can buy the same brands of yogurt and sour cream in both countries, it was a fair fight. Mary's parents, lifelong quark eaters, weighed in. The homemade version wasn't perfect, but it held up.
+Before we moved back to the US, we sat around the kitchen table in Germany with Mary's parents and did a blind taste test. Real quark versus the yogurt and sour cream combination. Since you can buy the same brands of yogurt and sour cream in both countries, it was a fair fight. Mary's parents tasted both. The homemade version wasn't perfect, but it held up.
 
 For me, still learning the differences in German dairy products, it was an education. Mary's parents could pick out subtleties I'd never have noticed. But that's part of the process, building my palate while helping with the quality assurance.
 
