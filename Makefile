@@ -5,3 +5,11 @@ build:
 
 serve:
 	uv run python -m http.server 8080 & sleep 1 && open http://localhost:8080
+
+stop:
+	@PID=$$(lsof -ti :8080); \
+	if [ -n "$$PID" ]; then \
+		kill $$PID && echo "Server stopped."; \
+	else \
+		echo "No server running on port 8080."; \
+	fi

@@ -1187,7 +1187,7 @@ section {
    -------------------------------------------------------------------------- */
 .blog-post__content h2 {
   font-size: 1.5rem;
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-md);
   margin-bottom: var(--spacing-sm);
   text-align: left;
 }
