@@ -1059,12 +1059,19 @@ section {
   flex-direction: column;
 }
 
-.blog-card__date {
+.blog-card__meta {
   font-size: 0.8rem;
   color: var(--color-text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.blog-card__date {
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: var(--spacing-xs);
+}
+
+.blog-card__author {
+  color: var(--color-text-light);
 }
 
 .blog-card__title {

@@ -2,7 +2,7 @@ name: Build & Deploy
 
 on:
   schedule:
-    - cron: '0 5 * * *'  # midnight ET (UTC-5)
+    - cron: '0 13 * * *'  # 8am ET (UTC-5)
 
 jobs:
   build:
@@ -24,4 +24,4 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git diff --quiet || (git add index.html sitemap.xml products/ blog/ && git commit -m "chore: rebuild site [skip ci]" && git push)
+          git diff --quiet || (git add index.html sitemap.xml products/ blog/ && git commit -m "chore: rebuild site" && git push)

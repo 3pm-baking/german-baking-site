@@ -16,7 +16,7 @@
               <span class="divider__icon">✿</span>
             </div>
           </header>
-          {% if post.image %}
+          {% if post.image and not post.hide_featured_image %}
             <div class="blog-post__featured-image">
               <img src="../images/{{ post.image }}"
                    alt="{{ post.title }}"

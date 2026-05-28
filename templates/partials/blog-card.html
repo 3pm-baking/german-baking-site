@@ -8,7 +8,10 @@
       </div>
     {% endif %}
     <div class="blog-card__content">
-      <time class="blog-card__date" datetime="{{ post.date }}">{{ post.display_date }}</time>
+      <div class="blog-card__meta">
+        <time class="blog-card__date" datetime="{{ post.date }}">{{ post.display_date }}</time>
+        {% if post.author %}by <span class="blog-card__author">{{ post.author }}</span>{% endif %}
+      </div>
       <h2 class="blog-card__title">{{ post.title }}</h2>
       <p class="blog-card__excerpt">{{ post.excerpt }}</p>
     </div>

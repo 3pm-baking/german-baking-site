@@ -7,6 +7,7 @@ Reads YAML files from content/locations/ and passes them to the landing page tem
 Reads markdown files from content/blog/ and generates blog/index.html + blog/*.html
 """
 
+import os
 import re
 import sys
 from datetime import UTC, date, datetime
@@ -145,6 +146,7 @@ class BlogPost(BaseModel):
     meta_description: str | None = None
     page_title: str | None = None
     og_description: str | None = None
+    hide_featured_image: bool = False
     tags: list[str] = []
     content_html: str = ""
     display_date: str = ""
@@ -263,17 +265,19 @@ def load_blog_posts(content_dir: Path) -> list[dict]:
     """Load blog posts from content/blog/*.md.
 
     Each file has YAML frontmatter followed by markdown content.
+    Posts dated in the future are excluded unless PREVIEW=true is set.
     Posts are returned sorted by date (newest first).
 
     Returns:
         list of blog post dicts
     """
+    preview = os.environ.get("PREVIEW", "").lower() in ("1", "true", "yes")
     blog_dir = content_dir.parent / "blog"
     if not blog_dir.exists():
         print("Warning: content/blog/ not found, skipping blog")
         return []
 
-    posts = []
+    raw_posts = []
     for md_file in sorted(blog_dir.glob("*.md"), reverse=True):
         raw_text = md_file.read_text(encoding="utf-8")
         parts = raw_text.split("---", 2)
@@ -284,15 +288,25 @@ def load_blog_posts(content_dir: Path) -> list[dict]:
         frontmatter_raw = parts[1].strip()
         markdown_body = parts[2].strip()
 
-        raw = yaml.safe_load(frontmatter_raw)
-        if not raw:
+        frontmatter = yaml.safe_load(frontmatter_raw)
+        if not frontmatter:
             print(f"  (skipping empty file: {md_file.name})")
             continue
 
-        raw["content_html"] = md.markdown(markdown_body, extensions=["extra"])
-        post = BlogPost.model_validate(raw)
-        posts.append(post.model_dump(mode="json"))
+        frontmatter["content_html"] = md.markdown(markdown_body, extensions=["extra"])
+        post = BlogPost.model_validate(frontmatter)
+        raw_posts.append(post)
 
+    if not preview:
+        today = date.today()
+        skipped = [p for p in raw_posts if p.date > today]
+        for p in skipped:
+            print(f"  (skipping future post: {p.title} [{p.date}])")
+        raw_posts = [p for p in raw_posts if p.date <= today]
+    else:
+        print("  PREVIEW mode: including future-dated posts")
+
+    posts = [p.model_dump(mode="json") for p in raw_posts]
     posts.sort(key=lambda p: p["date"], reverse=True)
     print(f"Loaded {len(posts)} blog post(s) from blog/")
     return posts
@@ -331,9 +345,18 @@ def build_blog_index(env: Environment, posts: list[dict]) -> None:
 
 
 def build_blog_pages(env: Environment, posts: list[dict]) -> tuple[int, list]:
-    """Generate individual blog post pages in blog/."""
+    """Generate individual blog post pages in blog/.
+
+    Cleans up stale generated HTML files before building
+    (e.g. leftover pages from a PREVIEW build that are no longer published).
+    """
     output_dir = Path(__file__).parent / "blog"
     output_dir.mkdir(exist_ok=True)
+
+    for html_file in output_dir.glob("*.html"):
+        if html_file.name == "index.html":
+            continue
+        html_file.unlink()
 
     template = env.get_template("blog-post.html")
     built_count = 0
