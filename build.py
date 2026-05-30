@@ -336,6 +336,14 @@ def build_rss_feed(env: Environment, posts: list[dict]) -> None:
     xml = template.render(posts=enriched_posts, build_date=build_date)
 
     output_file = Path(__file__).parent / "feed.xml"
+    if output_file.exists():
+        old_xml = output_file.read_text(encoding="utf-8")
+        # Strip the timestamp-only diff (lastBuildDate) from comparison
+        old_stripped = re.sub(r"\s*<lastBuildDate>.*?</lastBuildDate>", "", old_xml)
+        new_stripped = re.sub(r"\s*<lastBuildDate>.*?</lastBuildDate>", "", xml)
+        if old_stripped == new_stripped:
+            print(f"  feed.xml unchanged ({len(posts[:20])} post(s))")
+            return
     output_file.write_text(xml, encoding="utf-8")
     print(f"✓ templates/rss.xml → feed.xml ({len(posts[:20])} post(s))")
 
