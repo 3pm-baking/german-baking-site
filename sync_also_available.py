@@ -29,6 +29,7 @@ import yaml
 EXCLUDED: set[str] = {
     # Full product cards on the site
     "German Cheese Cake",
+    "German Cheesecake",
     "Russian Pull Cake",
     "Russischer Zupfkuchen",
     "Lemon Cake",
@@ -44,6 +45,7 @@ EXCLUDED: set[str] = {
     "Cake Pops",
     "Königskuchen",
     "Poppyseed Streusel Cheese Cake",
+    "Poppyseed Streusel Cheesecake",
     "Vanilla Pudding Powder 200g",
 }
 
