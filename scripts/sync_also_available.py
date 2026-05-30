@@ -56,7 +56,7 @@ def slugify(name: str) -> str:
 
 
 def main() -> None:
-    base_dir = Path(__file__).parent
+    base_dir = Path(__file__).parent.parent
     expenses_data = base_dir.parent / "expenses" / "data"
     markets_dir = expenses_data / "markets"
     recipes_dir = expenses_data / "recipes"

@@ -34,7 +34,6 @@ jobs:
         run: |
           rm -rf content/ templates/ scripts/ .agents/ .github/
           rm -f build.py pyproject.toml Makefile uv.lock .python-version AGENTS.md TODO.md test.md
-          rm -f sync_also_available.py sync_locations.py sync_products.py
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

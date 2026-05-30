@@ -30,13 +30,13 @@ jobs:
         id: write_products
         env:
           PAYLOAD: ${{ toJson(github.event.client_payload) }}
-        run: uv run python sync_products.py
+        run: uv run python scripts/sync_products.py
 
       - name: Write location files from payload
         id: write_locations
         env:
           PAYLOAD: ${{ toJson(github.event.client_payload) }}
-        run: uv run python sync_locations.py
+        run: uv run python scripts/sync_locations.py
 
       - name: Determine if any changes
         id: changes

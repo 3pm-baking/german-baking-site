@@ -1,7 +1,7 @@
 build:
 	PREVIEW=$(PREVIEW) uv run build.py
-	uv run sync_also_available.py
-	uv run sync_locations.py
+	uv run scripts/sync_also_available.py
+	uv run scripts/sync_locations.py
 
 serve-preview:
 	$(MAKE) build PREVIEW=true
