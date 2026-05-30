@@ -113,18 +113,138 @@ class Product(BaseModel):
         return self
 
 
+def format_schedule_display(sched: dict) -> str | None:
+    """Derive a human-readable schedule string from structured schedule data.
+
+    Handles ``interval_weeks`` for frequency prefixes (e.g. "Every other Saturday"
+    vs "Saturdays") and formats dates/times in the style used by farmers markets.
+    Returns ``None`` if the data is insufficient to generate a string.
+    """
+    day = sched.get("day_of_week", "")
+    interval = sched.get("frequency", {}).get("interval_weeks", 1)
+
+    if not day:
+        return None
+
+    # Day prefix — pluralize for weekly, prefix for biweekly
+    if interval == 1:
+        day_prefix = f"{day}s"
+    elif interval == 2:
+        day_prefix = f"Every other {day}"
+    else:
+        day_prefix = f"Every {interval} {day}s"
+
+    # Parse ISO dates from the raw YAML values (still strings at this point)
+    start = end = None
+    try:
+        if sched.get("start_date"):
+            start = datetime.strptime(str(sched["start_date"]), "%Y-%m-%d")
+    except ValueError, TypeError:
+        pass
+    try:
+        if sched.get("end_date"):
+            end = datetime.strptime(str(sched["end_date"]), "%Y-%m-%d")
+    except ValueError, TypeError:
+        pass
+
+    if not start and not end:
+        return None
+
+    def _fmt_date(d: datetime) -> str:
+        return d.strftime("%B %d").replace(" 0", " ")
+
+    if start and end:
+        date_str = f"{_fmt_date(start)} – {_fmt_date(end)}"
+    elif start:
+        date_str = f"Starting {_fmt_date(start)}"
+    else:
+        date_str = f"Through {_fmt_date(end)}"
+
+    # Format times — handles both "15:30" and sexagesimal 540 (= 09:00)
+    def _fmt_time(t: object) -> str | None:
+        if t is None:
+            return None
+        raw = str(t)
+        # PyYAML 1.1 parses 09:00 as sexagesimal → integer 540
+        if raw.lstrip("-").isdigit():
+            mins = int(raw)
+            raw = f"{mins // 60:02d}:{mins % 60:02d}"
+        parts = raw.split(":")
+        if len(parts) != 2:
+            return None
+        try:
+            h, m = int(parts[0]), int(parts[1])
+        except ValueError:
+            return None
+        ampm = "am" if h < 12 else "pm"
+        h12 = h if 1 <= h <= 12 else (h - 12 if h > 12 else 12)
+        if h == 0:
+            h12 = 12
+        return f"{h12}:{m:02d}{ampm}" if m else f"{h12}{ampm}"
+
+    start_time = _fmt_time(sched.get("start_time"))
+    end_time = _fmt_time(sched.get("end_time"))
+    time_str = f" · {start_time}–{end_time}" if start_time and end_time else ""
+
+    return f"{day_prefix}, {date_str}{time_str}"
+
+
 class Location(BaseModel):
     name: str
-    schedule: str
+    schedule: str | dict | None = None
+    schedule_display: str | None = None
     address: str | None = None
     url: str | None = None
     note: str | None = None
+    notes: str | None = None
     start_date: date | None = None
     end_date: date | None = None
     # Computed at validation time — not read from YAML
     upcoming: bool = False
     active: bool = True
     stale: bool = False
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize(cls, data: dict) -> dict:
+        # Normalize notes -> note
+        if "notes" in data and "note" not in data:
+            data["note"] = data.pop("notes")
+
+        # Strip redundant note prefixes that duplicate location name content
+        if data.get("note") and data.get("name"):
+            name = data["name"]
+            note = data["note"]
+            for match in re.finditer(r"\(([^)]+)\)", name):
+                prefix = match.group(1).lower()
+                if note.lower().startswith(prefix):
+                    stripped = note[len(match.group(1)) :].lstrip(" —:,-–")
+                    data["note"] = stripped if stripped else None
+                    break
+
+        # Handle structured schedule (new format)
+        sched = data.get("schedule")
+        if isinstance(sched, dict):
+            # Extract dates from nested schedule if not already top-level
+            if "start_date" not in data and sched.get("start_date"):
+                data["start_date"] = sched["start_date"]
+            if "end_date" not in data and sched.get("end_date"):
+                data["end_date"] = sched["end_date"]
+            # Derive display string from structured data (with fallback)
+            derived = format_schedule_display(sched)
+            if derived:
+                data["schedule"] = derived
+            elif data.get("schedule_display"):
+                data["schedule"] = data["schedule_display"]
+            else:
+                data["schedule"] = ""
+
+        # Suppress note when it duplicates the schedule text
+        if data.get("note") and data.get("schedule"):
+            if data["note"].strip().lower() in data["schedule"].lower():
+                data["note"] = None
+
+        return data
 
     @model_validator(mode="after")
     def compute_status(self) -> Location:
