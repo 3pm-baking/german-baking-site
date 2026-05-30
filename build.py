@@ -147,7 +147,12 @@ class BlogPost(BaseModel):
     page_title: str | None = None
     og_description: str | None = None
     hide_featured_image: bool = False
+    updated_date: date | None = None
+    alt_text: str | None = None
     tags: list[str] = []
+    related_products: list[str] = []
+    word_count: int = 0
+    reading_time: int = 0
     content_html: str = ""
     display_date: str = ""
 
@@ -164,6 +169,9 @@ class BlogPost(BaseModel):
         self.display_date = self.date.strftime("%B %d, %Y")
         if self.author not in AUTHOR_EMAILS:
             raise ValueError(f"Unknown author '{self.author}' — add email to AUTHOR_EMAILS in build.py")
+        text = re.sub(r"<[^>]+>", "", self.content_html)
+        self.word_count = len(text.split())
+        self.reading_time = max(1, (self.word_count + 199) // 200)
         return self
 
 
@@ -323,7 +331,7 @@ def _rfc822_filter(value: str) -> str:
 def build_rss_feed(env: Environment, posts: list[dict]) -> None:
     """Generate the RSS 2.0 feed (feed.xml) from blog posts."""
     template = env.get_template("rss.xml")
-    build_date = posts[0]["date"] if posts else datetime.now(UTC).isoformat()
+    build_date = datetime.now(UTC).isoformat()
     enriched_posts = [{**post, "author_email": AUTHOR_EMAILS.get(post["author"])} for post in posts]
     xml = template.render(posts=enriched_posts, build_date=build_date)
 
@@ -546,8 +554,13 @@ def build_landing_page(env, categories, locations, market_items, blog_posts):
     print("✓ templates/index.html → index.html")
 
 
-def build_product_pages(env, categories):
-    """Generate individual product detail pages."""
+def build_product_pages(env, categories, product_to_blog_posts=None):
+    """Generate individual product detail pages.
+
+    If *product_to_blog_posts* is provided (a dict mapping product slug → list
+    of blog post dicts), attaches ``related_blog_posts`` to each product so
+    templates can render "Related Blog Posts" links.
+    """
     output_dir = Path(__file__).parent / "products"
     output_dir.mkdir(exist_ok=True)
 
@@ -565,6 +578,10 @@ def build_product_pages(env, categories):
 
     for product_data in all_products:
         try:
+            # Resolve related blog posts from blog frontmatter mapping
+            related = (product_to_blog_posts or {}).get(product_data["slug"], [])
+            product_data["related_blog_posts"] = related
+
             # Render template
             html = template.render(page=product_data, badge_names=BADGE_NAMES)
 
@@ -613,6 +630,13 @@ def build_all():
     # Collect product slugs for sitemap
     all_product_slugs = [p["slug"] for p in categories.get("oven", []) + categories.get("pantry", [])]
 
+    # Build product → blog post mapping from blog frontmatter (related_products)
+    # so product pages can show "Related Blog Posts" without declaring it in product YAML.
+    product_to_blog_posts = {}
+    for post in blog_posts:
+        for product_slug in post.get("related_products", []):
+            product_to_blog_posts.setdefault(product_slug, []).append(post)
+
     # Setup Jinja2
     env = Environment(
         loader=FileSystemLoader(templates_dir),
@@ -632,7 +656,7 @@ def build_all():
     update_sitemap(base_dir, product_slugs=all_product_slugs)
 
     # Build product pages
-    built_count, errors = build_product_pages(env, categories)
+    built_count, errors = build_product_pages(env, categories, product_to_blog_posts=product_to_blog_posts)
 
     # Build blog
     build_blog_index(env, blog_posts)

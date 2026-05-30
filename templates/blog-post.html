@@ -10,7 +10,10 @@
             <h1 class="blog-post__title">{{ post.title }}</h1>
             <div class="blog-post__meta">
               <time class="blog-post__date" datetime="{{ post.date }}">{{ post.display_date }}</time>
-              by <span class="blog-post__author">{{ post.author }}</span>
+              <span class="blog-post__separator">·</span>
+              <span class="blog-post__author">{{ post.author }}</span>
+              <span class="blog-post__separator">·</span>
+              <span class="blog-post__reading-time">{{ post.reading_time }} min read</span>
             </div>
             <div class="divider">
               <span class="divider__icon">✿</span>
@@ -19,7 +22,7 @@
           {% if post.image and not post.hide_featured_image %}
             <div class="blog-post__featured-image">
               <img src="../images/{{ post.image }}"
-                   alt="{{ post.title }}"
+                   alt="{{ post.alt_text if post.alt_text else post.title }}"
                    data-pin-description="{{ post.meta_description }}"
                    data-pin-url="https://germanbakingasheville.com/blog/{{ post.slug }}.html">
               <a class="blog-post__pin"

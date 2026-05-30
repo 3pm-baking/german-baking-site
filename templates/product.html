@@ -36,6 +36,18 @@
               {% endif %}
             </section>
           {% endfor %}
+          {% if page.related_blog_posts %}
+            <section class="product-detail__section">
+              <h2>Related Blog Posts</h2>
+              <ul>
+                {% for post in page.related_blog_posts %}
+                  <li>
+                    <a href="../blog/{{ post.slug }}.html">{{ post.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </section>
+          {% endif %}
           <!-- Where to Buy / Wholesale CTA -->
           <section class="product-detail__section">
             <h2>Where to Buy</h2>

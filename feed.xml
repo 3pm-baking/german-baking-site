@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>3pm German Baking Blog</title>
     <link>https://germanbakingasheville.com/blog/</link>
     <description>German baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 May 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 May 2026 02:13:51 +0000</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://germanbakingasheville.com/images/logo.png</url>
+      <title>3pm German Baking Blog</title>
+      <link>https://germanbakingasheville.com/blog/</link>
+    </image>
     
     <item>
       <title>Why We Make Vanilla Sugar and Pudding Powders from Scratch</title>
@@ -14,6 +19,14 @@
       <guid isPermaLink="true">https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html</guid>
       <pubDate>Thu, 28 May 2026 00:00:00 +0000</pubDate>
       <author>mary@germanbakingasheville.com (Mary)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/vanilla-sugar.jpg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/vanilla-sugar.jpg"
+                     type="image/jpeg"/>
+      
       <description><![CDATA[<h2>The American Grocery Store Aisle</h2>
 <p>Every time I walk down a baking aisle in an American grocery store, I find myself picking up boxes and reading the ingredient lists. It has become a habit, and it rarely makes me happy.</p>
 <p>I pick up a box of pudding mix and read the ingredient list: Yellow 5, artificial colors, artificial flavor. I put it back and pick up a packet of vanilla sugar, which is somehow no better: vanillin (synthetic vanilla) and a list of additives.</p>
@@ -38,6 +51,14 @@
       <guid isPermaLink="true">https://germanbakingasheville.com/blog/what-is-quark.html</guid>
       <pubDate>Sun, 24 May 2026 00:00:00 +0000</pubDate>
       <author>william@germanbakingasheville.com (William)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/cheesecake.jpg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/cheesecake.jpg"
+                     type="image/jpeg"/>
+      
       <description><![CDATA[<h2>The First Time I Heard "Quark"</h2>
 <p>When my wife, Mary, first sent me to a German grocery store to pick up quark, I stood in the dairy aisle completely lost.</p>
 <p>It wasn't yogurt. It wasn't sour cream. It wasn't cream cheese. It was an entire category of dairy I, as an American, had never encountered in my life. I stared at the tubs, texted Mary, and tried to match the label to whatever she'd described. That moment, the American husband fumbling through a Berlin supermarket, is where this story starts.</p>

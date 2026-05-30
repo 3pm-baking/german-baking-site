@@ -3,14 +3,19 @@
     {% if post.image %}
       <div class="blog-card__image">
         <img src="../images/{{ post.image }}"
-             alt="{{ post.title }}"
+             alt="{{ post.alt_text if post.alt_text else post.title }}"
              loading="lazy">
       </div>
     {% endif %}
     <div class="blog-card__content">
       <div class="blog-card__meta">
         <time class="blog-card__date" datetime="{{ post.date }}">{{ post.display_date }}</time>
-        {% if post.author %}by <span class="blog-card__author">{{ post.author }}</span>{% endif %}
+        {% if post.author %}
+          <span class="blog-card__separator">·</span>
+          <span class="blog-card__author">{{ post.author }}</span>
+        {% endif %}
+        <span class="blog-card__separator">·</span>
+        <span class="blog-card__reading-time">{{ post.reading_time }} min read</span>
       </div>
       <h2 class="blog-card__title">{{ post.title }}</h2>
       <p class="blog-card__excerpt">{{ post.excerpt }}</p>
