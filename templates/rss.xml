@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>3pm German Baking Blog</title>
     <link>https://germanbakingasheville.com/blog/</link>
@@ -7,6 +7,11 @@
     <language>en-us</language>
     <lastBuildDate>{{ build_date | rfc822 }}</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://germanbakingasheville.com/images/logo.png</url>
+      <title>3pm German Baking Blog</title>
+      <link>https://germanbakingasheville.com/blog/</link>
+    </image>
     {% for post in posts[:20] %}
     <item>
       <title>{{ post.title }}</title>
@@ -14,6 +19,18 @@
       <guid isPermaLink="true">https://germanbakingasheville.com/blog/{{ post.slug }}.html</guid>
       <pubDate>{{ post.date | rfc822 }}</pubDate>
       <author>{% if post.author_email %}{{ post.author_email }} ({{ post.author }}){% else %}{{ post.author }}{% endif %}</author>
+      {% if post.tags %}
+      {% for tag in post.tags %}
+      <category>{{ tag }}</category>
+      {% endfor %}
+      {% endif %}
+      {% if post.image %}
+      <enclosure url="https://germanbakingasheville.com/images/{{ post.image }}"
+                 length="0"
+                 type="{% if post.image.endswith('.png') %}image/png{% else %}image/jpeg{% endif %}"/>
+      <media:content url="https://germanbakingasheville.com/images/{{ post.image }}"
+                     type="{% if post.image.endswith('.png') %}image/png{% else %}image/jpeg{% endif %}"/>
+      {% endif %}
       <description><![CDATA[{{ post.content_html | safe }}]]></description>
     </item>
     {% endfor %}

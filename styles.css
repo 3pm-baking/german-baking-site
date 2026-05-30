@@ -1059,12 +1059,19 @@ section {
   flex-direction: column;
 }
 
-.blog-card__date {
+.blog-card__meta {
   font-size: 0.8rem;
   color: var(--color-text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.blog-card__date {
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: var(--spacing-xs);
+}
+
+.blog-card__author {
+  color: var(--color-text-light);
 }
 
 .blog-card__title {
@@ -1510,7 +1517,7 @@ section {
 
 .product-detail {
   background-color: var(--color-background-warm);
-  padding: var(--spacing-lg) 0;
+  padding: var(--spacing-lg) 0 var(--spacing-sm) 0;
 }
 
 .product-detail__image-wrapper {
@@ -1584,8 +1591,12 @@ section {
   text-align: left;
   max-width: 600px;
   margin: 0 auto var(--spacing-sm);
-  padding-top: var(--spacing-md);
+  padding: 1.25rem 0 0.5rem 0;
   border-top: 1px solid var(--color-border-light);
+}
+
+.product-detail__section:last-child {
+  margin-bottom: 0;
 }
 
 .product-detail__section h2 {
@@ -1595,6 +1606,16 @@ section {
 
 .product-detail__section p {
   margin-bottom: 0;
+}
+
+.product-detail__section ul {
+  padding-left: 1.25rem;
+  list-style: disc;
+  margin: 0;
+}
+
+.product-detail__section li {
+  margin-bottom: 0.25rem;
 }
 
 .product-detail__allergens {

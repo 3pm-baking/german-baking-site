@@ -6,6 +6,9 @@ slug: why-we-make-vanilla-sugar-and-pudding-powder
 image: vanilla-sugar.jpg
 excerpt: In Germany, pudding powder and vanilla sugar are pantry staples, the kind every Oma makes herself. When I moved to the US and read the ingredient lists on the American versions, I knew we'd have to make our own.
 meta_description: Why 3pm German Baking makes vanilla sugar and pudding powders from scratch, and what's wrong with the American grocery store versions.
+related_products:
+  - vanilla-sugar
+  - pudding-powder
 ---
 
 ## The American Grocery Store Aisle
@@ -34,7 +37,7 @@ William wrote about his [first encounter with quark](/blog/what-is-quark.html), 
 
 I had not really thought through what the American versions would mean for our baking, but once I read the labels, making our own became a natural next step. These were the missing ingredients that make German recipes simple yet great, and we needed them to be right. Now we use *Vanillezucker* and *Puddingpulver* in our own cakes and recipes every day, and we started packaging the extras for sale at the market. These are staples people should have access to, great for baking and just as good on their own as a quick, easy-to-make dessert.
 
-Our vanilla sugar uses real vanilla beans, just like it was made at home, more authentic than what you'd find on any store shelf in Germany or here. Our pudding powders use cornstarch, sugar, real chocolate and cocoa or real vanilla, and a touch of turmeric in the vanilla pudding for color. No dyes, no stabilizers, no ingredients you need a chemistry degree to read. A few simple ingredients, the way it was always done.
+Our Vanilla Sugar uses real vanilla beans, just like it was made at home, more authentic than what you'd find on any store shelf in Germany or here. Our Pudding Powders use cornstarch, sugar, real chocolate and cocoa or real vanilla, and a touch of turmeric in the vanilla pudding for color. No dyes, no stabilizers, no ingredients you need a chemistry degree to read. A few simple ingredients, the way it was always done.
 
 ## Find Them at the Market
 

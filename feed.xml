@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>3pm German Baking Blog</title>
     <link>https://germanbakingasheville.com/blog/</link>
     <description>German baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 May 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 May 2026 02:14:33 +0000</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://germanbakingasheville.com/images/logo.png</url>
+      <title>3pm German Baking Blog</title>
+      <link>https://germanbakingasheville.com/blog/</link>
+    </image>
     
     <item>
       <title>Why We Make Vanilla Sugar and Pudding Powders from Scratch</title>
@@ -14,6 +19,14 @@
       <guid isPermaLink="true">https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html</guid>
       <pubDate>Thu, 28 May 2026 00:00:00 +0000</pubDate>
       <author>mary@germanbakingasheville.com (Mary)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/vanilla-sugar.jpg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/vanilla-sugar.jpg"
+                     type="image/jpeg"/>
+      
       <description><![CDATA[<h2>The American Grocery Store Aisle</h2>
 <p>Every time I walk down a baking aisle in an American grocery store, I find myself picking up boxes and reading the ingredient lists. It has become a habit, and it rarely makes me happy.</p>
 <p>I pick up a box of pudding mix and read the ingredient list: Yellow 5, artificial colors, artificial flavor. I put it back and pick up a packet of vanilla sugar, which is somehow no better: vanillin (synthetic vanilla) and a list of additives.</p>
@@ -27,7 +40,7 @@
 <h2>So We Made Our Own</h2>
 <p>William wrote about his <a href="/blog/what-is-quark.html">first encounter with quark</a>, the German ingredient he had never heard of before meeting me. He stood in a German grocery store, staring at a dairy aisle he did not understand. My challenge was the reverse: an ingredient I grew up with, staring back at me from an American box, full of things that did not belong there.</p>
 <p>I had not really thought through what the American versions would mean for our baking, but once I read the labels, making our own became a natural next step. These were the missing ingredients that make German recipes simple yet great, and we needed them to be right. Now we use <em>Vanillezucker</em> and <em>Puddingpulver</em> in our own cakes and recipes every day, and we started packaging the extras for sale at the market. These are staples people should have access to, great for baking and just as good on their own as a quick, easy-to-make dessert.</p>
-<p>Our vanilla sugar uses real vanilla beans, just like it was made at home, more authentic than what you'd find on any store shelf in Germany or here. Our pudding powders use cornstarch, sugar, real chocolate and cocoa or real vanilla, and a touch of turmeric in the vanilla pudding for color. No dyes, no stabilizers, no ingredients you need a chemistry degree to read. A few simple ingredients, the way it was always done.</p>
+<p>Our Vanilla Sugar uses real vanilla beans, just like it was made at home, more authentic than what you'd find on any store shelf in Germany or here. Our Pudding Powders use cornstarch, sugar, real chocolate and cocoa or real vanilla, and a touch of turmeric in the vanilla pudding for color. No dyes, no stabilizers, no ingredients you need a chemistry degree to read. A few simple ingredients, the way it was always done.</p>
 <h2>Find Them at the Market</h2>
 <p>Our <a href="/products/vanilla-sugar.html">Vanilla Sugar</a> and <a href="/products/pudding-powder.html">Pudding Powder</a> are available at our market table alongside our cakes. If you want to taste what these staples are supposed to be, the way they were in Oma's pantry, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">reach out directly</a>.</p>]]></description>
     </item>
@@ -38,6 +51,14 @@
       <guid isPermaLink="true">https://germanbakingasheville.com/blog/what-is-quark.html</guid>
       <pubDate>Sun, 24 May 2026 00:00:00 +0000</pubDate>
       <author>william@germanbakingasheville.com (William)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/cheesecake.jpg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/cheesecake.jpg"
+                     type="image/jpeg"/>
+      
       <description><![CDATA[<h2>The First Time I Heard "Quark"</h2>
 <p>When my wife, Mary, first sent me to a German grocery store to pick up quark, I stood in the dairy aisle completely lost.</p>
 <p>It wasn't yogurt. It wasn't sour cream. It wasn't cream cheese. It was an entire category of dairy I, as an American, had never encountered in my life. I stared at the tubs, texted Mary, and tried to match the label to whatever she'd described. That moment, the American husband fumbling through a Berlin supermarket, is where this story starts.</p>

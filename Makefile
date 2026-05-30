@@ -1,9 +1,14 @@
 build:
-	uv run build.py
+	PREVIEW=$(PREVIEW) uv run build.py
 	uv run sync_also_available.py
 	uv run sync_locations.py
 
+serve-preview:
+	$(MAKE) build PREVIEW=true
+	uv run python -m http.server 8080 & sleep 1 && open http://localhost:8080
+
 serve:
+	$(MAKE) build
 	uv run python -m http.server 8080 & sleep 1 && open http://localhost:8080
 
 stop:

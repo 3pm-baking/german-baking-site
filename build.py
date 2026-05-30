@@ -7,6 +7,7 @@ Reads YAML files from content/locations/ and passes them to the landing page tem
 Reads markdown files from content/blog/ and generates blog/index.html + blog/*.html
 """
 
+import os
 import re
 import sys
 from datetime import UTC, date, datetime
@@ -265,7 +266,13 @@ class BlogPost(BaseModel):
     meta_description: str | None = None
     page_title: str | None = None
     og_description: str | None = None
+    hide_featured_image: bool = False
+    updated_date: date | None = None
+    alt_text: str | None = None
     tags: list[str] = []
+    related_products: list[str] = []
+    word_count: int = 0
+    reading_time: int = 0
     content_html: str = ""
     display_date: str = ""
 
@@ -282,6 +289,9 @@ class BlogPost(BaseModel):
         self.display_date = self.date.strftime("%B %d, %Y")
         if self.author not in AUTHOR_EMAILS:
             raise ValueError(f"Unknown author '{self.author}' — add email to AUTHOR_EMAILS in build.py")
+        text = re.sub(r"<[^>]+>", "", self.content_html)
+        self.word_count = len(text.split())
+        self.reading_time = max(1, (self.word_count + 199) // 200)
         return self
 
 
@@ -383,17 +393,19 @@ def load_blog_posts(content_dir: Path) -> list[dict]:
     """Load blog posts from content/blog/*.md.
 
     Each file has YAML frontmatter followed by markdown content.
+    Posts dated in the future are excluded unless PREVIEW=true is set.
     Posts are returned sorted by date (newest first).
 
     Returns:
         list of blog post dicts
     """
+    preview = os.environ.get("PREVIEW", "").lower() in ("1", "true", "yes")
     blog_dir = content_dir.parent / "blog"
     if not blog_dir.exists():
         print("Warning: content/blog/ not found, skipping blog")
         return []
 
-    posts = []
+    raw_posts = []
     for md_file in sorted(blog_dir.glob("*.md"), reverse=True):
         raw_text = md_file.read_text(encoding="utf-8")
         parts = raw_text.split("---", 2)
@@ -404,15 +416,25 @@ def load_blog_posts(content_dir: Path) -> list[dict]:
         frontmatter_raw = parts[1].strip()
         markdown_body = parts[2].strip()
 
-        raw = yaml.safe_load(frontmatter_raw)
-        if not raw:
+        frontmatter = yaml.safe_load(frontmatter_raw)
+        if not frontmatter:
             print(f"  (skipping empty file: {md_file.name})")
             continue
 
-        raw["content_html"] = md.markdown(markdown_body, extensions=["extra"])
-        post = BlogPost.model_validate(raw)
-        posts.append(post.model_dump(mode="json"))
+        frontmatter["content_html"] = md.markdown(markdown_body, extensions=["extra"])
+        post = BlogPost.model_validate(frontmatter)
+        raw_posts.append(post)
 
+    if not preview:
+        today = date.today()
+        skipped = [p for p in raw_posts if p.date > today]
+        for p in skipped:
+            print(f"  (skipping future post: {p.title} [{p.date}])")
+        raw_posts = [p for p in raw_posts if p.date <= today]
+    else:
+        print("  PREVIEW mode: including future-dated posts")
+
+    posts = [p.model_dump(mode="json") for p in raw_posts]
     posts.sort(key=lambda p: p["date"], reverse=True)
     print(f"Loaded {len(posts)} blog post(s) from blog/")
     return posts
@@ -429,11 +451,19 @@ def _rfc822_filter(value: str) -> str:
 def build_rss_feed(env: Environment, posts: list[dict]) -> None:
     """Generate the RSS 2.0 feed (feed.xml) from blog posts."""
     template = env.get_template("rss.xml")
-    build_date = posts[0]["date"] if posts else datetime.now(UTC).isoformat()
+    build_date = datetime.now(UTC).isoformat()
     enriched_posts = [{**post, "author_email": AUTHOR_EMAILS.get(post["author"])} for post in posts]
     xml = template.render(posts=enriched_posts, build_date=build_date)
 
     output_file = Path(__file__).parent / "feed.xml"
+    if output_file.exists():
+        old_xml = output_file.read_text(encoding="utf-8")
+        # Strip the timestamp-only diff (lastBuildDate) from comparison
+        old_stripped = re.sub(r"\s*<lastBuildDate>.*?</lastBuildDate>", "", old_xml)
+        new_stripped = re.sub(r"\s*<lastBuildDate>.*?</lastBuildDate>", "", xml)
+        if old_stripped == new_stripped:
+            print(f"  feed.xml unchanged ({len(posts[:20])} post(s))")
+            return
     output_file.write_text(xml, encoding="utf-8")
     print(f"✓ templates/rss.xml → feed.xml ({len(posts[:20])} post(s))")
 
@@ -451,9 +481,18 @@ def build_blog_index(env: Environment, posts: list[dict]) -> None:
 
 
 def build_blog_pages(env: Environment, posts: list[dict]) -> tuple[int, list]:
-    """Generate individual blog post pages in blog/."""
+    """Generate individual blog post pages in blog/.
+
+    Cleans up stale generated HTML files before building
+    (e.g. leftover pages from a PREVIEW build that are no longer published).
+    """
     output_dir = Path(__file__).parent / "blog"
     output_dir.mkdir(exist_ok=True)
+
+    for html_file in output_dir.glob("*.html"):
+        if html_file.name == "index.html":
+            continue
+        html_file.unlink()
 
     template = env.get_template("blog-post.html")
     built_count = 0
@@ -643,8 +682,13 @@ def build_landing_page(env, categories, locations, market_items, blog_posts):
     print("✓ templates/index.html → index.html")
 
 
-def build_product_pages(env, categories):
-    """Generate individual product detail pages."""
+def build_product_pages(env, categories, product_to_blog_posts=None):
+    """Generate individual product detail pages.
+
+    If *product_to_blog_posts* is provided (a dict mapping product slug → list
+    of blog post dicts), attaches ``related_blog_posts`` to each product so
+    templates can render "Related Blog Posts" links.
+    """
     output_dir = Path(__file__).parent / "products"
     output_dir.mkdir(exist_ok=True)
 
@@ -662,6 +706,10 @@ def build_product_pages(env, categories):
 
     for product_data in all_products:
         try:
+            # Resolve related blog posts from blog frontmatter mapping
+            related = (product_to_blog_posts or {}).get(product_data["slug"], [])
+            product_data["related_blog_posts"] = related
+
             # Render template
             html = template.render(page=product_data, badge_names=BADGE_NAMES)
 
@@ -710,6 +758,13 @@ def build_all():
     # Collect product slugs for sitemap
     all_product_slugs = [p["slug"] for p in categories.get("oven", []) + categories.get("pantry", [])]
 
+    # Build product → blog post mapping from blog frontmatter (related_products)
+    # so product pages can show "Related Blog Posts" without declaring it in product YAML.
+    product_to_blog_posts = {}
+    for post in blog_posts:
+        for product_slug in post.get("related_products", []):
+            product_to_blog_posts.setdefault(product_slug, []).append(post)
+
     # Setup Jinja2
     env = Environment(
         loader=FileSystemLoader(templates_dir),
@@ -729,7 +784,7 @@ def build_all():
     update_sitemap(base_dir, product_slugs=all_product_slugs)
 
     # Build product pages
-    built_count, errors = build_product_pages(env, categories)
+    built_count, errors = build_product_pages(env, categories, product_to_blog_posts=product_to_blog_posts)
 
     # Build blog
     build_blog_index(env, blog_posts)

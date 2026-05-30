@@ -4,8 +4,10 @@ date: 2026-05-24
 slug: what-is-quark
 author: William
 excerpt: My wife Mary sent me to a German grocery store for quark. I had no idea what I was looking for. Now it's the reason our cheesecake is different from every other bakery in Asheville.
-image: cheese-cake.jpg
+image: cheesecake.jpg
 meta_description: What is quark? Discover the traditional German dairy product behind authentic Käsekuchen and how one couple found it close to home in Asheville, NC.
+related_products:
+  - german-cheesecake
 ---
 
 ## The First Time I Heard "Quark"

@@ -45,10 +45,11 @@
       "@type": "Brand",
       "name": "3pm German Baking"
     },
+    {% if page.price is not none and page.price > 0 %}
     "offers": {
       "@type": "Offer",
       "priceCurrency": "USD",
-      "price": "{{ page.price if page.price is not none else 0 }}",
+      "price": "{{ page.price | int if page.price == page.price | int else page.price }}",
       "priceValidUntil": "2099-12-31",
       "availability": "https://schema.org/InStock",
       "itemCondition": "https://schema.org/NewCondition",
@@ -74,6 +75,7 @@
         "geoRadius": "50000"
       }
     },
+    {% endif %}
     "category": "Bakery Products",
     "inLanguage": "en-US"
   }
