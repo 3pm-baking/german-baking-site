@@ -1270,6 +1270,29 @@ section {
 }
 
 /* --------------------------------------------------------------------------
+   Skip-to-Content Link (Accessibility)
+   -------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--spacing-sm);
+  z-index: 200;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-text);
+  color: var(--color-background);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: var(--spacing-sm);
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
    Blog Post Tags
    -------------------------------------------------------------------------- */
 .blog-post__tags {

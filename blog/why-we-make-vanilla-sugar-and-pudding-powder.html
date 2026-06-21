@@ -57,9 +57,16 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-        rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+        media="print"
+        onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+  </noscript>
+  <link rel="stylesheet" href="../styles.min.css">
+  <meta name="theme-color" content="#1a1a1a">
   <!-- Article Schema -->
   <script type="application/ld+json">
   {
@@ -134,17 +141,20 @@
   </script>
 </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <header class="blog-header">
   <div class="container">
     <a href="./" class="blog-header__back">← Back to Blog</a>
     <a href="../index.html" class="blog-header__logo-link">
       <img src="../images/logo.png"
            alt="3pm German Baking"
+           width="400"
+           height="400"
            class="blog-header__logo">
     </a>
   </div>
 </header>
-    <main class="blog-post">
+    <main id="main-content" class="blog-post">
       <div class="container container--narrow">
         <article>
           <header class="blog-post__header">
@@ -162,18 +172,22 @@
           </header>
           
             <div class="blog-post__featured-image">
-              <img src="../images/vanilla-sugar.jpg"
-                   alt="Why We Make Vanilla Sugar and Pudding Powders from Scratch"
-                   data-pin-description="Why 3pm German Baking makes vanilla sugar and pudding powders from scratch, and what&#39;s wrong with the American grocery store versions."
-                   data-pin-url="https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html">
-              <a class="blog-post__pin"
-                 href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html&description=Why%20We%20Make%20Vanilla%20Sugar%20and%20Pudding%20Powders%20from%20Scratch&media=https://germanbakingasheville.com/images/vanilla-sugar.jpg"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 aria-label="Save to Pinterest">Save</a>
-            </div>
-          
-          <div class="blog-post__content"><h2>The American Grocery Store Aisle</h2>
+              <picture>
+                <source srcset="../images/vanilla-sugar.webp" type="image/webp">
+                <img src="../images/vanilla-sugar.jpg"
+                     alt="Why We Make Vanilla Sugar and Pudding Powders from Scratch"
+                     width="800"
+                     height="533"
+                     data-pin-description="Why 3pm German Baking makes vanilla sugar and pudding powders from scratch, and what&#39;s wrong with the American grocery store versions."
+                     data-pin-url="https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html">
+                <a class="blog-post__pin"
+                   href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html&description=Why%20We%20Make%20Vanilla%20Sugar%20and%20Pudding%20Powders%20from%20Scratch&media=https://germanbakingasheville.com/images/vanilla-sugar.jpg"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Save to Pinterest">Save</a>
+              </div>
+            
+            <div class="blog-post__content"><h2>The American Grocery Store Aisle</h2>
 <p>Every time I walk down a baking aisle in an American grocery store, I find myself picking up boxes and reading the ingredient lists. It has become a habit, and it rarely makes me happy.</p>
 <p>I pick up a box of pudding mix and read the ingredient list: Yellow 5, artificial colors, artificial flavor. I put it back and pick up a packet of vanilla sugar, which is somehow no better: vanillin (synthetic vanilla) and a list of additives.</p>
 <p>In Germany, these are pantry staples, but the real version is what you make at home, not what you find on store shelves. I stood there in that American grocery store and realized that if I wanted the products I grew up with, I was going to have to make them myself.</p>
@@ -189,8 +203,8 @@
 <p>Our Vanilla Sugar uses real vanilla beans, just like it was made at home, more authentic than what you'd find on any store shelf in Germany or here. Our Pudding Powders use cornstarch, sugar, real chocolate and cocoa or real vanilla, and a touch of turmeric in the vanilla pudding for color. No dyes, no stabilizers, no ingredients you need a chemistry degree to read. A few simple ingredients, the way it was always done.</p>
 <h2>Find Them at the Market</h2>
 <p>Our <a href="/products/vanilla-sugar.html">Vanilla Sugar</a> and <a href="/products/pudding-powder.html">Pudding Powder</a> are available at our market table alongside our cakes. If you want to taste what these staples are supposed to be, the way they were in Oma's pantry, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">reach out directly</a>.</p></div>
-          
-          <div class="share-bar" aria-label="Share this article">
+            
+            <div class="share-bar" aria-label="Share this article">
   <div class="share-bar__buttons">
     <span class="share-bar__label">Share</span>
     <a href="https://twitter.com/intent/tweet?text=Why%20We%20Make%20Vanilla%20Sugar%20and%20Pudding%20Powders%20from%20Scratch&url=https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html"
@@ -308,12 +322,16 @@
   });
 })();
 </script>
-        </article>
-      </div>
-    </main>
-    <footer class="footer">
+          </article>
+        </div>
+      </main>
+      <footer class="footer">
   <div class="container">
-    <img src="../images/logo.png" alt="3pm German Baking" class="footer__logo">
+    <img src="../images/logo.png"
+         alt="3pm German Baking"
+         width="400"
+         height="400"
+         class="footer__logo">
     <div class="footer__contact">
       <a href="mailto:info@germanbakingasheville.com" class="footer__email">info@germanbakingasheville.com</a>
     </div>
@@ -332,5 +350,5 @@
     <p class="footer__copyright">All rights reserved.</p>
   </div>
 </footer>
-  </body>
-</html>
+    </body>
+  </html>

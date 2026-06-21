@@ -50,11 +50,23 @@
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
     <link rel="manifest" href="/manifest.json">
+    <link rel="preload"
+          as="image"
+          href="images/hero-couple-sharing-cake.webp"
+          fetchpriority="high"
+          type="image/webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-          rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+          media="print"
+          onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+    </noscript>
+    <link rel="stylesheet" href="styles.min.css">
+    <meta name="theme-color" content="#1a1a1a">
     <!-- Geographic Targeting Meta Tags -->
     <meta name="geo.region" content="US-NC">
     <meta name="geo.placename" content="Asheville">
@@ -160,9 +172,13 @@
     </script>
   </head>
   <body>
-    <nav class="nav">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <nav class="nav" aria-label="Main navigation">
       <div class="container">
-        <input type="checkbox" id="nav-toggle" class="nav__toggle">
+        <input type="checkbox"
+               id="nav-toggle"
+               class="nav__toggle"
+               aria-label="Toggle navigation menu">
         <label for="nav-toggle" class="nav__toggle-label">
           <span></span>
         </label>
@@ -185,13 +201,15 @@
         </ul>
       </div>
     </nav>
-    <main>
+    <main id="main-content">
       <section class="hero hero--with-image">
         <div class="container">
           <div class="hero__content">
             <h1 class="sr-only">3pm German Baking — Authentic German Cakes & Pastries in Asheville, NC</h1>
             <img src="images/logo.png"
                  alt="3pm German Baking - Est. 2026"
+                 width="400"
+                 height="400"
                  class="hero__logo">
             <p class="hero__tagline">Authentic German Baking in Asheville</p>
           </div>
@@ -233,9 +251,14 @@
               <article class="product-card" id="german-cheesecake">
   <a href="products/german-cheesecake.html" class="product-card__link">
     <div class="product-card__image">
-      <img src="images/cheesecake.jpg"
-           alt="German Cheesecake (Käsekuchen) - Authentic German baking in Asheville, NC"
-           loading="lazy">
+      <picture>
+        <source srcset="images/cheesecake.webp" type="image/webp">
+        <img src="images/cheesecake.jpg"
+             alt="German Cheesecake (Käsekuchen) - Authentic German baking in Asheville, NC"
+             loading="lazy"
+             width="400"
+             height="400">
+      </picture>
       
         <div class="product-card__badges">
           
@@ -258,9 +281,14 @@
               <article class="product-card" id="russian-pull-cake">
   <a href="products/russian-pull-cake.html" class="product-card__link">
     <div class="product-card__image">
-      <img src="images/pull-cake.jpg"
-           alt="Russian Pull Cake (Russischer Zupfkuchen) - Authentic German baking in Asheville, NC"
-           loading="lazy">
+      <picture>
+        <source srcset="images/pull-cake.webp" type="image/webp">
+        <img src="images/pull-cake.jpg"
+             alt="Russian Pull Cake (Russischer Zupfkuchen) - Authentic German baking in Asheville, NC"
+             loading="lazy"
+             width="400"
+             height="400">
+      </picture>
       
         <div class="product-card__badges">
           
@@ -283,9 +311,14 @@
               <article class="product-card" id="lemon-cake">
   <a href="products/lemon-cake.html" class="product-card__link">
     <div class="product-card__image">
-      <img src="images/seasonal-cake.jpg"
-           alt="Lemon Cake (Zitronenkuchen) - Authentic German baking in Asheville, NC"
-           loading="lazy">
+      <picture>
+        <source srcset="images/seasonal-cake.webp" type="image/webp">
+        <img src="images/seasonal-cake.jpg"
+             alt="Lemon Cake (Zitronenkuchen) - Authentic German baking in Asheville, NC"
+             loading="lazy"
+             width="400"
+             height="400">
+      </picture>
       
         <div class="product-card__badges">
           
@@ -315,9 +348,14 @@
               <article class="product-card" id="spinach-tartlets">
   <a href="products/spinach-tartlets.html" class="product-card__link">
     <div class="product-card__image">
-      <img src="images/spinat-toertchen.jpg"
-           alt="Spinach Tartlets (Spinattörtchen) - Authentic German baking in Asheville, NC"
-           loading="lazy">
+      <picture>
+        <source srcset="images/spinat-toertchen.webp" type="image/webp">
+        <img src="images/spinat-toertchen.jpg"
+             alt="Spinach Tartlets (Spinattörtchen) - Authentic German baking in Asheville, NC"
+             loading="lazy"
+             width="400"
+             height="400">
+      </picture>
       
         <div class="product-card__badges">
           
@@ -340,9 +378,14 @@
               <article class="product-card" id="oma-christas-spiced-cake">
   <a href="products/oma-christas-spiced-cake.html" class="product-card__link">
     <div class="product-card__image">
-      <img src="images/spiced-cake.jpeg"
-           alt="Oma Christa&#39;s Spiced Cake (Gewürzkuchen) - Authentic German baking in Asheville, NC"
-           loading="lazy">
+      <picture>
+        <source srcset="images/spiced-cake.webp" type="image/webp">
+        <img src="images/spiced-cake.jpeg"
+             alt="Oma Christa&#39;s Spiced Cake (Gewürzkuchen) - Authentic German baking in Asheville, NC"
+             loading="lazy"
+             width="400"
+             height="400">
+      </picture>
       
     </div>
     <h3 class="product-card__name">Oma Christa&#39;s Spiced Cake</h3>
@@ -439,6 +482,22 @@
         </div>
         <span class="also-available__german">Bananenkuchen</span>
         <p class="also-available__description">A delicious vegan banana cake with chocolate chips</p>
+      </li>
+      
+        <li class="also-available__separator" aria-hidden="true">
+          <div class="divider divider--small">
+            <span class="divider__icon">✿</span>
+          </div>
+        </li>
+      
+    
+      <li class="also-available__item">
+        <div class="also-available__name-row">
+          <span class="also-available__name">Bee Sting</span>
+          
+        </div>
+        <span class="also-available__german">Bienenstich</span>
+        <p class="also-available__description">Classic German Bee Sting Cake with honey almond topping and vanilla cream filling</p>
       </li>
       
         <li class="also-available__separator" aria-hidden="true">
@@ -681,6 +740,22 @@
     
       <li class="also-available__item">
         <div class="also-available__name-row">
+          <span class="also-available__name">Layered Chocolate Caramel Protein Bars</span>
+          
+        </div>
+        <span class="also-available__german">Schoko-Erdnuss-Proteinriegel</span>
+        <p class="also-available__description">This recipe creates multi-layered bars featuring a protein-rich base, a sweet and salty caramel layer, and a rich dark chocolate coating.</p>
+      </li>
+      
+        <li class="also-available__separator" aria-hidden="true">
+          <div class="divider divider--small">
+            <span class="divider__icon">✿</span>
+          </div>
+        </li>
+      
+    
+      <li class="also-available__item">
+        <div class="also-available__name-row">
           <span class="also-available__name">Poppyseed Streusel Cheesecake</span>
           
             <div class="also-available__badges">
@@ -697,6 +772,38 @@
         </div>
         <span class="also-available__german">Käsekuchen mit Mohn &amp; Streuseln</span>
         <p class="also-available__description">A rich German cheesecake layered with earthy poppy seeds and topped with buttery streusel crumbles</p>
+      </li>
+      
+        <li class="also-available__separator" aria-hidden="true">
+          <div class="divider divider--small">
+            <span class="divider__icon">✿</span>
+          </div>
+        </li>
+      
+    
+      <li class="also-available__item">
+        <div class="also-available__name-row">
+          <span class="also-available__name">Pumpkin Coffee Cake</span>
+          
+        </div>
+        <span class="also-available__german">Kürbis-Kaffeekuchen</span>
+        <p class="also-available__description">A moist pumpkin cake with a crumbly almond streusel topping and vanilla icing — gluten-free.</p>
+      </li>
+      
+        <li class="also-available__separator" aria-hidden="true">
+          <div class="divider divider--small">
+            <span class="divider__icon">✿</span>
+          </div>
+        </li>
+      
+    
+      <li class="also-available__item">
+        <div class="also-available__name-row">
+          <span class="also-available__name">Quiche</span>
+          
+        </div>
+        <span class="also-available__german"></span>
+        
       </li>
       
         <li class="also-available__separator" aria-hidden="true">
@@ -731,6 +838,22 @@
         </div>
         <span class="also-available__german">Himbeer Blechkuchen</span>
         <p class="also-available__description">A light and fluffy gluten-free vanilla cake topped with fresh raspberries and a sweet raspberry jam glaze</p>
+      </li>
+      
+        <li class="also-available__separator" aria-hidden="true">
+          <div class="divider divider--small">
+            <span class="divider__icon">✿</span>
+          </div>
+        </li>
+      
+    
+      <li class="also-available__item">
+        <div class="also-available__name-row">
+          <span class="also-available__name">Raspberry White Chocolate Cake Balls</span>
+          
+        </div>
+        <span class="also-available__german">Kuchenkugeln</span>
+        <p class="also-available__description">Gluten-free vanilla cake balls with raspberry, coated in white chocolate — a bite-sized German treat</p>
       </li>
       
         <li class="also-available__separator" aria-hidden="true">
@@ -794,6 +917,22 @@
         <p class="also-available__description">A light and fluffy gluten-free vanilla cake topped with fresh strawberries and a sweet strawberry jam glaze</p>
       </li>
       
+        <li class="also-available__separator" aria-hidden="true">
+          <div class="divider divider--small">
+            <span class="divider__icon">✿</span>
+          </div>
+        </li>
+      
+    
+      <li class="also-available__item">
+        <div class="also-available__name-row">
+          <span class="also-available__name">Yellow Zucchini Squash Quiche</span>
+          
+        </div>
+        <span class="also-available__german">Zucchiniquiche</span>
+        <p class="also-available__description">Gluten-free savory quiche with yellow zucchini and almond crust</p>
+      </li>
+      
     
   </ul>
 </div>
@@ -811,9 +950,14 @@
               <article class="product-card" id="pudding-powder">
   <a href="products/pudding-powder.html" class="product-card__link">
     <div class="product-card__image">
-      <img src="images/pudding-powder.jpg"
-           alt="Pudding Powder (Puddingpulver) - Authentic German baking in Asheville, NC"
-           loading="lazy">
+      <picture>
+        <source srcset="images/pudding-powder.webp" type="image/webp">
+        <img src="images/pudding-powder.jpg"
+             alt="Pudding Powder (Puddingpulver) - Authentic German baking in Asheville, NC"
+             loading="lazy"
+             width="400"
+             height="400">
+      </picture>
       
         <div class="product-card__badges">
           
@@ -843,9 +987,14 @@
               <article class="product-card" id="vanilla-sugar">
   <a href="products/vanilla-sugar.html" class="product-card__link">
     <div class="product-card__image">
-      <img src="images/vanilla-sugar.jpg"
-           alt="Vanilla Sugar (Vanillezucker) - Authentic German baking in Asheville, NC"
-           loading="lazy">
+      <picture>
+        <source srcset="images/vanilla-sugar.webp" type="image/webp">
+        <img src="images/vanilla-sugar.jpg"
+             alt="Vanilla Sugar (Vanillezucker) - Authentic German baking in Asheville, NC"
+             loading="lazy"
+             width="400"
+             height="400">
+      </picture>
       
         <div class="product-card__badges">
           
@@ -885,12 +1034,47 @@
             <div class="blog-recent__grid">
               
                 <article class="blog-card">
+  <a href="blog/custom-cake-orders.html" class="blog-card__link">
+    
+      <div class="blog-card__image">
+        <picture>
+          <source srcset="images/seasonal-cake.webp" type="image/webp">
+          <img src="images/seasonal-cake.jpg"
+               alt="How to Order a Whole Cake in the Greater Asheville Area"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
+      </div>
+    
+    <div class="blog-card__content">
+      <div class="blog-card__meta">
+        <time class="blog-card__date" datetime="2026-06-08">June 08, 2026</time>
+        
+          <span class="blog-card__separator">·</span>
+          <span class="blog-card__author">Mary</span>
+        
+        <span class="blog-card__separator">·</span>
+        <span class="blog-card__reading-time">2 min read</span>
+      </div>
+      <h3 class="blog-card__title">How to Order a Whole Cake in the Greater Asheville Area</h3>
+      <p class="blog-card__excerpt">Need a whole German Cheesecake for a birthday or a tray of Spinach Tartlets for a party? We take custom orders by email or at the market, and we can deliver in the greater Asheville area.</p>
+    </div>
+  </a>
+</article>
+              
+                <article class="blog-card">
   <a href="blog/automated-grocery-lists.html" class="blog-card__link">
     
       <div class="blog-card__image">
-        <img src="images/grocery-list-generation.jpg"
-             alt="How We Automate Grocery Lists for Market Day Baking"
-             loading="lazy">
+        <picture>
+          <source srcset="images/grocery-list-generation.webp" type="image/webp">
+          <img src="images/grocery-list-generation.jpg"
+               alt="How We Automate Grocery Lists for Market Day Baking"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
       </div>
     
     <div class="blog-card__content">
@@ -913,9 +1097,14 @@
   <a href="blog/how-north-asheville-market-started-our-bakery.html" class="blog-card__link">
     
       <div class="blog-card__image">
-        <img src="images/farmers-market.jpg"
-             alt="How the North Asheville Market Started Our Bakery"
-             loading="lazy">
+        <picture>
+          <source srcset="images/farmers-market.webp" type="image/webp">
+          <img src="images/farmers-market.jpg"
+               alt="How the North Asheville Market Started Our Bakery"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
       </div>
     
     <div class="blog-card__content">
@@ -930,31 +1119,6 @@
       </div>
       <h3 class="blog-card__title">How the North Asheville Market Started Our Bakery</h3>
       <p class="blog-card__excerpt">A year ago we walked through the North Asheville Farmers Market as visitors, wondering if this could be our home. We had no idea we&#39;d leave with the seed of a business.</p>
-    </div>
-  </a>
-</article>
-              
-                <article class="blog-card">
-  <a href="blog/why-we-make-vanilla-sugar-and-pudding-powder.html" class="blog-card__link">
-    
-      <div class="blog-card__image">
-        <img src="images/vanilla-sugar.jpg"
-             alt="Why We Make Vanilla Sugar and Pudding Powders from Scratch"
-             loading="lazy">
-      </div>
-    
-    <div class="blog-card__content">
-      <div class="blog-card__meta">
-        <time class="blog-card__date" datetime="2026-05-28">May 28, 2026</time>
-        
-          <span class="blog-card__separator">·</span>
-          <span class="blog-card__author">Mary</span>
-        
-        <span class="blog-card__separator">·</span>
-        <span class="blog-card__reading-time">4 min read</span>
-      </div>
-      <h3 class="blog-card__title">Why We Make Vanilla Sugar and Pudding Powders from Scratch</h3>
-      <p class="blog-card__excerpt">In Germany, pudding powder and vanilla sugar are pantry staples, the kind every Oma makes herself. When I moved to the US and read the ingredient lists on the American versions, I knew we&#39;d have to make our own.</p>
     </div>
   </a>
 </article>
@@ -1094,7 +1258,11 @@
     </main>
     <footer class="footer">
       <div class="container">
-        <img src="images/logo.png" alt="3pm German Baking" class="footer__logo">
+        <img src="images/logo.png"
+             alt="3pm German Baking"
+             width="400"
+             height="400"
+             class="footer__logo">
         <div class="footer__contact">
           <a href="mailto:info@germanbakingasheville.com" class="footer__email">info@germanbakingasheville.com</a>
         </div>

@@ -42,11 +42,23 @@
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
     <link rel="manifest" href="/manifest.json">
+    <link rel="preload"
+          as="image"
+          href="images/hero-couple-sharing-cake.webp"
+          fetchpriority="high"
+          type="image/webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-          rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+          media="print"
+          onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+    </noscript>
+    <link rel="stylesheet" href="styles.min.css">
+    <meta name="theme-color" content="#1a1a1a">
     <!-- Geographic Targeting Meta Tags -->
     <meta name="geo.region" content="US-NC">
     <meta name="geo.placename" content="Asheville">
@@ -152,9 +164,13 @@
     </script>
   </head>
   <body>
-    <nav class="nav">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <nav class="nav" aria-label="Main navigation">
       <div class="container">
-        <input type="checkbox" id="nav-toggle" class="nav__toggle">
+        <input type="checkbox"
+               id="nav-toggle"
+               class="nav__toggle"
+               aria-label="Toggle navigation menu">
         <label for="nav-toggle" class="nav__toggle-label">
           <span></span>
         </label>
@@ -177,13 +193,15 @@
         </ul>
       </div>
     </nav>
-    <main>
+    <main id="main-content">
       <section class="hero hero--with-image">
         <div class="container">
           <div class="hero__content">
             <h1 class="sr-only">3pm German Baking — Authentic German Cakes & Pastries in Asheville, NC</h1>
             <img src="images/logo.png"
                  alt="3pm German Baking - Est. 2026"
+                 width="400"
+                 height="400"
                  class="hero__logo">
             <p class="hero__tagline">Authentic German Baking in Asheville</p>
           </div>
@@ -376,7 +394,11 @@
     </main>
     <footer class="footer">
       <div class="container">
-        <img src="images/logo.png" alt="3pm German Baking" class="footer__logo">
+        <img src="images/logo.png"
+             alt="3pm German Baking"
+             width="400"
+             height="400"
+             class="footer__logo">
         <div class="footer__contact">
           <a href="mailto:info@germanbakingasheville.com" class="footer__email">info@germanbakingasheville.com</a>
         </div>

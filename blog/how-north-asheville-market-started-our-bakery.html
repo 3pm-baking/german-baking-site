@@ -57,9 +57,16 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-        rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+        media="print"
+        onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+  </noscript>
+  <link rel="stylesheet" href="../styles.min.css">
+  <meta name="theme-color" content="#1a1a1a">
   <!-- Article Schema -->
   <script type="application/ld+json">
   {
@@ -134,17 +141,20 @@
   </script>
 </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <header class="blog-header">
   <div class="container">
     <a href="./" class="blog-header__back">← Back to Blog</a>
     <a href="../index.html" class="blog-header__logo-link">
       <img src="../images/logo.png"
            alt="3pm German Baking"
+           width="400"
+           height="400"
            class="blog-header__logo">
     </a>
   </div>
 </header>
-    <main class="blog-post">
+    <main id="main-content" class="blog-post">
       <div class="container container--narrow">
         <article>
           <header class="blog-post__header">
@@ -162,18 +172,22 @@
           </header>
           
             <div class="blog-post__featured-image">
-              <img src="../images/farmers-market.jpg"
-                   alt="How the North Asheville Market Started Our Bakery"
-                   data-pin-description="How 3pm German Baking started at the North Asheville Farmers Market — the origin story of a German micro bakery in Asheville, NC."
-                   data-pin-url="https://germanbakingasheville.com/blog/how-north-asheville-market-started-our-bakery.html">
-              <a class="blog-post__pin"
-                 href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/how-north-asheville-market-started-our-bakery.html&description=How%20the%20North%20Asheville%20Market%20Started%20Our%20Bakery&media=https://germanbakingasheville.com/images/farmers-market.jpg"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 aria-label="Save to Pinterest">Save</a>
-            </div>
-          
-          <div class="blog-post__content"><h2>At the North Asheville Market</h2>
+              <picture>
+                <source srcset="../images/farmers-market.webp" type="image/webp">
+                <img src="../images/farmers-market.jpg"
+                     alt="How the North Asheville Market Started Our Bakery"
+                     width="800"
+                     height="533"
+                     data-pin-description="How 3pm German Baking started at the North Asheville Farmers Market — the origin story of a German micro bakery in Asheville, NC."
+                     data-pin-url="https://germanbakingasheville.com/blog/how-north-asheville-market-started-our-bakery.html">
+                <a class="blog-post__pin"
+                   href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/how-north-asheville-market-started-our-bakery.html&description=How%20the%20North%20Asheville%20Market%20Started%20Our%20Bakery&media=https://germanbakingasheville.com/images/farmers-market.jpg"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Save to Pinterest">Save</a>
+              </div>
+            
+            <div class="blog-post__content"><h2>At the North Asheville Market</h2>
 <p>A year ago, William and I were road tripping through the US, drawn to the Blue Ridge Mountains. Asheville was one of the places on our list, a city we were curious about as a potential home. We had no business plan and no serious intention of starting one.</p>
 <p>We visited the North Asheville Farmers Market as tourists, taking in the scene. But the longer we walked, the more we noticed: stand after stand of people who had built something from scratch, cheeses and breads and crafts and produce, everyone running their own table and making their own thing.</p>
 <p>The thought was quiet at first, not "let's start a bakery" but more of a nudge: <em>maybe we could do something like this.</em></p>
@@ -187,8 +201,8 @@
 <h2>Back to the Market</h2>
 <p>We did not go to that market a year ago expecting it to change anything. But Asheville became home, and the idea we picked up between the market stands became our business.</p>
 <p>If you want to know where to find us, we keep our <a href="/index.html#find-us">market schedule and locations updated here</a>. Or <a href="mailto:info@germanbakingasheville.com">reach out directly</a>, we would love to hear from you.</p></div>
-          
-          <div class="share-bar" aria-label="Share this article">
+            
+            <div class="share-bar" aria-label="Share this article">
   <div class="share-bar__buttons">
     <span class="share-bar__label">Share</span>
     <a href="https://twitter.com/intent/tweet?text=How%20the%20North%20Asheville%20Market%20Started%20Our%20Bakery&url=https://germanbakingasheville.com/blog/how-north-asheville-market-started-our-bakery.html"
@@ -306,12 +320,16 @@
   });
 })();
 </script>
-        </article>
-      </div>
-    </main>
-    <footer class="footer">
+          </article>
+        </div>
+      </main>
+      <footer class="footer">
   <div class="container">
-    <img src="../images/logo.png" alt="3pm German Baking" class="footer__logo">
+    <img src="../images/logo.png"
+         alt="3pm German Baking"
+         width="400"
+         height="400"
+         class="footer__logo">
     <div class="footer__contact">
       <a href="mailto:info@germanbakingasheville.com" class="footer__email">info@germanbakingasheville.com</a>
     </div>
@@ -330,5 +348,5 @@
     <p class="footer__copyright">All rights reserved.</p>
   </div>
 </footer>
-  </body>
-</html>
+    </body>
+  </html>

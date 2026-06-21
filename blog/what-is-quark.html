@@ -57,9 +57,16 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-        rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+        media="print"
+        onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+  </noscript>
+  <link rel="stylesheet" href="../styles.min.css">
+  <meta name="theme-color" content="#1a1a1a">
   <!-- Article Schema -->
   <script type="application/ld+json">
   {
@@ -134,17 +141,20 @@
   </script>
 </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <header class="blog-header">
   <div class="container">
     <a href="./" class="blog-header__back">← Back to Blog</a>
     <a href="../index.html" class="blog-header__logo-link">
       <img src="../images/logo.png"
            alt="3pm German Baking"
+           width="400"
+           height="400"
            class="blog-header__logo">
     </a>
   </div>
 </header>
-    <main class="blog-post">
+    <main id="main-content" class="blog-post">
       <div class="container container--narrow">
         <article>
           <header class="blog-post__header">
@@ -162,18 +172,22 @@
           </header>
           
             <div class="blog-post__featured-image">
-              <img src="../images/cheesecake.jpg"
-                   alt="What Is Quark? The German Ingredient I Learned About the Hard Way"
-                   data-pin-description="What is quark? Discover the traditional German dairy product behind authentic Käsekuchen and how one couple found it close to home in Asheville, NC."
-                   data-pin-url="https://germanbakingasheville.com/blog/what-is-quark.html">
-              <a class="blog-post__pin"
-                 href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/what-is-quark.html&description=What%20Is%20Quark%3F%20The%20German%20Ingredient%20I%20Learned%20About%20the%20Hard%20Way&media=https://germanbakingasheville.com/images/cheesecake.jpg"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 aria-label="Save to Pinterest">Save</a>
-            </div>
-          
-          <div class="blog-post__content"><h2>The First Time I Heard "Quark"</h2>
+              <picture>
+                <source srcset="../images/cheesecake.webp" type="image/webp">
+                <img src="../images/cheesecake.jpg"
+                     alt="What Is Quark? The German Ingredient I Learned About the Hard Way"
+                     width="800"
+                     height="533"
+                     data-pin-description="What is quark? Discover the traditional German dairy product behind authentic Käsekuchen and how one couple found it close to home in Asheville, NC."
+                     data-pin-url="https://germanbakingasheville.com/blog/what-is-quark.html">
+                <a class="blog-post__pin"
+                   href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/what-is-quark.html&description=What%20Is%20Quark%3F%20The%20German%20Ingredient%20I%20Learned%20About%20the%20Hard%20Way&media=https://germanbakingasheville.com/images/cheesecake.jpg"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Save to Pinterest">Save</a>
+              </div>
+            
+            <div class="blog-post__content"><h2>The First Time I Heard "Quark"</h2>
 <p>When my wife, Mary, first sent me to a German grocery store to pick up quark, I stood in the dairy aisle completely lost.</p>
 <p>It wasn't yogurt. It wasn't sour cream. It wasn't cream cheese. It was an entire category of dairy I, as an American, had never encountered in my life. I stared at the tubs, texted Mary, and tried to match the label to whatever she'd described. That moment, the American husband fumbling through a Berlin supermarket, is where this story starts.</p>
 <h2>So What Actually Is Quark?</h2>
@@ -194,8 +208,8 @@
 <h2>From Confusion to the Oven</h2>
 <p>What started as confusion in a German grocery aisle became an appreciation for an ingredient most Americans have never heard of. Now Mary and I get to share that with our customers and source it from someone we know at the market, not a distributor.</p>
 <p>Our <a href="/products/german-cheesecake.html">German Cheesecake</a> is where quark really shines. If you're curious to taste the difference, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">reach out directly</a>.</p></div>
-          
-          <div class="share-bar" aria-label="Share this article">
+            
+            <div class="share-bar" aria-label="Share this article">
   <div class="share-bar__buttons">
     <span class="share-bar__label">Share</span>
     <a href="https://twitter.com/intent/tweet?text=What%20Is%20Quark%3F%20The%20German%20Ingredient%20I%20Learned%20About%20the%20Hard%20Way&url=https://germanbakingasheville.com/blog/what-is-quark.html"
@@ -313,12 +327,16 @@
   });
 })();
 </script>
-        </article>
-      </div>
-    </main>
-    <footer class="footer">
+          </article>
+        </div>
+      </main>
+      <footer class="footer">
   <div class="container">
-    <img src="../images/logo.png" alt="3pm German Baking" class="footer__logo">
+    <img src="../images/logo.png"
+         alt="3pm German Baking"
+         width="400"
+         height="400"
+         class="footer__logo">
     <div class="footer__contact">
       <a href="mailto:info@germanbakingasheville.com" class="footer__email">info@germanbakingasheville.com</a>
     </div>
@@ -337,5 +355,5 @@
     <p class="footer__copyright">All rights reserved.</p>
   </div>
 </footer>
-  </body>
-</html>
+    </body>
+  </html>

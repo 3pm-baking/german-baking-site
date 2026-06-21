@@ -2,8 +2,9 @@
 <html lang="en">
   {% include 'partials/blog-head.html' %}
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     {% include 'partials/blog-header.html' %}
-    <main class="blog-post">
+    <main id="main-content" class="blog-post">
       <div class="container container--narrow">
         <article>
           <header class="blog-post__header">
@@ -21,27 +22,31 @@
           </header>
           {% if post.image and not post.hide_featured_image %}
             <div class="blog-post__featured-image">
-              <img src="../images/{{ post.image }}"
-                   alt="{{ post.alt_text if post.alt_text else post.title }}"
-                   data-pin-description="{{ post.meta_description }}"
-                   data-pin-url="https://germanbakingasheville.com/blog/{{ post.slug }}.html">
-              <a class="blog-post__pin"
-                 href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/{{ post.slug }}.html&description={{ post.title | urlencode }}&media=https://germanbakingasheville.com/images/{{ post.image }}"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 aria-label="Save to Pinterest">Save</a>
-            </div>
-          {% endif %}
-          <div class="blog-post__content">{{ post.content_html | safe }}</div>
-          {% if post.tags %}
-            <div class="blog-post__tags">
-              {% for tag in post.tags %}<span class="blog-post__tag">{{ tag }}</span>{% endfor %}
-            </div>
-          {% endif %}
-          {% include 'partials/share-buttons.html' %}
-        </article>
-      </div>
-    </main>
-    {% include 'partials/footer.html' %}
-  </body>
-</html>
+              <picture>
+                <source srcset="../images/{{ post.image | webp }}" type="image/webp">
+                <img src="../images/{{ post.image }}"
+                     alt="{{ post.alt_text if post.alt_text else post.title }}"
+                     width="800"
+                     height="533"
+                     data-pin-description="{{ post.meta_description }}"
+                     data-pin-url="https://germanbakingasheville.com/blog/{{ post.slug }}.html">
+                <a class="blog-post__pin"
+                   href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/{{ post.slug }}.html&description={{ post.title | urlencode }}&media=https://germanbakingasheville.com/images/{{ post.image }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Save to Pinterest">Save</a>
+              </div>
+            {% endif %}
+            <div class="blog-post__content">{{ post.content_html | safe }}</div>
+            {% if post.tags %}
+              <div class="blog-post__tags">
+                {% for tag in post.tags %}<span class="blog-post__tag">{{ tag }}</span>{% endfor %}
+              </div>
+            {% endif %}
+            {% include 'partials/share-buttons.html' %}
+          </article>
+        </div>
+      </main>
+      {% include 'partials/footer.html' %}
+    </body>
+  </html>

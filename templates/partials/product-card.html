@@ -1,9 +1,14 @@
 <article class="product-card" id="{{ product.slug }}">
   <a href="products/{{ product.slug }}.html" class="product-card__link">
     <div class="product-card__image">
-      <img src="images/{{ product.image }}"
-           alt="{{ product.title }} ({{ product.german_name }}) - Authentic German baking in Asheville, NC"
-           loading="lazy">
+      <picture>
+        {% if product.image %}<source srcset="images/{{ product.image | webp }}" type="image/webp">{% endif %}
+        <img src="images/{{ product.image }}"
+             alt="{{ product.title }} ({{ product.german_name }}) - Authentic German baking in Asheville, NC"
+             loading="lazy"
+             width="400"
+             height="400">
+      </picture>
       {% if product.badges %}
         <div class="product-card__badges">
           {% for badge in product.badges %}

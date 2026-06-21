@@ -46,9 +46,16 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-          rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+          media="print"
+          onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+    </noscript>
+    <link rel="stylesheet" href="../styles.min.css">
+    <meta name="theme-color" content="#1a1a1a">
     <!-- Breadcrumb Schema -->
     <script type="application/ld+json">
   {
@@ -85,24 +92,30 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "url": "https://germanbakingasheville.com/blog/automated-grocery-lists.html"
+          "url": "https://germanbakingasheville.com/blog/custom-cake-orders.html"
         },
         
         {
           "@type": "ListItem",
           "position": 2,
-          "url": "https://germanbakingasheville.com/blog/how-north-asheville-market-started-our-bakery.html"
+          "url": "https://germanbakingasheville.com/blog/automated-grocery-lists.html"
         },
         
         {
           "@type": "ListItem",
           "position": 3,
-          "url": "https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html"
+          "url": "https://germanbakingasheville.com/blog/how-north-asheville-market-started-our-bakery.html"
         },
         
         {
           "@type": "ListItem",
           "position": 4,
+          "url": "https://germanbakingasheville.com/blog/why-we-make-vanilla-sugar-and-pudding-powder.html"
+        },
+        
+        {
+          "@type": "ListItem",
+          "position": 5,
           "url": "https://germanbakingasheville.com/blog/what-is-quark.html"
         }
         
@@ -113,9 +126,13 @@
     
   </head>
   <body>
-    <nav class="nav">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <nav class="nav" aria-label="Main navigation">
       <div class="container">
-        <input type="checkbox" id="nav-toggle" class="nav__toggle">
+        <input type="checkbox"
+               id="nav-toggle"
+               class="nav__toggle"
+               aria-label="Toggle navigation menu">
         <label for="nav-toggle" class="nav__toggle-label">
           <span></span>
         </label>
@@ -138,7 +155,7 @@
         </ul>
       </div>
     </nav>
-    <main>
+    <main id="main-content">
       <section class="blog-index">
         <div class="container">
           <h1 class="text-center">Blog</h1>
@@ -150,12 +167,47 @@
             <div class="blog-grid">
               
                 <article class="blog-card">
+  <a href="custom-cake-orders.html" class="blog-card__link">
+    
+      <div class="blog-card__image">
+        <picture>
+          <source srcset="../images/seasonal-cake.webp" type="image/webp">
+          <img src="../images/seasonal-cake.jpg"
+               alt="How to Order a Whole Cake in the Greater Asheville Area"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
+      </div>
+    
+    <div class="blog-card__content">
+      <div class="blog-card__meta">
+        <time class="blog-card__date" datetime="2026-06-08">June 08, 2026</time>
+        
+          <span class="blog-card__separator">·</span>
+          <span class="blog-card__author">Mary</span>
+        
+        <span class="blog-card__separator">·</span>
+        <span class="blog-card__reading-time">2 min read</span>
+      </div>
+      <h2 class="blog-card__title">How to Order a Whole Cake in the Greater Asheville Area</h2>
+      <p class="blog-card__excerpt">Need a whole German Cheesecake for a birthday or a tray of Spinach Tartlets for a party? We take custom orders by email or at the market, and we can deliver in the greater Asheville area.</p>
+    </div>
+  </a>
+</article>
+              
+                <article class="blog-card">
   <a href="automated-grocery-lists.html" class="blog-card__link">
     
       <div class="blog-card__image">
-        <img src="../images/grocery-list-generation.jpg"
-             alt="How We Automate Grocery Lists for Market Day Baking"
-             loading="lazy">
+        <picture>
+          <source srcset="../images/grocery-list-generation.webp" type="image/webp">
+          <img src="../images/grocery-list-generation.jpg"
+               alt="How We Automate Grocery Lists for Market Day Baking"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
       </div>
     
     <div class="blog-card__content">
@@ -178,9 +230,14 @@
   <a href="how-north-asheville-market-started-our-bakery.html" class="blog-card__link">
     
       <div class="blog-card__image">
-        <img src="../images/farmers-market.jpg"
-             alt="How the North Asheville Market Started Our Bakery"
-             loading="lazy">
+        <picture>
+          <source srcset="../images/farmers-market.webp" type="image/webp">
+          <img src="../images/farmers-market.jpg"
+               alt="How the North Asheville Market Started Our Bakery"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
       </div>
     
     <div class="blog-card__content">
@@ -203,9 +260,14 @@
   <a href="why-we-make-vanilla-sugar-and-pudding-powder.html" class="blog-card__link">
     
       <div class="blog-card__image">
-        <img src="../images/vanilla-sugar.jpg"
-             alt="Why We Make Vanilla Sugar and Pudding Powders from Scratch"
-             loading="lazy">
+        <picture>
+          <source srcset="../images/vanilla-sugar.webp" type="image/webp">
+          <img src="../images/vanilla-sugar.jpg"
+               alt="Why We Make Vanilla Sugar and Pudding Powders from Scratch"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
       </div>
     
     <div class="blog-card__content">
@@ -228,9 +290,14 @@
   <a href="what-is-quark.html" class="blog-card__link">
     
       <div class="blog-card__image">
-        <img src="../images/cheesecake.jpg"
-             alt="What Is Quark? The German Ingredient I Learned About the Hard Way"
-             loading="lazy">
+        <picture>
+          <source srcset="../images/cheesecake.webp" type="image/webp">
+          <img src="../images/cheesecake.jpg"
+               alt="What Is Quark? The German Ingredient I Learned About the Hard Way"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
       </div>
     
     <div class="blog-card__content">

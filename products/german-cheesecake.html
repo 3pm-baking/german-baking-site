@@ -41,9 +41,16 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-        rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+        media="print"
+        onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+  </noscript>
+  <link rel="stylesheet" href="../styles.min.css">
+  <meta name="theme-color" content="#1a1a1a">
   <!-- Enhanced Product Schema -->
   <script type="application/ld+json">
   {
@@ -121,6 +128,7 @@
   </script>
 </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <header class="product-header">
   <div class="container">
     <a href="../index.html#german-cheesecake" class="product-header__back">← Back to All Products</a>
@@ -128,16 +136,23 @@
        class="product-header__logo-link">
       <img src="../images/logo.png"
            alt="3pm German Baking"
+           width="400"
+           height="400"
            class="product-header__logo">
     </a>
   </div>
 </header>
-    <main class="product-detail">
+    <main id="main-content" class="product-detail">
       <div class="container container--narrow">
         <div class="product-detail__image-wrapper">
-          <img src="../images/cheesecake.jpg"
-               alt="German Cheesecake - Käsekuchen"
-               class="product-detail__image">
+          <picture>
+            <source srcset="../images/cheesecake.webp" type="image/webp">
+            <img src="../images/cheesecake.jpg"
+                 alt="German Cheesecake - Käsekuchen"
+                 class="product-detail__image"
+                 width="400"
+                 height="400">
+          </picture>
         </div>
         <div class="product-detail__content">
           <h1 class="product-detail__name">German Cheesecake</h1>
@@ -212,7 +227,11 @@
     </main>
     <footer class="footer">
   <div class="container">
-    <img src="../images/logo.png" alt="3pm German Baking" class="footer__logo">
+    <img src="../images/logo.png"
+         alt="3pm German Baking"
+         width="400"
+         height="400"
+         class="footer__logo">
     <div class="footer__contact">
       <a href="mailto:info@germanbakingasheville.com" class="footer__email">info@germanbakingasheville.com</a>
     </div>

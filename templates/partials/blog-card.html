@@ -2,9 +2,14 @@
   <a href="{{ post.slug }}.html" class="blog-card__link">
     {% if post.image %}
       <div class="blog-card__image">
-        <img src="../images/{{ post.image }}"
-             alt="{{ post.alt_text if post.alt_text else post.title }}"
-             loading="lazy">
+        <picture>
+          <source srcset="../images/{{ post.image | webp }}" type="image/webp">
+          <img src="../images/{{ post.image }}"
+               alt="{{ post.alt_text if post.alt_text else post.title }}"
+               loading="lazy"
+               width="800"
+               height="533">
+        </picture>
       </div>
     {% endif %}
     <div class="blog-card__content">

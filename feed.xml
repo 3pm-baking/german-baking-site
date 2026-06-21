@@ -5,13 +5,79 @@
     <link>https://germanbakingasheville.com/blog/</link>
     <description>German baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 May 2026 20:17:14 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Jun 2026 09:44:58 +0000</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://germanbakingasheville.com/images/logo.png</url>
       <title>3pm German Baking Blog</title>
       <link>https://germanbakingasheville.com/blog/</link>
     </image>
+    
+    <item>
+      <title>How to Order a Whole Cake in the Greater Asheville Area</title>
+      <link>https://germanbakingasheville.com/blog/custom-cake-orders.html</link>
+      <guid isPermaLink="true">https://germanbakingasheville.com/blog/custom-cake-orders.html</guid>
+      <pubDate>Mon, 08 Jun 2026 00:00:00 +0000</pubDate>
+      <author>mary@germanbakingasheville.com (Mary)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/seasonal-cake.jpg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/seasonal-cake.jpg"
+                     type="image/jpeg"/>
+      
+      <description><![CDATA[<h2>The Question We Hear at the Market</h2>
+<p>Customers stop at our table and ask the same thing: "Can I get a whole cake?" They point to a slice of <em>Käsekuchen</em> or a tray of <em>Spinat-Törtchen</em> and wish they could take the whole thing home for a birthday or a dinner party.</p>
+<p>The answer is yes, and we are happy to do it.</p>
+<h2>What People Have Ordered</h2>
+<p>Over the last few months, we have baked Russian Pull Cakes for family gatherings, Almond Ricotta Cakes for brunches, and lemon cakes too. It has been fun seeing what people reach for when they can have the whole thing instead of a single slice.</p>
+<p>You can order anything from <a href="/index.html#products">our menu</a>: a whole German Cheesecake, a Lemon Cake, a tray of Spinach Tartlets, or whatever is in season. You can also ask for something you do not see on the table. If I can bake it and source the ingredients, I am happy to try, though custom requests need a bit more time to prepare.</p>
+<h2>How to Order</h2>
+<p>The easiest way is to send us an email at <a href="mailto:info@germanbakingasheville.com">info@germanbakingasheville.com</a>. Tell me what you want, when you need it, and how many people you are serving. I will confirm availability and we can work out the details.</p>
+<p>You can also find us at <a href="/index.html#find-us">one of our markets</a> and we can plan something together in person.</p>
+<p>A little advance notice helps, especially for larger orders or multiple cakes.</p>
+<h2>Delivery in the Greater Asheville Area</h2>
+<p>We offer delivery for a small fee anywhere in the greater Asheville area. If you are hosting a gathering and would rather not make a trip to pick up the cake, we can bring it to you.</p>
+<h2>Let Us Know What You Need</h2>
+<p>We started this bakery in Asheville to share the baking I grew up with. If something on our menu catches your eye or you have an occasion you want to celebrate with a German cake, just ask.</p>
+<p>Email us at <a href="mailto:info@germanbakingasheville.com">info@germanbakingasheville.com</a> or <a href="/index.html#find-us">find us at a market</a>.</p>]]></description>
+    </item>
+    
+    <item>
+      <title>How We Automate Grocery Lists for Market Day Baking</title>
+      <link>https://germanbakingasheville.com/blog/automated-grocery-lists.html</link>
+      <guid isPermaLink="true">https://germanbakingasheville.com/blog/automated-grocery-lists.html</guid>
+      <pubDate>Wed, 03 Jun 2026 00:00:00 +0000</pubDate>
+      <author>william@germanbakingasheville.com (William)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/grocery-list-generation.jpg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/grocery-list-generation.jpg"
+                     type="image/jpeg"/>
+      
+      <description><![CDATA[<h2>The Cart Problem</h2>
+<p>A single market day at 3pm German Baking means 100 to 120 slices across five or more different recipes. Before Mary ever preheats the oven, the ingredients have to get from the store to the kitchen.</p>
+<p>When we started this business, I wanted to support Mary by handling the automation and operations side of things so she could focus on what drew her to baking in the first place. I have a decade of data science behind me, so building tools that make the business run smoothly is where I fit in. The grocery list system is one of those tools.</p>
+<p>The grocery cart fills up fast. Pounds of butter. Bags of flour and sugar. Cartons of eggs. Quarts of yogurt. Whole vanilla beans, fresh lemons, spinach, frozen fruit. A full cart, every time, and every ingredient matters. Every trip has to be accurate.</p>
+<h2>The Hidden Complexity</h2>
+<p>Multi-recipe grocery lists are deceptively hard to get right, and precision is where I build software to help.</p>
+<p>The same ingredient appears across multiple recipes. If Mary is baking four Lemon Cakes, a Russian Pull Cake, and Spinach Tartlets, butter shows up in all of them. Sugar is in everything. Eggs are everywhere. Every amount has to be consolidated into a single shopping quantity with zero margin for error.</p>
+<p>Then there is the store itself. Produce in one section, dairy in another, baking supplies somewhere else entirely. A flat list means crisscrossing the store six times, which is not how Mary wants to spend a Friday afternoon before a Saturday market.</p>
+<h2>How It Works</h2>
+<p>The solution is a system that takes a free-text bake plan and turns it into an organized, department-sorted shopping list.</p>
+<p>It works through Discord, a chat app we use to run our bakery's tools. Mary messages a small program on our Raspberry Pi (we call it Razi) with what she plans to bake, written in plain English, the way she would write a text message:</p>
+<p><img alt="Grocery list generation interface" src="/images/grocery-list-generation.jpg" /></p>
+<p>The system already knows the ingredient list for every recipe we bake, stored in standardized units down to the gram. When the bot receives a bake plan, it scales each recipe to the requested quantity, consolidates every ingredient across every recipe, and sorts the results by grocery store department: dairy together, produce together, baking aisle together. What could take an hour of hunting through recipe cards and doing arithmetic is effectively instantaneous.</p>
+<p>The recipe data and calculations live in a Python application, not in a large language model (LLM). The math has to be right, every time. Ingredient consolidation, density-based measurements, department sorting—those are all deterministic. The LLM just translates Mary's free-text bake plan into something the calculator can understand. It is the glue, not the engine. If the system tells Mary to buy 12 sticks of butter, that number came from arithmetic, not from an LLM guessing what sounds plausible.</p>
+<p>We kept our recipes digitized from the start for labeling and consistency. Once that foundation was in place, building a grocery list system on top of it was a natural next step. The whole thing runs on Razi in our house, always on, always ready to turn a text message into a shopping list.</p>
+<h2>From Screen to Cart</h2>
+<p>The workflow is straightforward. Sometime before a market, Mary messages the bot on Discord with her bake plan. Right away she has an organized shopping list sorted by department. She prints it, heads to the store, and walks through once: dairy, produce, baking aisle, done. Fifteen to twenty minutes in and out, with a cart full of exactly what we need and nothing we do not.</p>
+<p>The grocery run happens a day or two before the market, usually while Mary is wrapping up a batch of something delicious. It is one of the invisible pieces of running a micro bakery, the kind of thing nobody thinks about unless they have tried to do it themselves. Baking is what drew Mary to start the business. My goal with these tools is simple: handle everything I can on the technical side so she can spend her time on what matters most, baking and connecting with customers.</p>
+<p>If you want to taste what all those grocery runs add up to, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">reach out directly</a>.</p>]]></description>
+    </item>
     
     <item>
       <title>How the North Asheville Market Started Our Bakery</title>

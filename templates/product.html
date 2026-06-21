@@ -2,13 +2,19 @@
 <html lang="en">
   {% include 'partials/head.html' %}
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     {% include 'partials/product-header.html' %}
-    <main class="product-detail">
+    <main id="main-content" class="product-detail">
       <div class="container container--narrow">
         <div class="product-detail__image-wrapper">
-          <img src="../images/{{ page.image }}"
-               alt="{{ page.title }} - {{ page.german_name }}"
-               class="product-detail__image">
+          <picture>
+            <source srcset="../images/{{ page.image | webp }}" type="image/webp">
+            <img src="../images/{{ page.image }}"
+                 alt="{{ page.title }} - {{ page.german_name }}"
+                 class="product-detail__image"
+                 width="400"
+                 height="400">
+          </picture>
         </div>
         <div class="product-detail__content">
           <h1 class="product-detail__name">{{ page.title }}</h1>

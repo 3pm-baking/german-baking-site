@@ -448,6 +448,29 @@ def _rfc822_filter(value: str) -> str:
     return format_datetime(dt)
 
 
+def _make_webp_filter(base_dir: Path):
+    """Jinja2 filter: convert image path to WebP if a .webp file exists next to it.
+
+    Template passes just the filename (e.g. ``cheesecake.jpg``); the ``images/``
+    or ``../images/`` prefix is part of the template's HTML markup.
+    """
+
+    def _filter(name: str) -> str:
+        if not name:
+            return name
+        webp_name = re.sub(r"\.(jpg|jpeg)$", ".webp", name)
+        # Check images/ first (all product/blog images live there)
+        if (base_dir / "images" / webp_name).exists():
+            return webp_name
+        # Also check raw path (e.g. if "images/foo.jpg" is passed directly)
+        clean = re.sub(r"^(\.\./)+", "", webp_name)
+        if (base_dir / clean).exists():
+            return webp_name
+        return name
+
+    return _filter
+
+
 def build_rss_feed(env: Environment, posts: list[dict]) -> None:
     """Generate the RSS 2.0 feed (feed.xml) from blog posts."""
     template = env.get_template("rss.xml")
@@ -746,6 +769,23 @@ def build_all():
 
     print("Building 3pm German Baking website...\n")
 
+    # Minify CSS (writes styles.min.css, templates reference the .min version)
+    try:
+        from cssmin import cssmin as minify_css
+
+        src = base_dir / "styles.css"
+        dst = base_dir / "styles.min.css"
+        original = src.read_text(encoding="utf-8")
+        minified = minify_css(original)
+        dst.write_text(minified, encoding="utf-8")
+        saved = len(original) - len(minified)
+        print(f"✓ styles.min.css generated ({len(original)} → {len(minified)} bytes, saved {saved} bytes)")
+    except ImportError:
+        print("  (cssmin not available, copying styles.css as-is)")
+        (base_dir / "styles.min.css").write_text(
+            (base_dir / "styles.css").read_text(encoding="utf-8"), encoding="utf-8"
+        )
+
     # Load products by category
     categories = load_products_by_category(content_dir)
 
@@ -771,6 +811,7 @@ def build_all():
         autoescape=select_autoescape(["html", "xml"]),
     )
     env.filters["rfc822"] = _rfc822_filter
+    env.filters["webp"] = _make_webp_filter(base_dir)
 
     # Load "Also Available" items
     market_items = load_also_available(content_dir)

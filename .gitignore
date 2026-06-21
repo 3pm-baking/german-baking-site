@@ -212,6 +212,9 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
+# Build artifacts
+styles.min.css
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
