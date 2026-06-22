@@ -141,12 +141,12 @@ def format_schedule_display(sched: dict) -> str | None:
     try:
         if sched.get("start_date"):
             start = datetime.strptime(str(sched["start_date"]), "%Y-%m-%d")
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         pass
     try:
         if sched.get("end_date"):
             end = datetime.strptime(str(sched["end_date"]), "%Y-%m-%d")
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         pass
 
     if not start and not end:
