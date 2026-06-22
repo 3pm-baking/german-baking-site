@@ -26,8 +26,8 @@
                 <source srcset="../images/{{ post.image | webp }}" type="image/webp">
                 <img src="../images/{{ post.image }}"
                      alt="{{ post.alt_text if post.alt_text else post.title }}"
-                     width="800"
-                     height="533"
+                     width="{{ post.image_width }}"
+                     height="{{ post.image_height }}"
                      data-pin-description="{{ post.meta_description }}"
                      data-pin-url="https://germanbakingasheville.com/blog/{{ post.slug }}.html">
                 <a class="blog-post__pin"
@@ -35,18 +35,27 @@
                    target="_blank"
                    rel="noopener noreferrer"
                    aria-label="Save to Pinterest">Save</a>
-              </div>
-            {% endif %}
-            <div class="blog-post__content">{{ post.content_html | safe }}</div>
-            {% if post.tags %}
-              <div class="blog-post__tags">
-                {% for tag in post.tags %}<span class="blog-post__tag">{{ tag }}</span>{% endfor %}
-              </div>
-            {% endif %}
-            {% include 'partials/share-buttons.html' %}
-          </article>
-        </div>
-      </main>
-      {% include 'partials/footer.html' %}
-    </body>
-  </html>
+              </picture>
+            </div>
+          {% endif %}
+          <div class="blog-post__content">{{ post.content_html | safe }}</div>
+          {% if post.tags %}
+            <div class="blog-post__tags">
+              {% for tag in post.tags %}<span class="blog-post__tag">{{ tag }}</span>{% endfor %}
+            </div>
+          {% endif %}
+          {% include 'partials/share-buttons.html' %}
+        </article>
+      </div>
+    </main>
+    {% include 'partials/footer.html' %}
+    {% if post.has_code %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"
+              defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"
+              defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"
+              defer></script>
+    {% endif %}
+  </body>
+</html>

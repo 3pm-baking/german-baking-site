@@ -20,6 +20,8 @@ import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pydantic import BaseModel, field_validator, model_validator
 
+from mdext.code_block_title import CodeBlockTitleExtension
+
 
 class Badge(StrEnum):
     """Food sensitivity / dietary badges.
@@ -267,12 +269,15 @@ class BlogPost(BaseModel):
     page_title: str | None = None
     og_description: str | None = None
     hide_featured_image: bool = False
+    image_width: int = 800
+    image_height: int = 533
     updated_date: date | None = None
     alt_text: str | None = None
     tags: list[str] = []
     related_products: list[str] = []
     word_count: int = 0
     reading_time: int = 0
+    has_code: bool = False
     content_html: str = ""
     display_date: str = ""
 
@@ -329,14 +334,12 @@ def load_also_available(content_dir: Path) -> list[dict]:
         if raw.get("website") is False:
             print(f"  (skipping website: false — {yaml_file.name})")
             continue
-        items.append(
-            {
-                "title": raw["title"],
-                "german_name": raw.get("german_name", ""),
-                "description": raw.get("description", ""),
-                "badges": raw.get("badges", []),
-            }
-        )
+        items.append({
+            "title": raw["title"],
+            "german_name": raw.get("german_name", ""),
+            "description": raw.get("description", ""),
+            "badges": raw.get("badges", []),
+        })
 
     print(f"Loaded {len(items)} item(s) for 'Also Available'")
     return items
@@ -421,7 +424,11 @@ def load_blog_posts(content_dir: Path) -> list[dict]:
             print(f"  (skipping empty file: {md_file.name})")
             continue
 
-        frontmatter["content_html"] = md.markdown(markdown_body, extensions=["extra"])
+        frontmatter["has_code"] = bool(re.search(r"^[~`]{3,}\s*\w", markdown_body, re.MULTILINE))
+        frontmatter["content_html"] = md.markdown(
+            markdown_body,
+            extensions=["extra", CodeBlockTitleExtension()],
+        )
         post = BlogPost.model_validate(frontmatter)
         raw_posts.append(post)
 

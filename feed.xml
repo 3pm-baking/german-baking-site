@@ -5,13 +5,72 @@
     <link>https://germanbakingasheville.com/blog/</link>
     <description>German baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 14 Jun 2026 09:44:58 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 22 Jun 2026 17:14:47 +0000</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://germanbakingasheville.com/images/logo.png</url>
       <title>3pm German Baking Blog</title>
       <link>https://germanbakingasheville.com/blog/</link>
     </image>
+    
+    <item>
+      <title>Meet Wright, the Open-Source Engine Behind Our Bakery</title>
+      <link>https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html</link>
+      <guid isPermaLink="true">https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html</guid>
+      <pubDate>Mon, 22 Jun 2026 00:00:00 +0000</pubDate>
+      <author>william@germanbakingasheville.com (William)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/wright-logo.png"
+                 length="0"
+                 type="image/png"/>
+      <media:content url="https://germanbakingasheville.com/images/wright-logo.png"
+                     type="image/png"/>
+      
+      <description><![CDATA[<h2>The Engine Behind the Grocery List</h2>
+<p>A couple weeks ago I wrote about how we <a href="/blog/automated-grocery-lists.html">automate our market day grocery lists</a>. That system runs on something I built called <a href="https://github.com/3pm-baking/wright">wright</a>, a Python library for production planning, recipe costing, and shopping list aggregation. It is the engine that does all the math behind scaling recipes, consolidating ingredients, calculating costs, and detecting allergens. We just released it as <a href="https://github.com/3pm-baking/wright">open source</a>.</p>
+<h2>What It Is</h2>
+<p>Wright is a bill-of-materials library. That means it handles the same kind of planning whether you are baking cakes, building a deck, or brewing beer. You define your assemblies (or recipes) with their components and materials (or ingredients), and wright handles the rest. That includes costing from purchase data, grouping shopping lists by store aisle, converting between units, detecting allergens and dietary properties, analyzing nutrition, and tracking supply levels.</p>
+<p>You give it your recipes and your price data, and it does the rest. It is also MIT licensed, so you can adapt it however you need for whatever kind of production planning you are doing.</p>
+<pre><code class="language-python">from decimal import Decimal
+from wright import (
+    Recipe,
+    Ingredient,
+    RecipeComponent,
+    Purchase,
+    calculate_recipe_cost,
+)
+
+# A simplified version of one of our recipes
+lemon_cake = Recipe(
+    name=&quot;Lemon Cake&quot;,
+    components=[
+        RecipeComponent(
+            name=&quot;Batter&quot;,
+            ingredients=[
+                Ingredient(name=&quot;Gluten-Free Flour&quot;, quantity=300, unit=&quot;g&quot;),
+                Ingredient(name=&quot;Dairy-Free Butter&quot;, quantity=200, unit=&quot;g&quot;),
+                # ... additional ingredients omitted
+            ],
+        )
+    ],
+    servings=12,
+)
+
+cost = calculate_recipe_cost(
+    lemon_cake,
+    [
+        Purchase(name=&quot;Gluten-Free Flour&quot;, quantity=2, unit=&quot;lb&quot;, price=Decimal(&quot;3.99&quot;)),
+        Purchase(name=&quot;Dairy-Free Butter&quot;, quantity=8, unit=&quot;oz&quot;, price=Decimal(&quot;2.49&quot;)),
+    ],
+)
+</code></pre>
+<p>That returns a <code>RecipeCost</code> with a breakdown per ingredient and a total cost range. Behind the scenes, wright matches each ingredient name to the purchase data, converts units (300 grams of flour from a 2 pound bag, 200 grams of butter from an 8 ounce package), calculates the right cost, and sums it all up. This is a partial example with only two ingredients, so the total is just for the flour and butter shown here, not the full cake. The library is designed to be flexible enough that you can customize it for whatever kind of production you do, and the same pattern scales to a full production run with multiple recipes, store-aisle grouping, stock deduction, and allergen detection.</p>
+<h2>Why We Released It</h2>
+<p>I have spent years in the open-source ecosystem, mostly on marketing and community for the <a href="https://github.com/pymc-devs/pymc">PyMC</a> project and other libraries in that ecosystem. A lot of what I do ends up public on <a href="https://github.com/williambdean">GitHub</a>. The thing I have always liked most about open source is the collaboration. It reminds me of starting the bakery here in Asheville. The community has been so welcoming, and other market vendors have been incredibly helpful and collaborative. Open-source tools power our bakery too, and we run on Python, Pydantic, and Linux on Razi, standing on the shoulders of everything people have built and shared freely. Wright is one small piece of how I try to contribute back, but it is far from the only one. Being based in North Carolina, I like that this library comes from a place where people build things that help others move forward. If you do any kind of production planning, it is all there on <a href="https://github.com/3pm-baking/wright">GitHub</a>.</p>
+<h2>Back to the Bakery</h2>
+<p>Wright runs the math behind every market day. It is how we know what to buy, what to charge, and what to tell customers who ask about allergens. The cakes that library helps cost and plan end up on our table at the market. If you want to taste what it all adds up to, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">reach out directly</a>.</p>]]></description>
+    </item>
     
     <item>
       <title>How to Order a Whole Cake in the Greater Asheville Area</title>

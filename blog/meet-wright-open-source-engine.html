@@ -12,18 +12,18 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="What is quark? Discover the traditional German dairy product behind authentic Käsekuchen and how one couple found it close to home in Asheville, NC.">
+  <meta name="description" content="Meet wright, an open-source Python library for production planning, recipe costing, and shopping list aggregation. Built by a farmers market bakery in Asheville, NC.">
   <meta name="author" content="William">
   <meta name="robots" content="max-image-preview:large">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="3pm German Baking">
-  <meta property="og:title" content="What Is Quark? The German Ingredient I Learned About the Hard Way | 3pm German Baking Blog">
-  <meta property="og:description" content="My wife Mary sent me to a German grocery store for quark. I had no idea what I was looking for. Now it&#39;s the reason our cheesecake is different from every other bakery in Asheville.">
+  <meta property="og:title" content="Meet Wright, the Open-Source Engine Behind Our Bakery | 3pm German Baking Blog">
+  <meta property="og:description" content="A farmers market bakery built an open-source Python library for production planning and recipe costing. Here is a quick look at wright and why we released it.">
   <meta property="og:url"
-        content="https://germanbakingasheville.com/blog/what-is-quark.html">
+        content="https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html">
   
     <meta property="og:image"
-          content="https://germanbakingasheville.com/images/cheesecake.jpg">
+          content="https://germanbakingasheville.com/images/wright-logo.png">
   
   <meta property="og:image:width" content="400">
   <meta property="og:image:height" content="400">
@@ -31,27 +31,27 @@
         content="3pm German Baking — authentic German baking in Asheville, NC">
   <meta property="og:locale" content="en_US">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="What Is Quark? The German Ingredient I Learned About the Hard Way | 3pm German Baking Blog">
-  <meta name="twitter:description" content="My wife Mary sent me to a German grocery store for quark. I had no idea what I was looking for. Now it&#39;s the reason our cheesecake is different from every other bakery in Asheville.">
+  <meta name="twitter:title" content="Meet Wright, the Open-Source Engine Behind Our Bakery | 3pm German Baking Blog">
+  <meta name="twitter:description" content="A farmers market bakery built an open-source Python library for production planning and recipe costing. Here is a quick look at wright and why we released it.">
   
     <meta name="twitter:image"
-          content="https://germanbakingasheville.com/images/cheesecake.jpg">
+          content="https://germanbakingasheville.com/images/wright-logo.png">
   
   <meta name="twitter:image:alt"
         content="3pm German Baking — authentic German baking in Asheville, NC">
   <meta property="article:published_time"
-        content="2026-05-24T00:00:00-05:00">
+        content="2026-06-22T00:00:00-05:00">
   <meta property="article:modified_time"
-        content="2026-05-24T00:00:00-05:00">
+        content="2026-06-22T00:00:00-05:00">
   <meta property="article:author" content="William">
   
   <link rel="canonical"
-        href="https://germanbakingasheville.com/blog/what-is-quark.html">
+        href="https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html">
   <link rel="alternate"
         type="application/rss+xml"
         href="/feed.xml"
         title="3pm German Baking Blog">
-  <title>What Is Quark? The German Ingredient I Learned About the Hard Way | 3pm German Baking Blog</title>
+  <title>Meet Wright, the Open-Source Engine Behind Our Bakery | 3pm German Baking Blog</title>
   <link rel="icon" type="image/png" href="../images/logo.png">
   <link rel="apple-touch-icon" href="../images/logo.png">
   <link rel="manifest" href="/manifest.json">
@@ -67,6 +67,15 @@
   </noscript>
   <link rel="stylesheet" href="../styles.min.css">
   
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css"
+          media="print"
+          onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    </noscript>
+  
   <meta name="theme-color" content="#1a1a1a">
   <!-- Article Schema -->
   <script type="application/ld+json">
@@ -74,11 +83,11 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "inLanguage": "en-US",
-    "headline": "What Is Quark? The German Ingredient I Learned About the Hard Way",
-    "description": "My wife Mary sent me to a German grocery store for quark. I had no idea what I was looking for. Now it\u0027s the reason our cheesecake is different from every other bakery in Asheville.",
-    "image": "https://germanbakingasheville.com/images/cheesecake.jpg",
-    "datePublished": "2026-05-24T00:00:00-05:00",
-    "dateModified": "2026-05-24T00:00:00-05:00",
+    "headline": "Meet Wright, the Open-Source Engine Behind Our Bakery",
+    "description": "A farmers market bakery built an open-source Python library for production planning and recipe costing. Here is a quick look at wright and why we released it.",
+    "image": "https://germanbakingasheville.com/images/wright-logo.png",
+    "datePublished": "2026-06-22T00:00:00-05:00",
+    "dateModified": "2026-06-22T00:00:00-05:00",
     "author": {
       "@type": "Person",
       "name": "William",
@@ -97,10 +106,10 @@
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://germanbakingasheville.com/blog/what-is-quark.html"
+      "@id": "https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html"
     }
     
-    ,"wordCount": 649
+    ,"wordCount": 593
     ,"contentLocation": {
       "@type": "Place",
       "name": "Asheville, North Carolina",
@@ -134,8 +143,8 @@
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "What Is Quark? The German Ingredient I Learned About the Hard Way",
-        "item": "https://germanbakingasheville.com/blog/what-is-quark.html"
+        "name": "Meet Wright, the Open-Source Engine Behind Our Bakery",
+        "item": "https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html"
       }
     ]
   }
@@ -159,13 +168,13 @@
       <div class="container container--narrow">
         <article>
           <header class="blog-post__header">
-            <h1 class="blog-post__title">What Is Quark? The German Ingredient I Learned About the Hard Way</h1>
+            <h1 class="blog-post__title">Meet Wright, the Open-Source Engine Behind Our Bakery</h1>
             <div class="blog-post__meta">
-              <time class="blog-post__date" datetime="2026-05-24">May 24, 2026</time>
+              <time class="blog-post__date" datetime="2026-06-22">June 22, 2026</time>
               <span class="blog-post__separator">·</span>
               <span class="blog-post__author">William</span>
               <span class="blog-post__separator">·</span>
-              <span class="blog-post__reading-time">4 min read</span>
+              <span class="blog-post__reading-time">3 min read</span>
             </div>
             <div class="divider">
               <span class="divider__icon">✿</span>
@@ -174,47 +183,69 @@
           
             <div class="blog-post__featured-image">
               <picture>
-                <source srcset="../images/cheesecake.webp" type="image/webp">
-                <img src="../images/cheesecake.jpg"
-                     alt="What Is Quark? The German Ingredient I Learned About the Hard Way"
-                     width="800"
-                     height="533"
-                     data-pin-description="What is quark? Discover the traditional German dairy product behind authentic Käsekuchen and how one couple found it close to home in Asheville, NC."
-                     data-pin-url="https://germanbakingasheville.com/blog/what-is-quark.html">
+                <source srcset="../images/wright-logo.png" type="image/webp">
+                <img src="../images/wright-logo.png"
+                     alt="Meet Wright, the Open-Source Engine Behind Our Bakery"
+                     width="400"
+                     height="425"
+                     data-pin-description="Meet wright, an open-source Python library for production planning, recipe costing, and shopping list aggregation. Built by a farmers market bakery in Asheville, NC."
+                     data-pin-url="https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html">
                 <a class="blog-post__pin"
-                   href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/what-is-quark.html&description=What%20Is%20Quark%3F%20The%20German%20Ingredient%20I%20Learned%20About%20the%20Hard%20Way&media=https://germanbakingasheville.com/images/cheesecake.jpg"
+                   href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html&description=Meet%20Wright%2C%20the%20Open-Source%20Engine%20Behind%20Our%20Bakery&media=https://germanbakingasheville.com/images/wright-logo.png"
                    target="_blank"
                    rel="noopener noreferrer"
                    aria-label="Save to Pinterest">Save</a>
               </picture>
             </div>
           
-          <div class="blog-post__content"><h2>The First Time I Heard "Quark"</h2>
-<p>When my wife, Mary, first sent me to a German grocery store to pick up quark, I stood in the dairy aisle completely lost.</p>
-<p>It wasn't yogurt. It wasn't sour cream. It wasn't cream cheese. It was an entire category of dairy I, as an American, had never encountered in my life. I stared at the tubs, texted Mary, and tried to match the label to whatever she'd described. That moment, the American husband fumbling through a Berlin supermarket, is where this story starts.</p>
-<h2>So What Actually Is Quark?</h2>
-<p>Quark is a fresh dairy product made by warming soured milk until it curdles, then straining the curds. I didn't have a reference point for it at first. Yogurt's too thin, cream cheese is too heavy. Quark sits in between, but with a tang of its own.</p>
-<p>What German cheesecake recipes call for specifically is <em>Magerquark</em>, fat-free quark. Unlike cream cheese, which relies on gums and stabilizers for body, quark is just milk, culture, and time. That simplicity is why it behaves differently when you bake with it.</p>
-<h2>Why It Matters for the Cheesecake</h2>
-<p>In Germany, <em>Kaffee und Kuchen</em>, afternoon coffee and cake, is a short break in the day. It's not a heavy dessert moment. It's not the finale of a restaurant meal. It's 3 p.m., a cup of coffee, and something that doesn't sit in your stomach like a brick.</p>
-<p>New York cheesecake is dense and rich. It's built to be the last thing you eat. German cheesecake, <em>Käsekuchen</em>, is lighter, tangier, and meant to pair with an afternoon coffee. Quark is the reason for that difference. Different dairy, different texture, different purpose altogether.</p>
-<h2>The Hunt for Quark in America</h2>
-<p>When Mary started 3pm German Baking, one of the first things we tackled was finding quark. But it isn't exactly sitting next to the Philadelphia cream cheese at Ingles.</p>
-<p>We experimented with what we could find. Fat-free yogurt and sour cream got us in the ballpark, close enough to work with while we kept searching for something better.</p>
-<p>Before we moved back to the US, we sat around the kitchen table in Germany with Mary's parents and did a blind taste test. Real quark versus the yogurt and sour cream combination. Since you can buy the same brands of yogurt and sour cream in both countries, it was a fair fight. Mary's parents tasted both. The homemade version wasn't perfect, but it held up.</p>
-<p>For me, still learning the differences in German dairy products, it was an education. Mary's parents could pick out subtleties I'd never have noticed. But that's part of the process, building my palate while helping with the quality assurance.</p>
-<p>There was plenty of trial and error. The reality of running a German bakery in the US is that some ingredients simply aren't on the shelf, and you learn to get creative.</p>
-<h2>Finding It Close to Home</h2>
-<p>At the Black Mountain Tailgate Market, we met Aaron from <a href="https://www.instagram.com/threesisterscheese/">Three Sisters Cheese</a>, a fellow vendor and another regular at the market. We got to talking, and he helped us get something much closer to real quark than anything we could manage with store-bought approximations.</p>
-<p>There was some trial and error there too. But now we're glad to support his business while he helps us make our cheesecake more authentic. That kind of collaboration, vendors supporting vendors, is one of the reasons showing up at the market matters.</p>
-<h2>From Confusion to the Oven</h2>
-<p>What started as confusion in a German grocery aisle became an appreciation for an ingredient most Americans have never heard of. Now Mary and I get to share that with our customers and source it from someone we know at the market, not a distributor.</p>
-<p>Our <a href="/products/german-cheesecake.html">German Cheesecake</a> is where quark really shines. If you're curious to taste the difference, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">reach out directly</a>.</p></div>
+          <div class="blog-post__content"><h2>The Engine Behind the Grocery List</h2>
+<p>A couple weeks ago I wrote about how we <a href="/blog/automated-grocery-lists.html">automate our market day grocery lists</a>. That system runs on something I built called <a href="https://github.com/3pm-baking/wright">wright</a>, a Python library for production planning, recipe costing, and shopping list aggregation. It is the engine that does all the math behind scaling recipes, consolidating ingredients, calculating costs, and detecting allergens. We just released it as <a href="https://github.com/3pm-baking/wright">open source</a>.</p>
+<h2>What It Is</h2>
+<p>Wright is a bill-of-materials library. That means it handles the same kind of planning whether you are baking cakes, building a deck, or brewing beer. You define your assemblies (or recipes) with their components and materials (or ingredients), and wright handles the rest. That includes costing from purchase data, grouping shopping lists by store aisle, converting between units, detecting allergens and dietary properties, analyzing nutrition, and tracking supply levels.</p>
+<p>You give it your recipes and your price data, and it does the rest. It is also MIT licensed, so you can adapt it however you need for whatever kind of production planning you are doing.</p>
+<pre><code class="language-python">from decimal import Decimal
+from wright import (
+    Recipe,
+    Ingredient,
+    RecipeComponent,
+    Purchase,
+    calculate_recipe_cost,
+)
+
+# A simplified version of one of our recipes
+lemon_cake = Recipe(
+    name=&quot;Lemon Cake&quot;,
+    components=[
+        RecipeComponent(
+            name=&quot;Batter&quot;,
+            ingredients=[
+                Ingredient(name=&quot;Gluten-Free Flour&quot;, quantity=300, unit=&quot;g&quot;),
+                Ingredient(name=&quot;Dairy-Free Butter&quot;, quantity=200, unit=&quot;g&quot;),
+                # ... additional ingredients omitted
+            ],
+        )
+    ],
+    servings=12,
+)
+
+cost = calculate_recipe_cost(
+    lemon_cake,
+    [
+        Purchase(name=&quot;Gluten-Free Flour&quot;, quantity=2, unit=&quot;lb&quot;, price=Decimal(&quot;3.99&quot;)),
+        Purchase(name=&quot;Dairy-Free Butter&quot;, quantity=8, unit=&quot;oz&quot;, price=Decimal(&quot;2.49&quot;)),
+    ],
+)
+</code></pre>
+<p>That returns a <code>RecipeCost</code> with a breakdown per ingredient and a total cost range. Behind the scenes, wright matches each ingredient name to the purchase data, converts units (300 grams of flour from a 2 pound bag, 200 grams of butter from an 8 ounce package), calculates the right cost, and sums it all up. This is a partial example with only two ingredients, so the total is just for the flour and butter shown here, not the full cake. The library is designed to be flexible enough that you can customize it for whatever kind of production you do, and the same pattern scales to a full production run with multiple recipes, store-aisle grouping, stock deduction, and allergen detection.</p>
+<h2>Why We Released It</h2>
+<p>I have spent years in the open-source ecosystem, mostly on marketing and community for the <a href="https://github.com/pymc-devs/pymc">PyMC</a> project and other libraries in that ecosystem. A lot of what I do ends up public on <a href="https://github.com/williambdean">GitHub</a>. The thing I have always liked most about open source is the collaboration. It reminds me of starting the bakery here in Asheville. The community has been so welcoming, and other market vendors have been incredibly helpful and collaborative. Open-source tools power our bakery too, and we run on Python, Pydantic, and Linux on Razi, standing on the shoulders of everything people have built and shared freely. Wright is one small piece of how I try to contribute back, but it is far from the only one. Being based in North Carolina, I like that this library comes from a place where people build things that help others move forward. If you do any kind of production planning, it is all there on <a href="https://github.com/3pm-baking/wright">GitHub</a>.</p>
+<h2>Back to the Bakery</h2>
+<p>Wright runs the math behind every market day. It is how we know what to buy, what to charge, and what to tell customers who ask about allergens. The cakes that library helps cost and plan end up on our table at the market. If you want to taste what it all adds up to, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">reach out directly</a>.</p></div>
           
           <div class="share-bar" aria-label="Share this article">
   <div class="share-bar__buttons">
     <span class="share-bar__label">Share</span>
-    <a href="https://twitter.com/intent/tweet?text=What%20Is%20Quark%3F%20The%20German%20Ingredient%20I%20Learned%20About%20the%20Hard%20Way&url=https://germanbakingasheville.com/blog/what-is-quark.html"
+    <a href="https://twitter.com/intent/tweet?text=Meet%20Wright%2C%20the%20Open-Source%20Engine%20Behind%20Our%20Bakery&url=https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html"
        class="share-bar__button share-bar__button--twitter"
        target="_blank"
        rel="noopener noreferrer"
@@ -223,7 +254,7 @@
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
       </svg>
     </a>
-    <a href="https://www.facebook.com/sharer/sharer.php?u=https://germanbakingasheville.com/blog/what-is-quark.html"
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html"
        class="share-bar__button share-bar__button--facebook"
        target="_blank"
        rel="noopener noreferrer"
@@ -233,7 +264,7 @@
       </svg>
     </a>
     
-      <a href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/what-is-quark.html&description=What%20Is%20Quark%3F%20The%20German%20Ingredient%20I%20Learned%20About%20the%20Hard%20Way&media=https://germanbakingasheville.com/images/cheesecake.jpg"
+      <a href="https://pinterest.com/pin/create/button/?url=https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html&description=Meet%20Wright%2C%20the%20Open-Source%20Engine%20Behind%20Our%20Bakery&media=https://germanbakingasheville.com/images/wright-logo.png"
          class="share-bar__button share-bar__button--pinterest"
          target="_blank"
          rel="noopener noreferrer"
@@ -243,7 +274,7 @@
         </svg>
       </a>
     
-    <a href="mailto:?subject=What%20Is%20Quark%3F%20The%20German%20Ingredient%20I%20Learned%20About%20the%20Hard%20Way&body=https://germanbakingasheville.com/blog/what-is-quark.html"
+    <a href="mailto:?subject=Meet%20Wright%2C%20the%20Open-Source%20Engine%20Behind%20Our%20Bakery&body=https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html"
        class="share-bar__button share-bar__button--email"
        aria-label="Share via email">
       <svg viewBox="0 0 24 24"
@@ -298,8 +329,8 @@
 (function() {
   var copyBtn = document.querySelector('.share-bar__button--copy');
   var nativeBtn = document.querySelector('.share-bar__button--native');
-  var url = 'https://germanbakingasheville.com/blog/what-is-quark.html';
-  var title = "What Is Quark? The German Ingredient I Learned About the Hard Way";
+  var url = 'https://germanbakingasheville.com/blog/meet-wright-open-source-engine.html';
+  var title = "Meet Wright, the Open-Source Engine Behind Our Bakery";
 
   if (navigator.share) {
     nativeBtn.style.display = '';
@@ -357,6 +388,13 @@
     <p class="footer__copyright">All rights reserved.</p>
   </div>
 </footer>
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"
+              defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"
+              defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"
+              defer></script>
     
   </body>
 </html>

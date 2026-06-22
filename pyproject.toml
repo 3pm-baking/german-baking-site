@@ -27,6 +27,7 @@ max_line_length = 140
 
 [tool.ruff]
 line-length = 120
+preview = true
 
 [tool.ruff.format]
 indent-style = "space"
