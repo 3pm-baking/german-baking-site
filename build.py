@@ -14,6 +14,7 @@ from datetime import UTC, date, datetime
 from email.utils import format_datetime
 from enum import StrEnum
 from pathlib import Path
+from typing import Self
 
 import markdown as md
 import yaml
@@ -107,7 +108,7 @@ class Product(BaseModel):
         return v if v is not None else []
 
     @model_validator(mode="after")
-    def set_derived_defaults(self) -> Product:
+    def set_derived_defaults(self) -> Self:
         if self.page_title is None:
             self.page_title = f"{self.title} | 3pm German Baking"
         if self.og_description is None:
@@ -249,7 +250,7 @@ class Location(BaseModel):
         return data
 
     @model_validator(mode="after")
-    def compute_status(self) -> Location:
+    def compute_status(self) -> Self:
         if self.start_date and self.end_date:
             today = date.today()
             self.upcoming = self.start_date > today
@@ -282,7 +283,7 @@ class BlogPost(BaseModel):
     display_date: str = ""
 
     @model_validator(mode="after")
-    def set_derived_defaults(self) -> BlogPost:
+    def set_derived_defaults(self) -> Self:
         if self.page_title is None:
             self.page_title = f"{self.title} | 3pm German Baking Blog"
         if self.og_description is None:
