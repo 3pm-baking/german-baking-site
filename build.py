@@ -142,12 +142,12 @@ def format_schedule_display(sched: dict) -> str | None:
     try:
         if sched.get("start_date"):
             start = datetime.strptime(str(sched["start_date"]), "%Y-%m-%d")
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         pass
     try:
         if sched.get("end_date"):
             end = datetime.strptime(str(sched["end_date"]), "%Y-%m-%d")
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         pass
 
     if not start and not end:
@@ -818,6 +818,9 @@ def build_all():
         loader=FileSystemLoader(templates_dir),
         autoescape=select_autoescape(["html", "xml"]),
     )
+    analytics_disabled = os.environ.get("ANALYTICS_DISABLED", "").lower() in ("1", "true", "yes")
+    env.globals["analytics_disabled"] = analytics_disabled
+
     env.filters["rfc822"] = _rfc822_filter
     env.filters["webp"] = _make_webp_filter(base_dir)
 
