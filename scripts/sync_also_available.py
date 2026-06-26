@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
 """
-Sync 'Also Available' items from local market/recipe data.
+DEPRECATED — use `expenses sync-site --output-dir` instead.
+
+This script creates stub YAML files without badges, prices, or the
+`# DO NOT EDIT` header. Use the expenses CLI instead:
+
+    cd ~/github/personal/3pm/expenses
+    uv run expenses sync-site --output-dir site/content/products
+
+That command uses the same code as the GitHub repo dispatch (site_sync.py)
+and produces files with proper badges, prices, and correct slugs.
+
+---
+Legacy docstring kept for reference:
 
 Reads all market session files from the sibling expenses repo to collect
 every recipe name ever sold, then writes YAML files into
@@ -40,6 +52,10 @@ EXCLUDED: set[str] = {
     "Chocolate Pudding Powder 300g",
     "Vanilla Pudding Powder 300g",
     "Vanilla Sugar 100g",
+    # Frosting variants (don't list separately from core product)
+    "Lemon Cake with Frosting",
+    "Raspberry Sheet Cake with Cream Cheese Frosting",
+    "Strawberry Sheet Cake with Cream Cheese Frosting",
     # Explicitly skipped
     "Terrazzo Cheesecake",
     "Cake Pops",
@@ -56,6 +72,20 @@ def slugify(name: str) -> str:
 
 
 def main() -> None:
+    import sys as _sys
+    print(
+        "WARNING: sync_also_available.py is DEPRECATED.",
+        file=_sys.stderr,
+    )
+    print(
+        "  Use `uv run expenses sync-site --output-dir site/content/products` instead.",
+        file=_sys.stderr,
+    )
+    print(
+        "  See the docstring at the top of this file for details.\n",
+        file=_sys.stderr,
+    )
+
     base_dir = Path(__file__).parent.parent
     # Site is a git submodule inside the expenses repo, so
     # base_dir.parent is already the expenses repo root.
