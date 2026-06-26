@@ -760,6 +760,26 @@ section {
   opacity: 0.7;
 }
 
+.footer__legal {
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.8rem;
+}
+
+.footer__legal a {
+  color: var(--color-text-light);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footer__legal a:hover {
+  opacity: 0.7;
+}
+
+.footer__separator {
+  margin: 0 0.5rem;
+  color: var(--color-border);
+}
+
 .footer__copyright {
   font-size: 0.8rem;
   color: var(--color-text-light);

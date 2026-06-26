@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include 'partials/analytics.html' %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ page.meta_description }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="3pm German Baking">
+    <meta property="og:title" content="{{ page.title }} | 3pm German Baking">
+    <meta property="og:description" content="{{ page.meta_description }}">
+    <meta property="og:url"
+          content="https://germanbakingasheville.com/{{ page.slug }}.html">
+    <meta property="og:image"
+          content="https://germanbakingasheville.com/images/logo.png">
+    <meta property="og:image:width" content="400">
+    <meta property="og:image:height" content="400">
+    <meta property="og:image:alt"
+          content="3pm German Baking logo — authentic German baking in Asheville, NC">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page.title }} | 3pm German Baking">
+    <meta name="twitter:description" content="{{ page.meta_description }}">
+    <meta name="twitter:image"
+          content="https://germanbakingasheville.com/images/logo.png">
+    <meta name="twitter:image:alt"
+          content="3pm German Baking — authentic German baking in Asheville, NC">
+    <link rel="canonical"
+          href="https://germanbakingasheville.com/{{ page.slug }}.html">
+    <title>{{ page.title }} | 3pm German Baking</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+          media="print"
+          onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+    </noscript>
+    <link rel="stylesheet" href="styles.min.css">
+    <meta name="theme-color" content="#1a1a1a">
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header class="blog-header">
+      <div class="container">
+        <a href="index.html" class="blog-header__logo-link">
+          <img src="images/logo.png"
+               alt="3pm German Baking"
+               width="400"
+               height="400"
+               class="blog-header__logo">
+        </a>
+      </div>
+    </header>
+    <main id="main-content" class="blog-post">
+      <div class="container container--narrow">
+        <article>
+          <header class="blog-post__header">
+            <h1 class="blog-post__title">{{ page.title }}</h1>
+            <div class="divider">
+              <span class="divider__icon">✿</span>
+            </div>
+          </header>
+          <div class="blog-post__content">{{ page.content_html | safe }}</div>
+        </article>
+      </div>
+    </main>
+    {% include 'partials/footer.html' %}
+  </body>
+</html>

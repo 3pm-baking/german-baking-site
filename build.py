@@ -759,6 +759,51 @@ def build_product_pages(env, categories, product_to_blog_posts=None):
     return built_count, errors
 
 
+def build_static_pages(env: Environment, pages_dir: Path) -> int:
+    """Generate static pages from markdown files in content/pages/.
+
+    Each file has YAML frontmatter followed by markdown content.
+    Rendered using templates/page.html.
+
+    Returns the number of pages built.
+    """
+    if not pages_dir.exists():
+        print("Warning: content/pages/ not found, skipping static pages")
+        return 0
+
+    template = env.get_template("page.html")
+    built_count = 0
+
+    for md_file in sorted(pages_dir.glob("*.md")):
+        raw_text = md_file.read_text(encoding="utf-8")
+        parts = raw_text.split("---", 2)
+        if len(parts) < 3:
+            print(f"  (skipping {md_file.name}: no valid frontmatter)")
+            continue
+
+        frontmatter_raw = parts[1].strip()
+        markdown_body = parts[2].strip()
+
+        frontmatter = yaml.safe_load(frontmatter_raw)
+        if not frontmatter:
+            print(f"  (skipping empty file: {md_file.name})")
+            continue
+
+        frontmatter["content_html"] = md.markdown(
+            markdown_body,
+            extensions=["extra"],
+        )
+
+        html = template.render(page=frontmatter)
+        slug = frontmatter.get("slug", md_file.stem)
+        output_file = Path(__file__).parent / f"{slug}.html"
+        output_file.write_text(html, encoding="utf-8")
+        print(f"✓ {md_file.name} → {output_file.name}")
+        built_count += 1
+
+    return built_count
+
+
 def build_all():
     """Main build function - generates landing page and product pages."""
     # Setup paths
@@ -832,6 +877,10 @@ def build_all():
     # Build landing page
     build_landing_page(env, categories, locations, market_items, blog_posts)
 
+    # Build static pages (privacy, terms, etc.)
+    pages_dir = base_dir / "content" / "pages"
+    page_count = build_static_pages(env, pages_dir)
+
     # Update sitemap lastmod for homepage and regenerate product entries
     update_sitemap(base_dir, product_slugs=all_product_slugs)
 
@@ -846,7 +895,7 @@ def build_all():
     # Update sitemap with blog entries
     update_sitemap(base_dir, product_slugs=all_product_slugs, blog_posts=blog_posts)
 
-    print(f"\nBuild complete! Landing page + {built_count} product pages + {blog_count} blog posts generated.")
+    print(f"\nBuild complete! Landing page + {built_count} product pages + {blog_count} blog posts + {page_count} static pages generated.")
 
     total_errors = errors + blog_errors
     if total_errors:

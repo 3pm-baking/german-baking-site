@@ -57,7 +57,9 @@ def slugify(name: str) -> str:
 
 def main() -> None:
     base_dir = Path(__file__).parent.parent
-    expenses_data = base_dir.parent / "expenses" / "data"
+    # Site is a git submodule inside the expenses repo, so
+    # base_dir.parent is already the expenses repo root.
+    expenses_data = base_dir.parent / "data"
     markets_dir = expenses_data / "markets"
     recipes_dir = expenses_data / "recipes"
     also_available_dir = base_dir / "content" / "products" / "also-available"
