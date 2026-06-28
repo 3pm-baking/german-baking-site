@@ -10,7 +10,8 @@ Reads markdown files from content/blog/ and generates blog/index.html + blog/*.h
 import os
 import re
 import sys
-from datetime import UTC, date, datetime
+from calendar import Calendar
+from datetime import UTC, date, datetime, timedelta
 from email.utils import format_datetime
 from enum import StrEnum
 from pathlib import Path
@@ -393,6 +394,120 @@ def load_locations(content_dir: Path) -> list:
     return locations
 
 
+# ---------------------------------------------------------------------------
+# Market calendar builder
+# ---------------------------------------------------------------------------
+
+
+def _parse_date(value: object) -> date:
+    """Return a date from a date object or ISO-format string."""
+    if isinstance(value, date):
+        return value
+    return datetime.strptime(str(value)[:10], "%Y-%m-%d").date()
+
+
+def _is_market_day(d: date, schedule: dict) -> bool:
+    """Check if *d* falls on a market day according to *schedule*."""
+    start = _parse_date(schedule["start_date"])
+    end = _parse_date(schedule["end_date"])
+    if d < start or d > end:
+        return False
+    freq = schedule.get("frequency", {})
+    interval = int(freq.get("interval_weeks", 1)) * 7
+    offset = int(freq.get("offset_weeks", 0)) * 7
+    first = start + timedelta(days=offset)
+    return (d - first).days % interval == 0
+
+
+def _classify_cell(d: date, schedules: list[dict]) -> str | None:
+    """Classify a single date against all market schedules.
+
+    Returns ``'active'``, ``'excluded'``, ``'normal'``, or ``'off_season'``.
+    """
+    active = False
+    excluded = False
+    for s in schedules:
+        if not _is_market_day(d, s):
+            continue
+        raw_exclude = s.get("exclude_dates", [])
+        ex_set = {_parse_date(x) for x in raw_exclude} if raw_exclude else set()
+        if d in ex_set:
+            excluded = True
+        else:
+            active = True
+    if active:
+        return "active"
+    if excluded:
+        return "excluded"
+    for s in schedules:
+        start = _parse_date(s["start_date"])
+        end = _parse_date(s["end_date"])
+        if start <= d <= end:
+            return "normal"
+    return "off_season"
+
+
+def _add_months(source: date, n: int) -> date:
+    """Return the first of the month *n* months from *source*."""
+    total = source.year * 12 + source.month - 1 + n
+    return date(total // 12, total % 12 + 1, 1)
+
+
+def build_market_calendars(locations_dir: Path) -> list[dict]:
+    """Build calendar data for the current and next month.
+
+    Reads location YAML files directly to extract raw schedule data,
+    then computes which days in each month are active market days.
+
+    Returns a list of calendar dicts, one per month, each with::
+
+        {"month_name": "July 2026",
+         "weeks": [[{"day": 1, "kind": "active"}, ...], ...]}
+
+    Returns an empty list if no schedules are found.
+    """
+    if not locations_dir.is_dir():
+        return []
+
+    schedules: list[dict] = []
+    for yaml_file in sorted(locations_dir.glob("*.yml")):
+        raw = yaml.safe_load(yaml_file.read_text(encoding="utf-8"))
+        if not raw:
+            continue
+        sched = raw.get("schedule")
+        if isinstance(sched, dict):
+            schedules.append(sched)
+
+    if not schedules:
+        return []
+
+    today = date.today()
+    months: list[dict] = []
+    cal = Calendar(firstweekday=6)  # Sunday first
+
+    for offset in range(2):
+        month_date = _add_months(today, offset)
+        y, m = month_date.year, month_date.month
+
+        weeks: list[list[dict]] = []
+        for cal_week in cal.monthdatescalendar(y, m):
+            week: list[dict] = []
+            for d in cal_week:
+                if d.month != m:
+                    week.append({"day": None, "kind": None})
+                else:
+                    week.append({"day": d.day, "kind": _classify_cell(d, schedules)})
+            weeks.append(week)
+
+        months.append({
+            "month_name": month_date.strftime("%B %Y"),
+            "weeks": weeks,
+        })
+
+    print(f"Built market calendars for {months[0]['month_name']} and {months[1]['month_name']}")
+    return months
+
+
 def load_blog_posts(content_dir: Path) -> list[dict]:
     """Load blog posts from content/blog/*.md.
 
@@ -690,7 +805,7 @@ def load_products_by_category(content_dir: Path) -> dict:
     return categories
 
 
-def build_landing_page(env, categories, locations, market_items, blog_posts):
+def build_landing_page(env, categories, locations, market_items, blog_posts, market_calendars=None):
     """Generate the landing page (index.html) from template."""
     template = env.get_template("index.html")
 
@@ -704,6 +819,7 @@ def build_landing_page(env, categories, locations, market_items, blog_posts):
         badge_icons=BADGE_ICONS,
         badge_labels=BADGE_LABELS,
         recent_posts=recent_posts,
+        market_calendars=market_calendars or [],
     )
 
     # Write to root directory
@@ -845,6 +961,9 @@ def build_all():
     # Load farmers market locations
     locations = load_locations(content_dir)
 
+    # Build market calendars for Find Us section
+    market_calendars = build_market_calendars(base_dir / "content" / "locations")
+
     # Load blog posts
     blog_posts = load_blog_posts(content_dir)
 
@@ -875,7 +994,7 @@ def build_all():
     print()  # Blank line
 
     # Build landing page
-    build_landing_page(env, categories, locations, market_items, blog_posts)
+    build_landing_page(env, categories, locations, market_items, blog_posts, market_calendars=market_calendars)
 
     # Build static pages (privacy, terms, etc.)
     pages_dir = base_dir / "content" / "pages"

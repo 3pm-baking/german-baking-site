@@ -318,6 +318,21 @@
               {% endfor %}
             </div>
           {% endif %}
+          {% if market_calendars %}
+            <h3 class="find-us__subheading">Market Calendar</h3>
+            <div class="market-calendars">
+              {% for cal in market_calendars %}
+                {% include 'partials/market-calendar.html' %}
+              {% endfor %}
+            </div>
+            <p class="market-calendar__disclaimer">
+              Schedule may change — follow us on
+              <a href="https://instagram.com/3pmgermanbaking" target="_blank" rel="noopener noreferrer">Instagram</a>
+              and
+              <a href="https://facebook.com/3pmgermanbaking" target="_blank" rel="noopener noreferrer">Facebook</a>
+              for the latest updates.
+            </p>
+          {% endif %}
           <h3 class="find-us__subheading">Other Ways to Order</h3>
           <div class="find-us__options">
             <div class="find-us__option">

@@ -1,0 +1,27 @@
+<div class="market-calendar">
+  <h4 class="market-calendar__title">{{ cal.month_name }}</h4>
+  <table class="market-calendar__table">
+    <thead>
+      <tr>
+        <th>S</th>
+        <th>M</th>
+        <th>T</th>
+        <th>W</th>
+        <th>T</th>
+        <th>F</th>
+        <th>S</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for week in cal.weeks %}
+      <tr>
+        {% for cell in week %}
+        <td class="market-calendar__cell{% if cell.kind %} market-calendar__cell--{{ cell.kind }}{% endif %}">
+          {{ cell.day if cell.day }}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
