@@ -697,6 +697,14 @@ section {
   border-radius: 3px;
 }
 
+.market-calendar__cell--today {
+  font-weight: 700;
+  color: #c0392b;
+  outline: 2px solid #c0392b;
+  outline-offset: -2px;
+  border-radius: 3px;
+}
+
 .market-calendar__cell--excluded {
   color: var(--color-text-light);
   opacity: 0.4;

@@ -419,11 +419,14 @@ def _is_market_day(d: date, schedule: dict) -> bool:
     return (d - first).days % interval == 0
 
 
-def _classify_cell(d: date, schedules: list[dict]) -> str | None:
+def _classify_cell(d: date, schedules: list[dict], today: date | None = None) -> str | None:
     """Classify a single date against all market schedules.
 
-    Returns ``'active'``, ``'excluded'``, ``'normal'``, or ``'off_season'``.
+    Returns ``'today'`` (if *d* matches *today*), ``'active'``, ``'excluded'``,
+    ``'normal'``, or ``'off_season'``.
     """
+    if today is not None and d == today:
+        return "today"
     active = False
     excluded = False
     for s in schedules:
@@ -496,7 +499,7 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
                 if d.month != m:
                     week.append({"day": None, "kind": None})
                 else:
-                    week.append({"day": d.day, "kind": _classify_cell(d, schedules)})
+                    week.append({"day": d.day, "kind": _classify_cell(d, schedules, today)})
             weeks.append(week)
 
         months.append({
