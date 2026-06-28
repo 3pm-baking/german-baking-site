@@ -17,7 +17,7 @@
       <tr>
         {% for cell in week %}
         <td class="market-calendar__cell{% if cell.kind %} market-calendar__cell--{{ cell.kind }}{% endif %}">
-          {{ cell.day if cell.day }}
+          {% if cell.day %}<span class="market-calendar__day">{{ cell.day }}</span>{% endif %}
         </td>
         {% endfor %}
       </tr>
