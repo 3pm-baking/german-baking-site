@@ -669,7 +669,7 @@ section {
 .market-calendar__table {
   border-collapse: collapse;
   width: 100%;
-  max-width: 230px;
+  max-width: 280px;
   font-size: 0.85rem;
   text-align: center;
   margin: 0 auto;
@@ -685,7 +685,7 @@ section {
 }
 
 .market-calendar__cell {
-  padding: 5px 2px;
+  padding: 6px 4px;
   width: 14.28%;
   color: var(--color-text-light);
 }
@@ -712,7 +712,7 @@ section {
   font-size: 0.85rem;
   color: var(--color-text-light);
   margin-top: var(--spacing-md);
-  margin-bottom: 0;
+  margin-bottom: var(--spacing-lg);
 }
 
 .market-calendar__disclaimer a {
