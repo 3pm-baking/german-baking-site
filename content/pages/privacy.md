@@ -37,7 +37,7 @@ We use your information to:
 
 ## Email Communications
 
-If you join our mailing list, we will send you occasional updates about new products, market appearances, and bakery news. You can unsubscribe at any time by clicking the unsubscribe link at the bottom of any email we send.
+If you join our mailing list, we will send you occasional updates about new products, market appearances, and bakery news. You can unsubscribe at any time by clicking the unsubscribe link at the bottom of any email we send, or visit our [unsubscribe page](https://newsletter.germanbakingasheville.com/unsubscribe) directly.
 
 We do not send marketing emails to customers who have not opted into the mailing list.
 

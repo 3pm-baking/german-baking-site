@@ -456,6 +456,20 @@ def _add_months(source: date, n: int) -> date:
     return date(total // 12, total % 12 + 1, 1)
 
 
+def _get_active_markets(d: date, schedules: list[dict]) -> list[str]:
+    """Return the names of markets active on *d*."""
+    names: list[str] = []
+    for entry in schedules:
+        sched = entry["schedule"]
+        if not _is_market_day(d, sched):
+            continue
+        raw_exclude = sched.get("exclude_dates", [])
+        ex_set = {_parse_date(x) for x in raw_exclude} if raw_exclude else set()
+        if d not in ex_set:
+            names.append(entry["name"])
+    return names
+
+
 def build_market_calendars(locations_dir: Path) -> list[dict]:
     """Build calendar data for the current and next month.
 
@@ -465,7 +479,7 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
     Returns a list of calendar dicts, one per month, each with::
 
         {"month_name": "July 2026",
-         "weeks": [[{"day": 1, "kind": "active"}, ...], ...]}
+         "weeks": [[{"day": 1, "kind": "active", "markets": ["West Asheville..."]}, ...], ...]}
 
     Returns an empty list if no schedules are found.
     """
@@ -479,7 +493,7 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
             continue
         sched = raw.get("schedule")
         if isinstance(sched, dict):
-            schedules.append(sched)
+            schedules.append({"name": raw.get("name", ""), "schedule": sched})
 
     if not schedules:
         return []
@@ -497,9 +511,11 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
             week: list[dict] = []
             for d in cal_week:
                 if d.month != m:
-                    week.append({"day": None, "kind": None})
+                    week.append({"day": None, "kind": None, "markets": []})
                 else:
-                    week.append({"day": d.day, "kind": _classify_cell(d, schedules, today)})
+                    kind = _classify_cell(d, [e["schedule"] for e in schedules], today)
+                    markets = _get_active_markets(d, schedules)
+                    week.append({"day": d.day, "kind": kind, "markets": markets})
             weeks.append(week)
 
         months.append({

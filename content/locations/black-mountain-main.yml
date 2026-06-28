@@ -3,10 +3,10 @@
 name: Black Mountain Tailgate Market
 address: First Baptist Church, Black Mountain, NC
 url: https://blackmountainmarket.org/
-schedule_display: Saturdays, May 2 – November 21 · 9am–12pm
+schedule_display: Saturdays, May 2 – November 28 · 9am–12pm
 schedule:
   start_date: '2026-05-02'
-  end_date: '2026-11-21'
+  end_date: '2026-11-28'
   start_time: 09:00
   end_time: '12:00'
   day_of_week: Saturday

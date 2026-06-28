@@ -688,6 +688,7 @@ section {
   padding: 6px 4px;
   width: 14.28%;
   color: var(--color-text-light);
+  position: relative;
 }
 
 .market-calendar__cell--active {
@@ -703,12 +704,40 @@ section {
 }
 
 .market-calendar__cell--today .market-calendar__day {
-  border: 2px solid #000000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  min-width: 2em;
+  box-shadow: 0 0 0 2px #000000;
   border-radius: 50%;
-  width: 1.6em;
-  height: 1.6em;
-  line-height: 1.6em;
   font-weight: 700;
+}
+
+.market-calendar__tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333333;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.market-calendar__cell--active:hover .market-calendar__tooltip,
+.market-calendar__cell--today:hover .market-calendar__tooltip {
+  display: block;
+}
+
+.market-calendar__cell--excluded:hover .market-calendar__tooltip {
+  display: block;
+  opacity: 1;
 }
 
 .market-calendar__cell--excluded {
