@@ -457,15 +457,13 @@ def _add_months(source: date, n: int) -> date:
 
 
 def _get_active_markets(d: date, schedules: list[dict]) -> list[str]:
-    """Return the names of markets active on *d*."""
+    """Return the names of markets whose schedule includes *d*.
+    Returns excluded dates too so the tooltip shows "which market" even on skipped days.
+    """
     names: list[str] = []
     for entry in schedules:
         sched = entry["schedule"]
-        if not _is_market_day(d, sched):
-            continue
-        raw_exclude = sched.get("exclude_dates", [])
-        ex_set = {_parse_date(x) for x in raw_exclude} if raw_exclude else set()
-        if d not in ex_set:
+        if _is_market_day(d, sched):
             names.append(entry["name"])
     return names
 

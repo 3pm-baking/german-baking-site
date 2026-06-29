@@ -15,3 +15,4 @@ schedule:
     offset_weeks: 0
   exclude_dates:
   - '2026-06-30'
+  - '2026-07-14'
