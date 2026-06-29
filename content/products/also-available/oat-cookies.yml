@@ -6,4 +6,5 @@ german_name: Haferflockenplätzchen
 description: Gluten-free oat cookies with vegan chocolate chips and rum aroma
 badges:
 - gf
-price: 3.0
+- dairy-free
+price: 5
