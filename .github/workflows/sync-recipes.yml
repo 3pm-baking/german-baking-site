@@ -54,7 +54,7 @@ jobs:
         run: |
           # Find and close any open sync PRs, deleting their branches
           gh pr list \
-            --search "sync: update products from recipes in:title" \
+            --search "sync: update products and locations in:title" \
             --state open \
             --json number,headRefName \
             --jq '.[] | "\(.number) \(.headRefName)"' \
