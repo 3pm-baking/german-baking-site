@@ -12,6 +12,7 @@ import re
 import sys
 from calendar import Calendar
 from datetime import UTC, date, datetime, timedelta
+from zoneinfo import ZoneInfo
 from email.utils import format_datetime
 from enum import StrEnum
 from pathlib import Path
@@ -253,7 +254,7 @@ class Location(BaseModel):
     @model_validator(mode="after")
     def compute_status(self) -> Self:
         if self.start_date and self.end_date:
-            today = date.today()
+            today = _today_et()
             self.upcoming = self.start_date > today
             self.active = self.start_date <= today <= self.end_date
             self.stale = self.end_date < today
@@ -450,6 +451,10 @@ def _classify_cell(d: date, schedules: list[dict], today: date | None = None) ->
     return "off_season"
 
 
+def _today_et() -> date:
+    return datetime.now(ZoneInfo("America/New_York")).date()
+
+
 def _add_months(source: date, n: int) -> date:
     """Return the first of the month *n* months from *source*."""
     total = source.year * 12 + source.month - 1 + n
@@ -496,7 +501,7 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
     if not schedules:
         return []
 
-    today = date.today()
+    today = _today_et()
     months: list[dict] = []
     cal = Calendar(firstweekday=6)  # Sunday first
 
@@ -566,7 +571,7 @@ def load_blog_posts(content_dir: Path) -> list[dict]:
         raw_posts.append(post)
 
     if not preview:
-        today = date.today()
+        today = _today_et()
         skipped = [p for p in raw_posts if p.date > today]
         for p in skipped:
             print(f"  (skipping future post: {p.title} [{p.date}])")
@@ -694,7 +699,7 @@ def update_sitemap(
         print("Warning: sitemap.xml not found, skipping sitemap update")
         return
 
-    today_str = date.today().isoformat()
+    today_str = _today_et().isoformat()
     content = sitemap_path.read_text(encoding="utf-8")
 
     # Update homepage lastmod
