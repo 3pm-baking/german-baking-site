@@ -1367,7 +1367,7 @@
             <h3 class="find-us__subheading">Market Calendar</h3>
             <div class="market-calendars">
               
-                <div class="market-calendar">
+                <div class="market-calendar" data-month="6" data-year="2026">
   <h4 class="market-calendar__title">June 2026</h4>
   <table class="market-calendar__table">
     <thead>
@@ -1606,7 +1606,7 @@
       
       <tr>
         
-        <td class="market-calendar__cell market-calendar__cell--today">
+        <td class="market-calendar__cell market-calendar__cell--normal">
           
           <span class="market-calendar__day">28</span>
           
@@ -1650,8 +1650,12 @@
     </tbody>
   </table>
 </div>
+<script>
+(function(){var d=new Date();var m=d.getMonth()+1;var els=document.querySelectorAll('.market-calendar[data-year="'+d.getFullYear()+'"][data-month="'+m+'"]');for(var i=0;i<els.length;i++){var cells=els[i].querySelectorAll('.market-calendar__cell');for(var j=0;j<cells.length;j++){var s=cells[j].querySelector('.market-calendar__day');if(s&&parseInt(s.textContent)===d.getDate()){cells[j].classList.add('market-calendar__cell--today');}}}
+})();
+</script>
               
-                <div class="market-calendar">
+                <div class="market-calendar" data-month="7" data-year="2026">
   <h4 class="market-calendar__title">July 2026</h4>
   <table class="market-calendar__table">
     <thead>
@@ -1935,6 +1939,10 @@
     </tbody>
   </table>
 </div>
+<script>
+(function(){var d=new Date();var m=d.getMonth()+1;var els=document.querySelectorAll('.market-calendar[data-year="'+d.getFullYear()+'"][data-month="'+m+'"]');for(var i=0;i<els.length;i++){var cells=els[i].querySelectorAll('.market-calendar__cell');for(var j=0;j<cells.length;j++){var s=cells[j].querySelector('.market-calendar__day');if(s&&parseInt(s.textContent)===d.getDate()){cells[j].classList.add('market-calendar__cell--today');}}}
+})();
+</script>
               
             </div>
             <p class="market-calendar__disclaimer">

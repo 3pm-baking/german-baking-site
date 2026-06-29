@@ -420,14 +420,13 @@ def _is_market_day(d: date, schedule: dict) -> bool:
     return (d - first).days % interval == 0
 
 
-def _classify_cell(d: date, schedules: list[dict], today: date | None = None) -> str | None:
+def _classify_cell(d: date, schedules: list[dict]) -> str | None:
     """Classify a single date against all market schedules.
 
-    Returns ``'today'`` (if *d* matches *today*), ``'active'``, ``'excluded'``,
-    ``'normal'``, or ``'off_season'``.
+    Returns ``'active'``, ``'excluded'``, ``'normal'``, or ``'off_season'``.
+    The ``'today'`` class is handled client-side via JavaScript so the
+    highlighted date reflects the visitor's Eastern Time, not build time.
     """
-    if today is not None and d == today:
-        return "today"
     active = False
     excluded = False
     for s in schedules:
@@ -501,12 +500,12 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
     if not schedules:
         return []
 
-    today = _today_et()
     months: list[dict] = []
     cal = Calendar(firstweekday=6)  # Sunday first
+    ref = _today_et()
 
     for offset in range(2):
-        month_date = _add_months(today, offset)
+        month_date = _add_months(ref, offset)
         y, m = month_date.year, month_date.month
 
         weeks: list[list[dict]] = []
@@ -516,13 +515,15 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
                 if d.month != m:
                     week.append({"day": None, "kind": None, "markets": []})
                 else:
-                    kind = _classify_cell(d, [e["schedule"] for e in schedules], today)
+                    kind = _classify_cell(d, [e["schedule"] for e in schedules])
                     markets = _get_active_markets(d, schedules)
                     week.append({"day": d.day, "kind": kind, "markets": markets})
             weeks.append(week)
 
         months.append({
             "month_name": month_date.strftime("%B %Y"),
+            "month_num": m,
+            "year": y,
             "weeks": weeks,
         })
 

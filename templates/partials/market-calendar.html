@@ -1,4 +1,4 @@
-<div class="market-calendar">
+<div class="market-calendar" data-month="{{ cal.month_num }}" data-year="{{ cal.year }}">
   <h4 class="market-calendar__title">{{ cal.month_name }}</h4>
   <table class="market-calendar__table">
     <thead>
@@ -30,3 +30,7 @@
     </tbody>
   </table>
 </div>
+<script>
+(function(){var d=new Date();var m=d.getMonth()+1;var els=document.querySelectorAll('.market-calendar[data-year="'+d.getFullYear()+'"][data-month="'+m+'"]');for(var i=0;i<els.length;i++){var cells=els[i].querySelectorAll('.market-calendar__cell');for(var j=0;j<cells.length;j++){var s=cells[j].querySelector('.market-calendar__day');if(s&&parseInt(s.textContent)===d.getDate()){cells[j].classList.add('market-calendar__cell--today');}}}
+})();
+</script>
