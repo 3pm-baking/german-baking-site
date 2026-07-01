@@ -5,13 +5,39 @@
     <link>https://germanbakingasheville.com/blog/</link>
     <description>German baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 22 Jun 2026 17:14:47 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 01 Jul 2026 16:34:33 +0000</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://germanbakingasheville.com/images/logo.png</url>
       <title>3pm German Baking Blog</title>
       <link>https://germanbakingasheville.com/blog/</link>
     </image>
+    
+    <item>
+      <title>How Six Months at the Market Made Asheville Feel Like Home</title>
+      <link>https://germanbakingasheville.com/blog/six-months-at-market-asheville-home.html</link>
+      <guid isPermaLink="true">https://germanbakingasheville.com/blog/six-months-at-market-asheville-home.html</guid>
+      <pubDate>Wed, 01 Jul 2026 00:00:00 +0000</pubDate>
+      <author>william@germanbakingasheville.com (William)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/black-mountain-first-season-end.jpeg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/black-mountain-first-season-end.jpeg"
+                     type="image/jpeg"/>
+      
+      <description><![CDATA[<h2>Before the Markets</h2>
+<p>Six months ago I woke up in the middle of the night in Germany, jet lagged, alone with my computer, trying out some label designs. I am the one who makes the labels and Mary gives feedback. I was so excited to show her what I had made. It was the first time we had put pen to paper on this thing. Mary and I were back visiting family for the holidays. We were already living in Asheville, and before we left, we had started building connections through our church, our neighbors, a co-working space in West Asheville, and Meetup groups. People had been welcoming from the start.</p>
+<p>But that was us doing the reaching. We were new in town and always the ones making the first move.</p>
+<h2>The Give and Take</h2>
+<p>When we came back from Germany, we started the bakery. All the things I had only been designing labels for were suddenly on a table in front of people. Russian Pull Cake, German Cheesecake, Lemon Cake, and the rest.</p>
+<p>Then the dynamic started to change. People stopped at our market stand at the West Asheville and Black Mountain farmers markets, asked about the products, emailed us for a Russian Pull Cake for afternoon coffee and cake, an Apple Strudel for a birthday, or a Lemon Cake for a brunch with friends. It is not just the deliveries. Whether at the market or through a direct order, people have stories and it is always great to hear them. That is something I want to write more about another time, there have been so many.</p>
+<h2>West Asheville and Black Mountain</h2>
+<p>West Asheville Tailgate Market and Black Mountain Tailgate Market have been well organized and full of welcoming people. The vendors next to us, the organizers running things, and the tremendous customer base. They all make it easy to show up.</p>
+<p>Six months ago I was designing labels on a laptop in Germany, not sure how this would work in a city we barely knew. Now we drive across Asheville together while Mary delivers cakes to people who found us at a market, through the website, or even through Gemini when they searched for our products. We came here putting in the work to find our place. The bakery gave us a place where people could find us too.</p>
+<p>If you want to try what we are making, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">email us</a>. We deliver in the greater Asheville area and would love to meet you.</p>]]></description>
+    </item>
     
     <item>
       <title>Meet Wright, the Open-Source Engine Behind Our Bakery</title>
