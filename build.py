@@ -12,11 +12,11 @@ import re
 import sys
 from calendar import Calendar
 from datetime import UTC, date, datetime, timedelta
-from zoneinfo import ZoneInfo
 from email.utils import format_datetime
 from enum import StrEnum
 from pathlib import Path
 from typing import Self
+from zoneinfo import ZoneInfo
 
 import markdown as md
 import yaml
@@ -1037,7 +1037,10 @@ def build_all():
     # Update sitemap with blog entries
     update_sitemap(base_dir, product_slugs=all_product_slugs, blog_posts=blog_posts)
 
-    print(f"\nBuild complete! Landing page + {built_count} product pages + {blog_count} blog posts + {page_count} static pages generated.")
+    print(
+        f"\nBuild complete! Landing page + {built_count} product pages"
+        f" + {blog_count} blog posts + {page_count} static pages generated."
+    )
 
     total_errors = errors + blog_errors
     if total_errors:
