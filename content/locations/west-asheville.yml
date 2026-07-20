@@ -8,9 +8,6 @@ schedule:
   day_of_week: Tuesday
   end_date: '2026-12-22'
   end_time: '18:30'
-  exclude_dates:
-  - '2026-06-30'
-  - '2026-07-14'
   frequency:
     interval_weeks: 1
     offset_weeks: 0
