@@ -557,6 +557,10 @@ section {
   margin-top: var(--spacing-md);
 }
 
+.find-us__social:last-of-type + .find-us__option-text {
+  margin-top: var(--spacing-lg);
+}
+
 .social-icon {
   display: inline-flex;
   align-items: center;
