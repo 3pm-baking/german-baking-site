@@ -5,7 +5,7 @@
     <link>https://germanbakingasheville.com/blog/</link>
     <description>German baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Jul 2026 14:37:23 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 25 Jul 2026 15:13:34 +0000</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://germanbakingasheville.com/images/logo.png</url>
@@ -37,6 +37,35 @@
 <h2>Why 3pm</h2>
 <p>Mary grew up with <em>Kaffee und Kuchen</em>. It is how she thinks about baking, everything is timed around that afternoon moment. When we were deciding on a name for the business, the time was already baked into how she operates. 3pm German Baking is not just a name. It tells you what we are about. You can find one of our lighter cakes at the West Asheville or Black Mountain farmers markets.</p>
 <p>If you want to try a lighter slice of cake with your coffee, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">email us your order</a> and we will get you your cake.</p>]]></description>
+    </item>
+    
+    <item>
+      <title>What a Bakery Taught Data Scientists About Practical Technology</title>
+      <link>https://germanbakingasheville.com/blog/bakery-lightning-talk-scipy-2026.html</link>
+      <guid isPermaLink="true">https://germanbakingasheville.com/blog/bakery-lightning-talk-scipy-2026.html</guid>
+      <pubDate>Fri, 17 Jul 2026 00:00:00 +0000</pubDate>
+      <author>william@germanbakingasheville.com (William)</author>
+      
+      
+      <enclosure url="https://germanbakingasheville.com/images/scipy-talk.jpg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/scipy-talk.jpg"
+                     type="image/jpeg"/>
+      
+      <description><![CDATA[<h2>Five Minutes</h2>
+<p>On Wednesday I stood in front of a room full of data scientists and engineers at SciPy 2026 in Minneapolis. I had five minutes for a lightning talk. Five minutes to explain what it is like running a two-person German bakery with open-source tools.</p>
+<p>That is not a lot of time. There are so many layers to how this business works, from the <a href="/blog/automated-grocery-lists.html">grocery list automation</a> I have written about before to the <a href="/blog/meet-wright-open-source-engine.html">wright library</a> we released earlier this summer. I could have talked for an hour.</p>
+<h2>The Balance</h2>
+<p>What I tried to get across in those five minutes is that none of this technology exists for its own sake. The goal is not to build the most elegant system, it is to make more room for the people we serve.</p>
+<p>Mary and I run this bakery together. Every hour I save on grocery lists, cost calculations, or planning is an hour she can spend on the things that actually matter, like connecting with customers, sharing stories about German baking, and making the best items we can. Technology is the tool that creates that space.</p>
+<h2>People Got It</h2>
+<p>After the talk, a few people came up. Some said they make gluten-free items too, just not at the same scale. Others mentioned they were trying to build their own shopping list system and wondered if <a href="/blog/meet-wright-open-source-engine.html">wright</a> could help. Nothing dramatic, but it piqued some interest.</p>
+<p>That is why I released wright as open source in the first place. It is the engine behind most of what we do, and if it helps someone else solve a similar problem, that is the point.</p>
+<h2>Why It Matters</h2>
+<p>For me, I am just trying to make helpful technology and understand how to improve processes. As a data scientist, it is always about the users. The user in this case happens to be my wife, and I am just trying to allow her to focus on what is important and of interest to her: the baking, making new recipes, and connecting with the customers.</p>
+<p>Open source is something I care about and leveraging technology is part of my daily work. There is so much we could do with this business, but there is always the question of whether something is worth the burden. That judgment call is what keeps it interesting. It is a genuinely fun use case for technology, and I love being able to share it.</p>
+<p>If you want to try our lighter take on German cake, <a href="/index.html#find-us">find us at a market</a> or <a href="mailto:info@germanbakingasheville.com">email us your order</a> and we will get you your cake.</p>]]></description>
     </item>
     
     <item>
