@@ -558,7 +558,7 @@ section {
 }
 
 .find-us__social:last-of-type + .find-us__option-text {
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-md);
 }
 
 .social-icon {
