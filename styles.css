@@ -836,25 +836,8 @@ section {
 }
 
 /* --------------------------------------------------------------------------
-   Newsletter CTA (Stay in Touch)
+   Newsletter CTA
    -------------------------------------------------------------------------- */
-.newsletter-cta {
-  background-color: var(--color-background-warm);
-  padding: var(--spacing-lg) 0;
-}
-
-.newsletter-cta__content {
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.newsletter-cta__text {
-  font-size: 1.125rem;
-  color: var(--color-text-light);
-  margin-bottom: var(--spacing-md);
-}
-
 .newsletter-cta__link {
   display: inline-block;
   font-family: var(--font-heading);

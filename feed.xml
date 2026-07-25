@@ -5,7 +5,7 @@
     <link>https://germanbakingasheville.com/blog/</link>
     <description>German baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Jul 2026 15:13:34 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 25 Jul 2026 15:31:41 +0000</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://germanbakingasheville.com/images/logo.png</url>
@@ -59,8 +59,9 @@
 <h2>The Balance</h2>
 <p>What I tried to get across in those five minutes is that none of this technology exists for its own sake. The goal is not to build the most elegant system, it is to make more room for the people we serve.</p>
 <p>Mary and I run this bakery together. Every hour I save on grocery lists, cost calculations, or planning is an hour she can spend on the things that actually matter, like connecting with customers, sharing stories about German baking, and making the best items we can. Technology is the tool that creates that space.</p>
+<p>Technology is not the only way to make things easier though. We can get more clever about how we pack the car, what we bring and what we leave behind, or maybe find a kitchen with two ovens instead of one. There are lots of ways to create space. This is just the technology side of it.</p>
 <h2>People Got It</h2>
-<p>After the talk, a few people came up. Some said they make gluten-free items too, just not at the same scale. Others mentioned they were trying to build their own shopping list system and wondered if <a href="/blog/meet-wright-open-source-engine.html">wright</a> could help. Nothing dramatic, but it piqued some interest.</p>
+<p>After the talk, a few people came up. Some said they make gluten-free items too, just not at the same scale. Others mentioned they were trying to build their own shopping list system and wondered if <a href="/blog/meet-wright-open-source-engine.html">wright</a> could help. Nothing dramatic, but it sparked some interest.</p>
 <p>That is why I released wright as open source in the first place. It is the engine behind most of what we do, and if it helps someone else solve a similar problem, that is the point.</p>
 <h2>Why It Matters</h2>
 <p>For me, I am just trying to make helpful technology and understand how to improve processes. As a data scientist, it is always about the users. The user in this case happens to be my wife, and I am just trying to allow her to focus on what is important and of interest to her: the baking, making new recipes, and connecting with the customers.</p>

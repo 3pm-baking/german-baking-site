@@ -7,6 +7,7 @@ excerpt: I had five minutes at SciPy 2026 to tell a room full of data scientists
 meta_description: A lightning talk at SciPy 2026 about how 3pm German Baking uses open-source technology to balance operations with customer connection. Practical lessons from a real small business.
 page_title: "What a Bakery Taught Data Scientists About Practical Technology | 3pm German Baking Blog"
 image: scipy-talk.jpg
+alt_text: William presenting a lightning talk at SciPy 2026.
 ---
 
 ## Five Minutes
@@ -25,7 +26,7 @@ Technology is not the only way to make things easier though. We can get more cle
 
 ## People Got It
 
-After the talk, a few people came up. Some said they make gluten-free items too, just not at the same scale. Others mentioned they were trying to build their own shopping list system and wondered if [wright](/blog/meet-wright-open-source-engine.html) could help. Nothing dramatic, but it piqued some interest.
+After the talk, a few people came up. Some said they make gluten-free items too, just not at the same scale. Others mentioned they were trying to build their own shopping list system and wondered if [wright](/blog/meet-wright-open-source-engine.html) could help. Nothing dramatic, but it sparked some interest.
 
 That is why I released wright as open source in the first place. It is the engine behind most of what we do, and if it helps someone else solve a similar problem, that is the point.
 
