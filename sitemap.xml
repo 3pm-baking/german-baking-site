@@ -24,6 +24,12 @@
   </url>
   <!-- PRODUCT_START -->
   <url>
+    <loc>https://germanbakingasheville.com/products/almond-ricotta-cake.html</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://germanbakingasheville.com/products/german-cheesecake.html</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
@@ -49,6 +55,12 @@
   </url>
   <url>
     <loc>https://germanbakingasheville.com/products/russian-pull-cake.html</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://germanbakingasheville.com/products/seasonal-vegetable-quiche.html</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

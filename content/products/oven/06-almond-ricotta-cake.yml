@@ -1,0 +1,21 @@
+title: Almond Ricotta Cake
+german_name: Saftiger Mandel Ricotta Kuchen
+slug: almond-ricotta-cake
+image: almond-ricotta-cake.jpg
+description: Moist almond and ricotta cake with orange zest — naturally gluten-free
+meta_description: Almond Ricotta Cake (Mandel Ricotta Kuchen) - A moist, naturally gluten-free cake made with almond flour, ricotta, and fresh orange zest. German baking in Asheville, NC.
+og_description: A moist, naturally gluten-free almond and ricotta cake with bright orange zest.
+page_title: Almond Ricotta Cake / Mandel Ricotta Kuchen | 3pm German Baking — Asheville, NC
+price: 6
+badges:
+- gf
+sections:
+- title: Origin
+  content: This gluten-free almond ricotta cake combines the nutty richness of almond flour with the creamy texture of ricotta, brightened with orange zest. It's a naturally flourless cake that proves gluten-free baking can be every bit as satisfying as the original.
+- title: Perfect For
+  content: An excellent choice for those seeking naturally gluten-free desserts without compromise. Pairs beautifully with coffee or tea, and its moist, tender crumb makes it a standout at farmers markets and brunch tables.
+- title: Availability
+  content: Available at <a href="../index.html#find-us">local Asheville-area farmers markets</a>. Contact us for direct orders or catering inquiries.
+- title: Allergen Information
+  type: allergens
+  content: Dairy (ricotta), Eggs, Almonds (tree nuts). Naturally gluten-free.
