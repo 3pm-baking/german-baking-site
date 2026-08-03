@@ -9,7 +9,11 @@ schedule:
   end_date: '2026-12-22'
   end_time: '18:30'
   exclude_dates:
-  - '2026-07-14'
+  - '2026-08-25'
+  - '2026-09-01'
+  - '2026-09-08'
+  - '2026-09-15'
+  - '2026-09-22'
   frequency:
     interval_weeks: 1
     offset_weeks: 0

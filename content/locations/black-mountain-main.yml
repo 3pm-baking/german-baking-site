@@ -10,6 +10,7 @@ schedule:
   end_time: '12:00'
   exclude_dates:
   - '2026-08-22'
+  - '2026-09-05'
   frequency:
     interval_weeks: 2
     offset_weeks: 0
