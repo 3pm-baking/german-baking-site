@@ -1,6 +1,6 @@
 ---
 title: What Germans Actually Eat for Their Birthdays
-date: 2026-08-02
+date: 2026-08-06
 slug: german-birthday-cakes
 author: Mary
 excerpt: A customer in Asheville asked for a chocolate birthday cake. I knew the one. But it got me thinking about how German birthdays are different here, starting with the fact that you are expected to bring your own cake.
