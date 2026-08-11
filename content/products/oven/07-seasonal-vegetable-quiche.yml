@@ -3,19 +3,29 @@ german_name: Saisonale Gemüse-Quiche
 slug: seasonal-vegetable-quiche
 image: seasonal-vegetable-quiche.jpg
 description: Gluten-free savory quiche with seasonal vegetables and almond crust
-meta_description: Seasonal Vegetable Quiche (Saisonale Gemüse-Quiche) - A gluten-free savory quiche packed with fresh seasonal vegetables in an almond flour crust. German-inspired baking in Asheville, NC.
-og_description: A gluten-free savory quiche packed with seasonal vegetables in a nutty almond crust.
-page_title: Seasonal Vegetable Quiche / Saisonale Gemüse-Quiche | 3pm German Baking — Asheville, NC
+meta_description: Seasonal Vegetable Quiche (Saisonale Gemüse-Quiche) - A gluten-free
+  savory quiche packed with fresh seasonal vegetables in an almond flour crust. German-inspired
+  baking in Asheville, NC.
+og_description: A gluten-free savory quiche packed with seasonal vegetables in a nutty
+  almond crust.
+page_title: Seasonal Vegetable Quiche / Saisonale Gemüse-Quiche | 3pm German Baking
+  — Asheville, NC
 price: 6
 badges:
 - gf
 sections:
 - title: Origin
-  content: This gluten-free quiche showcases the best of each season's harvest in a tender almond flour crust. Inspired by the German tradition of hearty savory tarts (herzhafte Quiches), it's a versatile option that changes with the farmer's market offerings throughout the year.
+  content: This gluten-free quiche showcases the best of each season's harvest in
+    a tender almond flour crust. Inspired by the German tradition of hearty savory
+    tarts (herzhafte Quiches), it's a versatile option that changes with the farmer's
+    market offerings throughout the year.
 - title: Perfect For
-  content: An ideal choice for lunch, brunch, or a light dinner. The almond crust provides a nutty complement to the seasonal filling, making it satisfying for both gluten-free and conventional eaters alike.
+  content: An ideal choice for lunch, brunch, or a light dinner. The almond crust
+    provides a nutty complement to the seasonal filling, making it satisfying for
+    both gluten-free and conventional eaters alike.
 - title: Availability
-  content: Available at <a href="../index.html#find-us">local Asheville-area farmers markets</a>. Seasonal availability — contact us for what's currently in rotation.
+  content: Available at <a href="../index.html#find-us">local Asheville-area farmers
+    markets</a>. Seasonal availability — contact us for what's currently in rotation.
 - title: Allergen Information
   type: allergens
   content: Dairy, Eggs, Almonds (tree nuts). Naturally gluten-free.
