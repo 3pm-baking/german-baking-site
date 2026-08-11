@@ -1,11 +1,11 @@
 ---
-title: Why 3pm? The Kaffee und Kuchen Tradition Behind Our Name
+title: "Kaffee und Kuchen: The German Coffee and Cake Tradition (And Why Our Bakery Is Named 3pm)"
 date: 2026-07-25
 slug: why-3pm-kaffee-und-kuchen
 author: William
-excerpt: Our bakery is named 3pm German Baking. There is a reason for that, it marks the time of Kaffee und Kuchen, the German coffee and cake tradition that most Americans have never heard of.
+excerpt: Kaffee und Kuchen is the German afternoon tradition of coffee and cake — a daily ritual at 3pm that most Americans have never heard of. It's why our bakery is named 3pm, and it shaped the lighter, less-sweet style of German baking.
 meta_description: What is Kaffee und Kuchen? Learn about the German coffee-and-cake tradition, why 3pm is the time for it, and how it shaped the lighter style of German baking at 3pm German Baking in Asheville, NC.
-page_title: "Kaffee und Kuchen: The German Coffee Cake Tradition | 3pm German Baking Blog"
+page_title: "Kaffee und Kuchen: The German Coffee and Cake Tradition | 3pm German Baking Blog"
 image: 3pm-german-baking-68.jpg
 ---
 
