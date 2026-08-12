@@ -677,6 +677,7 @@ def _get_popup_markets(locations_dir: Path) -> list[dict]:
                 "url": raw.get("url", ""),
                 "when": when,
                 "end_time": _raw_time_str(sched.get("end_time")),
+                "date": target.isoformat(),
             })
         if results:
             if preview in ("today", "tomorrow"):

@@ -1,6 +1,6 @@
 {% if tomorrow_markets %}
 {% set m = tomorrow_markets[0] %}
-<div id="market-popup" class="popup popup--hidden" role="dialog" aria-modal="true" aria-label="Upcoming market"{% if m.end_time %} data-end="{{ m.end_time }}"{% endif %}>
+<div id="market-popup" class="popup popup--hidden" role="dialog" aria-modal="true" aria-label="Upcoming market"{% if m.end_time %} data-end="{{ m.end_time }}"{% endif %}{% if m.date %} data-date="{{ m.date }}"{% endif %}>
   <div class="popup__backdrop"></div>
   <div class="popup__card">
     <span class="popup__icon" aria-hidden="true">🍰</span>
@@ -141,6 +141,12 @@
   if (document.cookie.indexOf('popup_dismissed=1') !== -1) return;
   var popup = document.getElementById('market-popup');
   if (!popup) return;
+
+  var marketDate = popup.getAttribute('data-date');
+  if (marketDate) {
+    var etToday = new Date().toLocaleDateString('en-CA', {timeZone: 'America/New_York'});
+    if (etToday > marketDate) return;
+  }
 
   var endTime = popup.getAttribute('data-end');
   if (endTime) {
