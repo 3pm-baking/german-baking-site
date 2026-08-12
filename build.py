@@ -637,6 +637,103 @@ def build_rss_feed(env: Environment, posts: list[dict]) -> None:
     print(f"✓ templates/rss.xml → feed.xml ({len(posts[:20])} post(s))")
 
 
+def _get_popup_markets(locations_dir: Path) -> list[dict]:
+    """Return markets happening today (preferred) or tomorrow.
+
+    Checks raw location YAML files for active, non-excluded market days.
+    Returns a list of dicts with name, time, address, url, when, and end_time.
+    (``'today'`` or ``'tomorrow'``). Returns empty list if nothing matches.
+
+    Set ``POPUP_PREVIEW=today|tomorrow`` to override the ``when`` field
+    for testing (e.g. forcing "See you today!" even for a tomorrow market).
+    """
+    if not locations_dir.is_dir():
+        return []
+
+    today = _today_et()
+    tomorrow = today + timedelta(days=1)
+    preview = os.environ.get("POPUP_PREVIEW", "").lower()
+
+    for target, when in ((today, "today"), (tomorrow, "tomorrow")):
+        results = []
+        for yaml_file in sorted(locations_dir.glob("*.yml")):
+            raw = yaml.safe_load(yaml_file.read_text(encoding="utf-8"))
+            if not raw:
+                continue
+            sched = raw.get("schedule")
+            if not isinstance(sched, dict):
+                continue
+            extra_dates = sched.get("extra_dates", [])
+            extra_set = {_parse_date(x) for x in extra_dates} if extra_dates else set()
+            if not _is_market_day(target, sched) and target not in extra_set:
+                continue
+            ex_set = {_parse_date(x) for x in sched.get("exclude_dates", [])}
+            if target in ex_set:
+                continue
+            results.append({
+                "name": raw.get("name", ""),
+                "time": _popup_time_str(sched),
+                "address": raw.get("address", ""),
+                "url": raw.get("url", ""),
+                "when": when,
+                "end_time": _raw_time_str(sched.get("end_time")),
+            })
+        if results:
+            if preview in ("today", "tomorrow"):
+                for r in results:
+                    r["when"] = preview
+            return results
+
+    return []
+
+
+def _raw_time_str(t: object) -> str | None:
+    """Convert a schedule time value to ``HH:MM`` string (e.g. ``"18:30"``)."""
+    if t is None:
+        return None
+    raw = str(t)
+    if raw.lstrip("-").isdigit():
+        mins = int(raw)
+        raw = f"{mins // 60:02d}:{mins % 60:02d}"
+    parts = raw.split(":")
+    if len(parts) != 2:
+        return None
+    try:
+        int(parts[0]), int(parts[1])
+    except ValueError:
+        return None
+    return f"{int(parts[0]):02d}:{int(parts[1]):02d}"
+
+
+def _popup_time_str(sched: dict) -> str:
+    """Format start/end times for popup display (e.g. ``9am–12pm``)."""
+    def _fmt(t: object) -> str | None:
+        if t is None:
+            return None
+        raw = str(t)
+        if raw.lstrip("-").isdigit():
+            mins = int(raw)
+            raw = f"{mins // 60:02d}:{mins % 60:02d}"
+        parts = raw.split(":")
+        if len(parts) != 2:
+            return None
+        try:
+            h, m = int(parts[0]), int(parts[1])
+        except ValueError:
+            return None
+        ampm = "am" if h < 12 else "pm"
+        h12 = h if 1 <= h <= 12 else (h - 12 if h > 12 else 12)
+        if h == 0:
+            h12 = 12
+        return f"{h12}:{m:02d}{ampm}" if m else f"{h12}{ampm}"
+
+    start = _fmt(sched.get("start_time"))
+    end = _fmt(sched.get("end_time"))
+    if start and end:
+        return f"{start}–{end}"
+    return start or end or ""
+
+
 def build_blog_index(env: Environment, posts: list[dict]) -> None:
     """Generate the blog listing page (blog/index.html)."""
     template = env.get_template("blog-index.html")
@@ -828,7 +925,7 @@ def load_products_by_category(content_dir: Path) -> dict:
     return categories
 
 
-def build_landing_page(env, categories, locations, market_items, blog_posts, market_calendars=None):
+def build_landing_page(env, categories, locations, market_items, blog_posts, market_calendars=None, tomorrow_markets=None):
     """Generate the landing page (index.html) from template."""
     template = env.get_template("index.html")
 
@@ -843,6 +940,7 @@ def build_landing_page(env, categories, locations, market_items, blog_posts, mar
         badge_labels=BADGE_LABELS,
         recent_posts=recent_posts,
         market_calendars=market_calendars or [],
+        tomorrow_markets=tomorrow_markets or [],
     )
 
     # Write to root directory
@@ -1017,7 +1115,11 @@ def build_all():
     print()  # Blank line
 
     # Build landing page
-    build_landing_page(env, categories, locations, market_items, blog_posts, market_calendars=market_calendars)
+    tomorrow_markets = _get_popup_markets(base_dir / "content" / "locations")
+    if tomorrow_markets:
+        when = tomorrow_markets[0]["when"]
+        print(f"  popup: {tomorrow_markets[0]['name']} ({when})")
+    build_landing_page(env, categories, locations, market_items, blog_posts, market_calendars=market_calendars, tomorrow_markets=tomorrow_markets)
 
     # Build static pages (privacy, terms, etc.)
     pages_dir = base_dir / "content" / "pages"

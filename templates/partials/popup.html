@@ -1,0 +1,201 @@
+{% if tomorrow_markets %}
+{% set m = tomorrow_markets[0] %}
+<div id="market-popup" class="popup popup--hidden" role="dialog" aria-modal="true" aria-label="Upcoming market"{% if m.end_time %} data-end="{{ m.end_time }}"{% endif %}>
+  <div class="popup__backdrop"></div>
+  <div class="popup__card">
+    <span class="popup__icon" aria-hidden="true">🍰</span>
+    <p class="popup__heading">{% if m.when == 'today' %}See you today!{% else %}See you tomorrow!{% endif %}</p>
+    <p class="popup__market-name">{{ m.name }}</p>
+    <p class="popup__market-time">{{ m.time }}</p>
+    <p class="popup__market-address"><a href="https://www.google.com/maps/search/?api=1&amp;query={{ m.address | urlencode }}" target="_blank" rel="noopener noreferrer">{{ m.address }}</a></p>
+    <div class="popup__actions">
+      {% if m.url %}
+      <a href="{{ m.url }}" class="popup__cta" target="_blank" rel="noopener noreferrer">View Location</a>
+      {% else %}
+      <a href="#find-us" class="popup__cta">View Location</a>
+      {% endif %}
+      <button class="popup__dismiss">Not now</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .popup {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 1rem;
+    animation: popup-fade-in 0.35s ease-out;
+  }
+  .popup--hidden {
+    display: none;
+  }
+  .popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+  }
+  .popup__card {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    background: #f9f7f4;
+    border: 1px solid #1a1a1a;
+    border-radius: 12px;
+    padding: 1.5rem 1.25rem 1.25rem;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    animation: popup-slide-up 0.35s ease-out;
+  }
+  .popup__icon {
+    font-size: 1.75rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .popup__heading {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem;
+    color: #1a1a1a;
+  }
+  .popup__market-name {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem;
+    color: #1a1a1a;
+  }
+  .popup__market-time {
+    font-size: 0.8rem;
+    color: #555;
+    margin: 0 0 0.25rem;
+  }
+  .popup__market-address {
+    font-size: 0.75rem;
+    color: #555;
+    margin: 0 0 1rem;
+  }
+  .popup__market-address a {
+    color: #555;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .popup__market-address a:hover {
+    color: #1a1a1a;
+  }
+  .popup__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .popup__cta {
+    display: inline-block;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    background: #1a1a1a;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+  }
+  .popup__cta:hover {
+    background: #333;
+  }
+  .popup__dismiss {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .popup__dismiss:hover {
+    color: #1a1a1a;
+  }
+  @keyframes popup-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes popup-slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  @media (min-width: 769px) {
+    .popup {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+(function() {
+  if (document.cookie.indexOf('popup_dismissed=1') !== -1) return;
+  var popup = document.getElementById('market-popup');
+  if (!popup) return;
+
+  var endTime = popup.getAttribute('data-end');
+  if (endTime) {
+    var parts = endTime.split(':');
+    var endMinutes = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    var etNow = new Date(new Date().toLocaleString('en-US', {timeZone: 'America/New_York'}));
+    var nowMinutes = etNow.getHours() * 60 + etNow.getMinutes();
+    if (nowMinutes >= endMinutes) return;
+  }
+
+  var shown = false;
+  var dismissBtn = popup.querySelector('.popup__dismiss');
+  var cta = popup.querySelector('.popup__cta');
+
+  function show() {
+    if (shown) return;
+    shown = true;
+    popup.classList.remove('popup--hidden');
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'popup_impression', {popup_type: 'market'});
+    }
+  }
+
+  function hide() {
+    popup.classList.add('popup--hidden');
+  }
+
+  function dismiss() {
+    hide();
+    document.cookie = 'popup_dismissed=1; max-age=604800; path=/; SameSite=Lax';
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'popup_dismiss', {popup_type: 'market'});
+    }
+  }
+
+  if (dismissBtn) dismissBtn.addEventListener('click', dismiss);
+
+  if (cta) {
+    cta.addEventListener('click', function() {
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'popup_click', {popup_type: 'market'});
+      }
+    });
+  }
+
+  var timer = setTimeout(show, 3000);
+  var onScroll = function() {
+    var pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    if (pct > 0.3) {
+      clearTimeout(timer);
+      show();
+      window.removeEventListener('scroll', onScroll);
+    }
+  };
+  window.addEventListener('scroll', onScroll);
+})();
+</script>
+{% endif %}
