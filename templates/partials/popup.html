@@ -176,7 +176,7 @@
 
   function dismiss() {
     hide();
-    document.cookie = 'popup_dismissed=1; max-age=604800; path=/; SameSite=Lax';
+    document.cookie = 'popup_dismissed=1; max-age=259200; path=/; SameSite=Lax';
     if (typeof gtag !== 'undefined') {
       gtag('event', 'popup_dismiss', {popup_type: 'market'});
     }
