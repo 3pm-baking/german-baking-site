@@ -1,0 +1,30 @@
+title: Opa Karl's Apple Cake
+german_name: Feiner Apfelkuchen
+slug: opa-karls-apple-cake
+image: opa-karls-apple-cake.jpg
+description: A classic German apple cake from Apfelbauer Ernst-Walther Süss. Tender sponge topped with wreath-arranged apples and a shiny apricot glaze.
+meta_description: Opa Karl's Apple Cake (Feiner Apfelkuchen) - Gluten-free German apple cake with wreath-arranged apples on tender sponge and a shiny apricot glaze. Asheville, NC.
+og_description: Wreath-arranged apples on tender sponge with a shiny apricot glaze—Opa Karl's classic.
+page_title: Opa Karl's Apple Cake (Feiner Apfelkuchen) | 3pm German Baking — Asheville, NC
+price: 7
+badges:
+- gf
+sections:
+- title: Origin
+  content: "This Feiner Apfelkuchen comes from Apfelbauer Ernst-Walther Süss—an apple
+    farmer in Germany whose orchard fruit defines the cake. Tender sponge, apples
+    arranged in a wreath on top, and a shiny apricot glaze: the kind of straightforward,
+    perfect apple cake that German bakery counters are known for. Opa Karl's name on
+    it says everything about where the recipe lives in the family."
+- title: Perfect For
+  content: The Kaffee und Kuchen classic—afternoon coffee with a slice that tastes
+    like a German orchard. Gluten-free without compromise, so everyone at the table
+    gets the same cake. Also lovely slightly warm with a spoonful of plain yogurt or
+    cream.
+- title: Availability
+  content: Available at <a href="../index.html#find-us">local Asheville-area farmers
+    markets</a>. Contact us for direct orders, custom sizing for events, or wholesale
+    inquiries.
+- title: Allergen Information
+  type: allergens
+  content: Eggs, Nuts (almond). Gluten-free.
