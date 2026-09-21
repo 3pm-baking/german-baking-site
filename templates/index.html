@@ -307,7 +307,8 @@
                       <a href="https://www.google.com/maps/search/?api=1&query={{ location.address | urlencode }}"
                          target="_blank"
                          rel="noopener noreferrer"
-                         class="location-card__map-link">{{ location.address }}</a>
+                         class="location-card__map-link"
+                         onclick="gtag('event', 'maps_click', {market: '{{ location.name | e }}'});">{{ location.address }}</a>
                     {% endif %}
                     {% if location.note %}
                       <br>
@@ -327,9 +328,9 @@
             </div>
             <p class="market-calendar__disclaimer">
               Schedule may change — follow us on
-              <a href="https://instagram.com/3pmgermanbaking" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href="https://instagram.com/3pmgermanbaking" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'social_click', {network: 'instagram'});">Instagram</a>
               and
-              <a href="https://facebook.com/3pmgermanbaking" target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a href="https://facebook.com/3pmgermanbaking" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'social_click', {network: 'facebook'});">Facebook</a>
               for the latest updates.
             </p>
           {% endif %}
@@ -365,7 +366,8 @@
                target="_blank"
                rel="noopener noreferrer"
                aria-label="Follow us on Facebook"
-               title="Follow us on Facebook">
+               title="Follow us on Facebook"
+               onclick="gtag('event', 'social_click', {network: 'facebook'});">
               <img src="images/facebook.svg" alt="" width="24" height="24">
               <span class="social-icon__text">3pm German Baking</span>
             </a>
@@ -376,7 +378,8 @@
                target="_blank"
                rel="noopener noreferrer"
                aria-label="Follow us on Instagram @3pmgermanbaking"
-               title="Follow us on Instagram">
+               title="Follow us on Instagram"
+               onclick="gtag('event', 'social_click', {network: 'instagram'});">
               <img src="images/instagram.svg" alt="" width="24" height="24">
               <span class="social-icon__text">@3pmgermanbaking</span>
             </a>
@@ -453,7 +456,8 @@
              target="_blank"
              rel="noopener noreferrer"
              aria-label="Follow us on Facebook"
-             title="Follow us on Facebook">
+             title="Follow us on Facebook"
+             onclick="gtag('event', 'social_click', {network: 'facebook'});">
             <img src="images/facebook.svg" alt="" width="24" height="24">
             <span class="social-icon__text">3pm German Baking</span>
           </a>
@@ -464,7 +468,8 @@
              target="_blank"
              rel="noopener noreferrer"
              aria-label="Follow us on Instagram @3pmgermanbaking"
-             title="Follow us on Instagram">
+             title="Follow us on Instagram"
+             onclick="gtag('event', 'social_click', {network: 'instagram'});">
             <img src="images/instagram.svg" alt="" width="24" height="24">
             <span class="social-icon__text">@3pmgermanbaking</span>
           </a>

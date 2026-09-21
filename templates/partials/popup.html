@@ -7,7 +7,7 @@
     <p class="popup__heading">{% if m.when == 'today' %}See you today!{% else %}See you tomorrow!{% endif %}</p>
     <p class="popup__market-name">{{ m.name }}</p>
     <p class="popup__market-time">{{ m.time }}</p>
-    <p class="popup__market-address"><a href="https://www.google.com/maps/search/?api=1&amp;query={{ m.address | urlencode }}" target="_blank" rel="noopener noreferrer">{{ m.address }}</a></p>
+    <p class="popup__market-address"><a href="https://www.google.com/maps/search/?api=1&amp;query={{ m.address | urlencode }}" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'maps_click', {market: '{{ m.name | e }}'});">{{ m.address }}</a></p>
     <div class="popup__actions">
       {% if m.url %}
       <a href="{{ m.url }}" class="popup__cta" target="_blank" rel="noopener noreferrer">View Location</a>
