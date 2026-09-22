@@ -5,7 +5,7 @@
     <link>https://germanbakingasheville.com/blog/</link>
     <description>German baking traditions, Asheville food culture, and stories from our micro bakery in Western North Carolina.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 22 Sep 2026 22:40:49 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 22 Sep 2026 22:59:44 +0000</lastBuildDate>
     <atom:link href="https://germanbakingasheville.com/feed.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://germanbakingasheville.com/images/logo.png</url>
@@ -20,6 +20,12 @@
       <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
       <author>william@germanbakingasheville.com (William)</author>
       
+      
+      <enclosure url="https://germanbakingasheville.com/images/poppy-roll.jpg"
+                 length="0"
+                 type="image/jpeg"/>
+      <media:content url="https://germanbakingasheville.com/images/poppy-roll.jpg"
+                     type="image/jpeg"/>
       
       <description><![CDATA[<h2>Three Words, One Confusion</h2>
 <p>At the market I hear these words swapped all the time, and honestly, I mixed them up myself when I first started paying attention. It does not help that we sell both Apple Strudel and Apple Streusel, so the names sit right next to each other on the table. Saying them out loud feels like a tongue twister. And then <em>striezel</em> shows up as the curve ball. They sound like siblings. They are not.</p>
