@@ -315,9 +315,20 @@ class BlogPost(BaseModel):
 # a single source of truth.
 BADGE_ICONS = {b.value: b.icon for b in Badge}
 
-# Homepage "Available Now" grid: first N in-season products (curation order
-# comes from season_order, stamped from SEASONAL_RECIPES) + always-available.
-HOMEPAGE_AVAILABLE_NOW_COUNT = 6
+
+def load_homepage_available_now_count() -> int:
+    """How many in-season products the homepage grid features.
+
+    Configured in the zentrale repo's data/product-availability.yaml
+    (``homepage_available_now``) — the merchandising config file. Falls back
+    to 15 (full lineup) when the file is unavailable (standalone site clone).
+    """
+    config_path = Path(__file__).parent.parent / "data" / "product-availability.yaml"
+    try:
+        data = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+        return int(data.get("homepage_available_now", 15))
+    except (OSError, yaml.YAMLError):
+        return 15
 BADGE_LABELS = {b.value: b.aria_label for b in Badge}
 BADGE_NAMES = {b.value: b.display_name for b in Badge}
 
@@ -999,9 +1010,10 @@ def build_landing_page(env, categories, locations, blog_posts, market_calendars=
 
     recent_posts = blog_posts[:3] if blog_posts else []
     groups = split_catalog(categories["catalog"])
+    available_now_count = load_homepage_available_now_count()
 
     html = template.render(
-        available_now=groups["in_season"][:HOMEPAGE_AVAILABLE_NOW_COUNT] + groups["always_available"],
+        available_now=groups["in_season"][:available_now_count] + groups["always_available"],
         in_season_count=len(groups["in_season"]),
         previously=groups["previously"],
         pantry_products=categories["pantry"],
