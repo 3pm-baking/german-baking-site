@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include 'partials/analytics.html' %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+          content="3pm German Baking full menu — every cake, pastry, and pantry good we make. In-season favorites, frozen staples, and everything available by order.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="3pm German Baking">
+    <meta property="og:title"
+          content="Full Menu | 3pm German Baking — Asheville, NC">
+    <meta property="og:description"
+          content="Our full menu: in-season baking, frozen staples, and everything available by order.">
+    <meta property="og:url" content="https://germanbakingasheville.com/products/">
+    <meta property="og:image"
+          content="https://germanbakingasheville.com/images/logo.png">
+    <meta property="og:image:alt"
+          content="3pm German Baking logo — authentic German baking in Asheville, NC">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"
+          content="Full Menu | 3pm German Baking — Asheville, NC">
+    <meta name="twitter:description"
+          content="Our full menu: in-season baking, frozen staples, and everything available by order.">
+    <meta name="twitter:image"
+          content="https://germanbakingasheville.com/images/logo.png">
+    <meta name="twitter:image:alt"
+          content="3pm German Baking logo — authentic German baking in Asheville, NC">
+    <link rel="canonical" href="https://germanbakingasheville.com/products/">
+    <title>Full Menu | 3pm German Baking — Asheville, NC</title>
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <link rel="apple-touch-icon" href="../images/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+          media="print"
+          onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+    </noscript>
+    <link rel="stylesheet" href="../styles.min.css">
+    <meta name="theme-color" content="#1a1a1a">
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://germanbakingasheville.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Full Menu",
+        "item": "https://germanbakingasheville.com/products/"
+      }
+    ]
+  }
+    </script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <nav class="nav" aria-label="Main navigation">
+      <div class="container">
+        <input type="checkbox"
+               id="nav-toggle"
+               class="nav__toggle"
+               aria-label="Toggle navigation menu">
+        <label for="nav-toggle" class="nav__toggle-label">
+          <span></span>
+        </label>
+        <ul class="nav__list">
+          <li class="nav__item">
+            <a href="../index.html" class="nav__link">Home</a>
+          </li>
+          <li class="nav__item">
+            <a href="./" class="nav__link">Full Menu</a>
+          </li>
+          <li class="nav__item">
+            <a href="../index.html#blog" class="nav__link">Blog</a>
+          </li>
+          <li class="nav__item">
+            <a href="../index.html#find-us" class="nav__link">Find Us</a>
+          </li>
+          <li class="nav__item">
+            <a href="../index.html#wholesale" class="nav__link">Wholesale</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main id="main-content">
+      <section class="products-index">
+        <div class="container">
+          <h1 class="text-center">Our Full Menu</h1>
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
+          <p class="products-index__intro">
+            Everything we bake — in season, in the freezer, and available by order.
+          </p>
+        </div>
+      </section>
+      <section class="products">
+        <div class="container">
+          <h2 class="text-center">In Season</h2>
+          <div class="divider"><span class="divider__icon">✿</span></div>
+          <p class="available-now__intro">What we're baking this season — fresh, fruit-driven, and rotating with the harvest.</p>
+          <div class="products__grid">
+            {% for product in in_season %}
+              {% include 'partials/product-card.html' %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+      <section class="products">
+        <div class="container">
+          <h2 class="text-center">Always Available</h2>
+          <div class="divider"><span class="divider__icon">✿</span></div>
+          <p class="available-now__intro">Kept in our freezer year-round — you can always get these.</p>
+          <div class="products__grid">
+            {% for product in always_available %}
+              {% include 'partials/product-card.html' %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+      <section class="products">
+        <div class="container">
+          <h2 class="text-center">Previously Available</h2>
+          <div class="divider"><span class="divider__icon">✿</span></div>
+          <p class="available-now__intro">Everything we've made — all available by order. Email us and we'll bake it for you.</p>
+          <div class="products__grid">
+            {% for product in previously %}
+              {% include 'partials/product-card.html' %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+      <section class="pantry">
+        <div class="container">
+          <h2 class="text-center">From Our Pantry</h2>
+          <div class="divider"><span class="divider__icon">✿</span></div>
+          <div class="pantry__grid">
+            {% for product in pantry %}
+              {% include 'partials/product-card.html' %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="footer footer--warm">
+      <div class="container">
+        <img src="../images/logo.png" alt="3pm German Baking" class="footer__logo">
+        <div class="footer__contact">
+          <a href="mailto:info@germanbakingasheville.com" class="footer__email" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
+        </div>
+        <div class="footer__newsletter">
+          <a href="https://newsletter.germanbakingasheville.com"
+             class="footer__newsletter-link"
+             onclick="gtag('event', 'newsletter_footer_click');">
+            Join our mailing list &rarr;
+          </a>
+        </div>
+        <div class="footer__social">
+          <a href="https://facebook.com/3pmgermanbaking"
+             class="social-icon social-icon--facebook"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Follow us on Facebook"
+             title="Follow us on Facebook"
+             onclick="gtag('event', 'social_click', {network: 'facebook'});">
+            <img src="../images/facebook.svg" alt="" width="24" height="24">
+            <span class="social-icon__text">3pm German Baking</span>
+          </a>
+        </div>
+        <div class="footer__social">
+          <a href="https://instagram.com/3pmgermanbaking"
+             class="social-icon social-icon--instagram"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Follow us on Instagram @3pmgermanbaking"
+             title="Follow us on Instagram"
+             onclick="gtag('event', 'social_click', {network: 'instagram'});">
+            <img src="../images/instagram.svg" alt="" width="24" height="24">
+            <span class="social-icon__text">@3pmgermanbaking</span>
+          </a>
+        </div>
+        <p class="footer__legal">
+          <a href="../privacy.html">Privacy Policy</a>
+          <span class="footer__separator">·</span>
+          <a href="../terms.html">Terms of Service</a>
+        </p>
+        <p class="footer__copyright">© 2026 3pm German Baking.</p>
+        <p class="footer__copyright">All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

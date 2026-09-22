@@ -1,0 +1,14 @@
+<li class="previously__item">
+  {% if product.has_page %}
+  <a href="products/{{ product.slug }}.html">
+  {% endif %}
+    {% if product.image %}
+      <img src="images/{{ product.image }}" alt="" class="previously__thumb" loading="lazy">
+    {% endif %}
+    <span class="previously__name">{{ product.title }}
+      {%- if product.german_name %} <span class="previously__german">{{ product.german_name }}</span>{% endif %}
+    </span>
+  {% if product.has_page %}
+  </a>
+  {% endif %}
+</li>

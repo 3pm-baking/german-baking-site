@@ -1920,3 +1920,97 @@ section {
     gap: var(--spacing-xs);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Available Now / Previously Available (homepage redesign 2026-09-22)
+   -------------------------------------------------------------------------- */
+
+.available-now__intro {
+  text-align: center;
+  max-width: 42rem;
+  margin: 0 auto var(--spacing-md);
+  color: var(--color-text-light);
+}
+
+.previously__intro {
+  text-align: center;
+  max-width: 42rem;
+  margin: 0 auto var(--spacing-md);
+  color: var(--color-text-light);
+}
+
+.previously__list {
+  columns: 3;
+  column-gap: 2.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-md);
+}
+
+.previously__item {
+  break-inside: avoid;
+  margin: 0;
+}
+
+.previously__item a {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.previously__item a:hover .previously__name {
+  text-decoration: underline;
+}
+
+.previously__thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.previously__name {
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.previously__german {
+  display: block;
+  color: var(--color-text-light);
+  font-style: italic;
+  font-size: 0.8em;
+}
+
+.previously__more {
+  text-align: center;
+  margin-top: var(--spacing-md);
+}
+
+/* Brand-photo fallback for photo-less cards */
+.product-card__fallback {
+  opacity: 0.85;
+}
+
+/* Hover affordance only on clickable cards */
+.product-card--linked:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 900px) {
+  .previously__list { columns: 2; }
+}
+
+@media (max-width: 600px) {
+  .previously__list { columns: 1; }
+}
+
+/* Fallback image must fill the 1:1 box regardless of natural aspect ratio */
+.product-card__image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

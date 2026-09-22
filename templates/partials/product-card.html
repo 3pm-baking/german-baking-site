@@ -1,13 +1,24 @@
-<article class="product-card" id="{{ product.slug }}">
+<article class="product-card{% if product.has_page %} product-card--linked{% endif %}" id="{{ product.slug }}">
+  {% if product.has_page %}
   <a href="products/{{ product.slug }}.html" class="product-card__link">
+  {% endif %}
     <div class="product-card__image">
       <picture>
         {% if product.image %}<source srcset="images/{{ product.image | webp }}" type="image/webp">{% endif %}
+        {% if product.image %}
         <img src="images/{{ product.image }}"
              alt="{{ product.title }} ({{ product.german_name }}) - Authentic German baking in Asheville, NC"
              loading="lazy"
              width="400"
              height="400">
+        {% else %}
+        <img src="images/hero-couple-sharing-cake.jpg"
+             alt=""
+             loading="lazy"
+             width="400"
+             height="400"
+             class="product-card__fallback">
+        {% endif %}
       </picture>
       {% if product.badges %}
         <div class="product-card__badges">
@@ -25,5 +36,7 @@
     <h3 class="product-card__name">{{ product.title }}</h3>
     <p class="product-card__german">{{ product.german_name }}</p>
     <p class="product-card__description">{{ product.description }}</p>
+  {% if product.has_page %}
   </a>
+  {% endif %}
 </article>

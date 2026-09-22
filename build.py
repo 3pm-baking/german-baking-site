@@ -103,6 +103,9 @@ class Product(BaseModel):
     price: float | None = None
     badges: list[Badge] = []
     sections: list[ProductSection] = []
+    seasons: list[str] = []
+    season_order: int | None = None
+    always_available: bool = False
 
     @field_validator("sections", mode="before")
     @classmethod
@@ -116,6 +119,11 @@ class Product(BaseModel):
         if self.og_description is None:
             self.og_description = self.description
         return self
+
+    @property
+    def has_page(self) -> bool:
+        """Full product page content exists (=> clickable on the site)."""
+        return bool(self.sections)
 
 
 def format_schedule_display(sched: dict) -> str | None:
@@ -306,6 +314,10 @@ class BlogPost(BaseModel):
 # Badge lookup dicts for templates — derived from the Badge enum so there is
 # a single source of truth.
 BADGE_ICONS = {b.value: b.icon for b in Badge}
+
+# Homepage "Available Now" grid: first N in-season products (curation order
+# comes from season_order, stamped from SEASONAL_RECIPES) + always-available.
+HOMEPAGE_AVAILABLE_NOW_COUNT = 6
 BADGE_LABELS = {b.value: b.aria_label for b in Badge}
 BADGE_NAMES = {b.value: b.display_name for b in Badge}
 
@@ -747,6 +759,30 @@ def build_blog_index(env: Environment, posts: list[dict]) -> None:
     print("✓ templates/blog-index.html → blog/index.html")
 
 
+def build_products_index(env: Environment, categories: dict) -> None:
+    """Generate the all-products listing page (products/index.html).
+
+    Groups: In Season, Always Available, Previously Available, Pantry.
+    """
+    template = env.get_template("products-index.html")
+    groups = split_catalog(categories["catalog"])
+
+    html = template.render(
+        in_season=groups["in_season"],
+        always_available=groups["always_available"],
+        previously=groups["previously"],
+        pantry=categories["pantry"],
+        badge_icons=BADGE_ICONS,
+        badge_labels=BADGE_LABELS,
+    )
+
+    output_dir = Path(__file__).parent / "products"
+    output_dir.mkdir(exist_ok=True)
+    output_file = output_dir / "index.html"
+    output_file.write_text(html, encoding="utf-8")
+    print("✓ templates/products-index.html → products/index.html")
+
+
 def build_blog_pages(env: Environment, posts: list[dict]) -> tuple[int, list]:
     """Generate individual blog post pages in blog/.
 
@@ -886,30 +922,33 @@ def parse_product(filepath: Path) -> dict:
     if not raw:
         raise ValueError(f"File {filepath} is empty or invalid YAML")
     product = Product.model_validate(raw)
-    return product.model_dump(mode="json")
+    data = product.model_dump(mode="json")
+    # has_page is a computed property — model_dump drops it, but templates
+    # need it to decide clickability (full page content => linked).
+    data["has_page"] = product.has_page
+    return data
 
 
 def load_products_by_category(content_dir: Path) -> dict:
     """
-    Load products from oven/ and pantry/ subdirectories.
+    Load products from the single catalog pool (also-available/) and pantry/.
 
     Returns:
         {
-            'oven': [product1, product2, ...],
+            'catalog': [product1, product2, ...],   # single pool, all products
             'pantry': [product3, product4, ...]
         }
-    Products sorted by filename (01-, 02- prefix determines order)
+    Catalog sorted by season_order (curation order), then title.
     """
     categories = {}
 
-    for category in ["oven", "pantry"]:
-        category_dir = content_dir / category
+    for category, dirname in [("catalog", "also-available"), ("pantry", "pantry")]:
+        category_dir = content_dir / dirname
         if not category_dir.exists():
             print(f"Warning: {category_dir} not found, skipping")
             categories[category] = []
             continue
 
-        # Sort by filename (number prefix gives us order)
         yaml_files = sorted(category_dir.glob("*.yml"))
         products = []
 
@@ -920,21 +959,51 @@ def load_products_by_category(content_dir: Path) -> dict:
             except Exception as e:
                 print(f"✗ Error loading {yaml_file.name}: {e}")
 
+        if category == "catalog":
+            products.sort(key=lambda p: (
+                p.get("season_order") if p.get("season_order") is not None else 999,
+                p["title"],
+            ))
+
         categories[category] = products
-        print(f"Loaded {len(products)} products from {category}/")
+        print(f"Loaded {len(products)} products from {dirname}/")
 
     return categories
 
 
-def build_landing_page(env, categories, locations, market_items, blog_posts, market_calendars=None, tomorrow_markets=None):
+def split_catalog(catalog: list[dict]) -> dict[str, list[dict]]:
+    """Split the product pool into homepage/all-products page groups.
+
+    Returns:
+        {
+            'in_season': products with a non-empty seasons list
+                         (sorted by season_order — the curation order),
+            'always_available': products with always_available: true,
+            'previously': everything else
+        }
+    """
+    in_season = [p for p in catalog if p.get("seasons")]
+    always = [p for p in catalog if p.get("always_available") and not p.get("seasons")]
+    in_season_slugs = {p["slug"] for p in in_season}
+    always_slugs = {p["slug"] for p in always}
+    previously = [
+        p for p in catalog
+        if p["slug"] not in in_season_slugs and p["slug"] not in always_slugs
+    ]
+    return {"in_season": in_season, "always_available": always, "previously": previously}
+
+
+def build_landing_page(env, categories, locations, blog_posts, market_calendars=None, tomorrow_markets=None):
     """Generate the landing page (index.html) from template."""
     template = env.get_template("index.html")
 
     recent_posts = blog_posts[:3] if blog_posts else []
+    groups = split_catalog(categories["catalog"])
 
     html = template.render(
-        oven_products=categories["oven"],
-        oven_listed_only=market_items,
+        available_now=groups["in_season"][:HOMEPAGE_AVAILABLE_NOW_COUNT] + groups["always_available"],
+        in_season_count=len(groups["in_season"]),
+        previously=groups["previously"],
         pantry_products=categories["pantry"],
         locations=locations,
         badge_icons=BADGE_ICONS,
@@ -963,8 +1032,10 @@ def build_product_pages(env, categories, product_to_blog_posts=None):
 
     template = env.get_template("product.html")
 
-    # Flatten into single list for product page generation
-    all_products = categories["oven"] + categories["pantry"]
+    # Only products with full page content get detail pages (=> clickable).
+    all_products = [
+        p for p in categories["catalog"] + categories["pantry"] if p.get("sections")
+    ]
 
     if not all_products:
         print("Warning: No products found")
@@ -972,6 +1043,7 @@ def build_product_pages(env, categories, product_to_blog_posts=None):
 
     built_count = 0
     errors = []
+    built_slugs: set[str] = set()
 
     for product_data in all_products:
         try:
@@ -988,11 +1060,18 @@ def build_product_pages(env, categories, product_to_blog_posts=None):
 
             print(f"✓ {product_data['slug']}.yml → products/{output_file.name}")
             built_count += 1
+            built_slugs.add(product_data["slug"])
 
         except Exception as e:
             error_msg = f"✗ {product_data['slug']}: {str(e)}"
             print(error_msg)
             errors.append(error_msg)
+
+    # Clean up stale product pages (products that lost their full content)
+    for html_file in output_dir.glob("*.html"):
+        if html_file.stem not in built_slugs:
+            html_file.unlink()
+            print(f"  (removed stale product page: {html_file.name})")
 
     return built_count, errors
 
@@ -1089,8 +1168,11 @@ def build_all():
     # Load blog posts
     blog_posts = load_blog_posts(content_dir)
 
-    # Collect product slugs for sitemap
-    all_product_slugs = [p["slug"] for p in categories.get("oven", []) + categories.get("pantry", [])]
+    # Collect product slugs for sitemap (only products with detail pages)
+    all_product_slugs = [
+        p["slug"] for p in categories.get("catalog", []) + categories.get("pantry", [])
+        if p.get("sections")
+    ]
 
     # Build product → blog post mapping from blog frontmatter (related_products)
     # so product pages can show "Related Blog Posts" without declaring it in product YAML.
@@ -1110,9 +1192,6 @@ def build_all():
     env.filters["rfc822"] = _rfc822_filter
     env.filters["webp"] = _make_webp_filter(base_dir)
 
-    # Load "Also Available" items
-    market_items = load_also_available(content_dir)
-
     print()  # Blank line
 
     # Build landing page
@@ -1120,7 +1199,7 @@ def build_all():
     if tomorrow_markets:
         when = tomorrow_markets[0]["when"]
         print(f"  popup: {tomorrow_markets[0]['name']} ({when})")
-    build_landing_page(env, categories, locations, market_items, blog_posts, market_calendars=market_calendars, tomorrow_markets=tomorrow_markets)
+    build_landing_page(env, categories, locations, blog_posts, market_calendars=market_calendars, tomorrow_markets=tomorrow_markets)
 
     # Build static pages (privacy, terms, etc.)
     pages_dir = base_dir / "content" / "pages"
@@ -1131,6 +1210,9 @@ def build_all():
 
     # Build product pages
     built_count, errors = build_product_pages(env, categories, product_to_blog_posts=product_to_blog_posts)
+
+    # Build the all-products listing page
+    build_products_index(env, categories)
 
     # Build blog
     build_blog_index(env, blog_posts)

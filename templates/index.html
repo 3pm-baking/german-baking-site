@@ -234,18 +234,38 @@
       </section>
       <section class="products" id="products">
         <div class="container">
-          <h2 class="text-center">From Our Oven</h2>
+          <h2 class="text-center">Available Now</h2>
           <div class="divider">
             <span class="divider__icon">✿</span>
           </div>
+          <p class="available-now__intro">
+            What we're baking this season at the markets — plus a few favorites
+            we keep in the freezer year-round.
+          </p>
           <div class="products__grid">
-            {% for product in oven_products %}
+            {% for product in available_now %}
               {% include 'partials/product-card.html' %}
             {% endfor %}
           </div>
-          {% if oven_listed_only %}
-            {% include 'partials/also-available-card.html' %}
-          {% endif %}
+        </div>
+      </section>
+      <section class="previously" id="previously">
+        <div class="container">
+          <h2 class="text-center">Previously Available</h2>
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
+          <p class="previously__intro">
+            Our full menu is available by order — email us and we'll bake it for you.
+          </p>
+          <ul class="previously__list">
+            {% for product in previously %}
+              {% include 'partials/previously-item.html' %}
+            {% endfor %}
+          </ul>
+          <p class="previously__more">
+            <a href="products/">View the full menu &rarr;</a>
+          </p>
         </div>
       </section>
       <section class="pantry" id="pantry">
