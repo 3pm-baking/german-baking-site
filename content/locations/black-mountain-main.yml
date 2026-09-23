@@ -5,13 +5,13 @@ address: First Baptist Church, Black Mountain, NC
 url: https://blackmountainmarket.org/
 schedule_display: Saturdays, May 2 – November 28 · 9am–12pm
 schedule:
-  start_date: '2026-05-02'
-  end_date: '2026-11-28'
-  start_time: 09:00
-  end_time: '12:00'
   day_of_week: Saturday
+  end_date: '2026-11-28'
+  end_time: '12:00'
+  exclude_dates:
+  - '2026-09-05'
   frequency:
     interval_weeks: 2
     offset_weeks: 0
-  exclude_dates:
-  - '2026-09-05'
+  start_date: '2026-05-02'
+  start_time: 09:00
