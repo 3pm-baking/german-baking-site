@@ -2116,6 +2116,12 @@ section {
   color: var(--color-text-light);
 }
 
+.tg-badge--paid {
+  background: #e6f4ea;
+  color: #1e7d3c;
+  border-color: #bfe3c9;
+}
+
 .tg-unavailable {
   color: var(--color-text-light);
   text-align: center;
@@ -2208,18 +2214,45 @@ section {
   margin-bottom: var(--spacing-sm);
 }
 
+/* Text fields: label-left grid so inputs share a left edge */
+label.tg-cart-field {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  align-items: center;
+  column-gap: 0.6rem;
+}
+
+label.tg-cart-field > span {
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  label.tg-cart-field {
+    grid-template-columns: 1fr;
+    row-gap: 0.25rem;
+  }
+}
+
 .tg-cart-field input,
 .tg-cart-pickup {
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--color-border-light);
   border-radius: 6px;
   font: inherit;
-  margin-left: 0.4rem;
+  margin-left: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tg-cart-newsletter {
+  display: flex;
+  align-items: center;
 }
 
 .tg-cart-newsletter input {
   margin-left: 0;
   margin-right: 0.4rem;
+  width: auto;
 }
 
 .tg-cart-checkout-btn {
@@ -2246,6 +2279,194 @@ section {
   color: var(--color-text-light);
   font-size: 0.85rem;
   margin-top: var(--spacing-xs);
+}
+
+/* Pickup option cards: radio choice with market, window, live countdown */
+.tg-pickup-options {
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: var(--spacing-sm);
+  margin: var(--spacing-sm) 0;
+}
+
+.tg-pickup-options legend {
+  font-weight: 600;
+  padding: 0 0.4rem;
+}
+
+.tg-pickup-option {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "radio market countdown"
+    "radio when countdown"
+    "radio deadline countdown";
+  align-items: center;
+  column-gap: 0.6rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.tg-pickup-option:last-child {
+  margin-bottom: 0;
+}
+
+.tg-pickup-option:hover {
+  border-color: var(--color-text-light);
+}
+
+.tg-pickup-option:has(input:checked) {
+  border-color: var(--color-text);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.tg-pickup-option input[type="radio"] {
+  grid-area: radio;
+  margin: 0;
+  appearance: none;
+  box-sizing: border-box;
+  padding: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2px solid var(--color-text-light);
+  border-radius: 3px;
+  background: var(--color-background);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.tg-pickup-option input[type="radio"]::before {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  transform: scale(0);
+  transition: transform 0.12s ease-in-out;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  background: var(--color-background);
+}
+
+.tg-pickup-option input[type="radio"]:checked {
+  border-color: var(--color-text);
+  background: var(--color-text);
+}
+
+.tg-pickup-option input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+.tg-pickup-market {
+  grid-area: market;
+  font-weight: 600;
+}
+
+.tg-pickup-when {
+  grid-area: when;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+.tg-pickup-deadline {
+  grid-area: deadline;
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+}
+
+.tg-pickup-countdown {
+  grid-area: countdown;
+  justify-self: end;
+  align-self: center;
+  background: #e6f4ea;
+  color: #1e7d3c;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tg-pickup-option--soon .tg-pickup-countdown {
+  background: #fdf3d7;
+  color: #9a6b00;
+}
+
+/* Order-status "see you at the market" card */
+.tg-market-card {
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: var(--spacing-sm) var(--spacing-sm);
+  margin: var(--spacing-sm) 0;
+}
+
+.tg-market-card-heading {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.tg-market-card__when {
+  color: var(--color-text-light);
+  margin-bottom: 0.2rem;
+}
+
+.tg-market-card-address {
+  margin-bottom: 0.2rem;
+}
+
+.tg-market-card-schedule,
+.tg-market-card-link {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.tg-market-card-schedule:last-child,
+.tg-market-card-link:last-child,
+.tg-market-card-address:last-child {
+  margin-bottom: 0;
+}
+
+/* /orders/ find-my-order form */
+.tg-lookup-form {
+  max-width: 26rem;
+  margin-top: var(--spacing-sm);
+}
+
+.tg-lookup-form .tg-cart-checkout-btn {
+  margin-top: var(--spacing-xs);
+}
+
+.tg-lookup-result {
+  margin-top: var(--spacing-sm);
+  color: var(--color-text-light);
+}
+
+.tg-status-hint {
+  margin-top: var(--spacing-xs);
+  font-size: 0.85rem;
+}
+
+/* /orders/ masked order summaries */
+.tg-lookup-order {
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+  text-align: left;
+}
+
+.tg-lookup-order-status {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.tg-lookup-order-item {
+  color: var(--color-text-light);
+  margin-bottom: 0.2rem;
 }
 
 .tg-cancel-btn {

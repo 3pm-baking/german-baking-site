@@ -7,6 +7,7 @@ Reads YAML files from content/locations/ and passes them to the landing page tem
 Reads markdown files from content/blog/ and generates blog/index.html + blog/*.html
 """
 
+import json
 import os
 import re
 import sys
@@ -1192,14 +1193,46 @@ def build_cart_page(env: Environment) -> None:
     print("✓ templates/cart.html → cart/index.html")
 
 
+def tailgate_markets_json() -> str:
+    """Market info for the order-status page, keyed by market name.
+
+    The tailgate pickup-point labels ("West Asheville Tailgate Market") match
+    the location YAML names, so the status page can show address, hours, and
+    a Maps link for the market the customer picked up at.
+    """
+    locations_dir = Path(__file__).parent / "content" / "locations"
+    markets = {}
+    for filepath in sorted(locations_dir.glob("*.yml")):
+        loc = parse_location(filepath)
+        markets[loc["name"]] = {
+            "address": loc.get("address"),
+            "url": loc.get("url"),
+            "schedule_display": loc.get("schedule_display"),
+        }
+    return json.dumps(markets, ensure_ascii=False)
+
+
 def build_order_status_page(env: Environment) -> None:
     """Generate /order-status/ — magic-link order status (client-side)."""
     template = env.get_template("order-status.html")
     output_dir = Path(__file__).parent / "order-status"
     output_dir.mkdir(exist_ok=True)
-    html = template.render(tailgate_api_base=TAILGATE_API_BASE)
+    html = template.render(
+        tailgate_api_base=TAILGATE_API_BASE,
+        tailgate_markets_json=tailgate_markets_json(),
+    )
     (output_dir / "index.html").write_text(html, encoding="utf-8")
     print("✓ templates/order-status.html → order-status/index.html")
+
+
+def build_orders_page(env: Environment) -> None:
+    """Generate /orders/ — find-my-order recovery (client-side)."""
+    template = env.get_template("orders.html")
+    output_dir = Path(__file__).parent / "orders"
+    output_dir.mkdir(exist_ok=True)
+    html = template.render(tailgate_api_base=TAILGATE_API_BASE)
+    (output_dir / "index.html").write_text(html, encoding="utf-8")
+    print("✓ templates/orders.html → orders/index.html")
 
 
 def build_all():
@@ -1308,6 +1341,7 @@ def build_all():
     # Ordering pages (pre-order cart + order status)
     build_cart_page(env)
     build_order_status_page(env)
+    build_orders_page(env)
 
     # Update sitemap with blog entries
     update_sitemap(base_dir, product_slugs=all_product_slugs, blog_posts=blog_posts)

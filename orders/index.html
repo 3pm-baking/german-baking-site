@@ -13,9 +13,9 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Pre-order authentic German cakes and pastries for pickup at Asheville area farmers markets.">
+    <meta name="description" content="Find your 3pm German Baking pre-order.">
     <meta name="robots" content="noindex">
-    <title>Your Pre-Order | 3pm German Baking</title>
+    <title>Find Your Pre-Order | 3pm German Baking</title>
     <link rel="icon" type="image/png" href="/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,17 +59,17 @@
     <main id="main-content">
       <section class="tg-cart-page">
         <div class="container">
-          <h1 class="tg-cart-title">Your Pre-Order</h1>
+          <h1 class="tg-cart-title">Find Your Pre-Order</h1>
           <p class="tg-cart-intro">
-            Reserve from this week's bake. Pay now, pick up at the market.
+            Lost your order link? Enter the email you used at checkout and
+            we'll send fresh links for your active orders.
           </p>
-          <p class="tg-cart-details">
-            Pickups require a <strong>48-hour lead time</strong>. Each pickup
-            location below shows its order deadline. Orders and cancellations
-            close together at that deadline, so we know exactly what to bake.
-          </p>
-          <div id="tg-cart-root">
-            <p class="tg-unavailable">Loading your cart…</p>
+          <div id="tg-orders-root">
+            <form id="tg-lookup-form" class="tg-lookup-form">
+              <label class="tg-cart-field"><span>Email</span> <input type="email" id="tg-lookup-email" maxlength="200" required></label>
+              <button type="submit" id="tg-lookup-btn" class="tg-cart-checkout-btn">Email me my links</button>
+              <p class="tg-lookup-result" id="tg-lookup-result" hidden></p>
+            </form>
           </div>
         </div>
       </section>

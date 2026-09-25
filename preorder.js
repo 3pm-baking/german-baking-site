@@ -143,7 +143,9 @@ async function initPreorderWidget() {
   }
 }
 
-/** Nav chip: "your order for pickup — view" (from the last checkout). */
+/** Nav chip: "your order for pickup — view" (from the last checkout).
+ * Without a saved order, falls back to a "Find my order" chip so the
+ * recovery flow is discoverable from every page. */
 function renderOrderChip(container) {
   let saved;
   try {
@@ -151,11 +153,15 @@ function renderOrderChip(container) {
   } catch {
     saved = null;
   }
-  if (!saved || !saved.ref) return;
   const chip = document.createElement("a");
   chip.className = "tg-chip";
-  chip.href = `/order-status/?ref=${encodeURIComponent(saved.ref)}&token=${encodeURIComponent(saved.token)}`;
-  chip.textContent = `Your order for ${saved.pickup || "pickup"} — view status`;
+  if (saved && saved.ref) {
+    chip.href = `/order-status/?ref=${encodeURIComponent(saved.ref)}&token=${encodeURIComponent(saved.token)}`;
+    chip.textContent = `Your order for ${saved.pickup || "pickup"} · view status`;
+  } else {
+    chip.href = "/orders/";
+    chip.textContent = "Find my order";
+  }
   container.prepend(chip);
 }
 
@@ -387,41 +393,59 @@ function renderCart(root, { cart, issues }, availability) {
   table.appendChild(totalRow);
   root.appendChild(table);
 
-  // pickup point selector from open drops
-  const pickupSelect = document.createElement("select");
-  pickupSelect.className = "tg-cart-pickup";
-  pickupSelect.id = "tg-cart-pickup";
+  // pickup options from open drops — radio cards with live countdown
+  const pickupOptions = [];
   for (const drop of availability.drops) {
     const opt = drop.fulfillment_options.find((o) => o.type === "pickup" && o.status === "open");
     if (!opt) continue;
     for (const p of opt.pickup_points) {
-      const option = document.createElement("option");
-      option.value = `${drop.drop_id}|${p.slug}`;
-      option.textContent = `${p.label} — order by ${formatCutoff(opt.cutoff)}`;
-      pickupSelect.appendChild(option);
+      pickupOptions.push({
+        dropId: drop.drop_id,
+        cutoff: opt.cutoff,
+        pickupAt: opt.pickup_at,
+        point: p,
+      });
     }
   }
-  if (pickupSelect.options.length > 0) {
-    const label = document.createElement("label");
-    label.className = "tg-cart-field";
-    label.textContent = "Pickup at ";
-    label.appendChild(pickupSelect);
-    root.appendChild(label);
+  pickupOptions.sort((a, b) => new Date(a.cutoff) - new Date(b.cutoff));
+  if (pickupOptions.length > 0) {
+    const group = document.createElement("fieldset");
+    group.className = "tg-cart-field tg-pickup-options";
+    const legend = document.createElement("legend");
+    legend.textContent = "Pickup at";
+    group.appendChild(legend);
+    pickupOptions.forEach((o, i) => {
+      const cd = tgCountdown(o.cutoff);
+      const day = tgRelativeDay(o.pickupAt || o.cutoff);
+      const win = tgPickupWindow(o.point, o.pickupAt);
+      const label = document.createElement("label");
+      label.className = "tg-pickup-option" + (cd.soon ? " tg-pickup-option--soon" : "");
+      label.innerHTML = `
+        <input type="radio" name="tg-pickup" value="${o.dropId}|${o.point.slug}" ${i === 0 ? "checked" : ""}>
+        <span class="tg-pickup-market">${tgShortMarketName(o.point.label)}</span>
+        <span class="tg-pickup-when">${[day, win].filter(Boolean).join(" · ")}</span>
+        <span class="tg-pickup-countdown" data-cutoff="${o.cutoff}">${cd.text}</span>
+        <span class="tg-pickup-deadline">Order by ${formatCutoff(o.cutoff)}</span>
+      `;
+      group.appendChild(label);
+    });
+    root.appendChild(group);
+    tgStartPickupTicker(group);
   }
 
   // contact + newsletter + checkout
   const form = document.createElement("div");
   form.className = "tg-cart-checkout";
   form.innerHTML = `
-    <label class="tg-cart-field">Name <input type="text" id="tg-cart-name" maxlength="200" required></label>
-    <label class="tg-cart-field">Email or phone <input type="text" id="tg-cart-contact" maxlength="200" required></label>
+    <label class="tg-cart-field"><span>Name</span> <input type="text" id="tg-cart-name" maxlength="200" required></label>
+    <label class="tg-cart-field"><span>Email or phone</span> <input type="text" id="tg-cart-contact" maxlength="200" required></label>
     ${window.TAILGATE_NEWSLETTER ? `
     <label class="tg-cart-field tg-cart-newsletter">
       <input type="checkbox" id="tg-cart-newsletter">
       Also send me the monthly newsletter
     </label>` : ""}
     <button type="button" id="tg-cart-checkout" class="tg-cart-checkout-btn">Checkout</button>
-    <p class="tg-cart-fineprint">Payment via Square — cards, Apple Pay, Google Pay, Cash App.</p>
+    <p class="tg-cart-fineprint">Payment via Square: cards, Apple Pay, Google Pay, Cash App.</p>
   `;
   root.appendChild(form);
 
@@ -477,7 +501,8 @@ async function checkout(root, availability) {
   if (cart.items.length === 0) return;
   const name = root.querySelector("#tg-cart-name").value.trim();
   const contact = root.querySelector("#tg-cart-contact").value.trim();
-  const pickupValue = root.querySelector("#tg-cart-pickup").value;
+  const pickupInput = root.querySelector("input[name='tg-pickup']:checked");
+  const pickupValue = pickupInput ? pickupInput.value : "";
   if (!pickupValue) return;
   const [dropId, pickupSlug] = pickupValue.split("|");
   const newsletterInput = root.querySelector("#tg-cart-newsletter");
@@ -518,16 +543,16 @@ async function checkout(root, availability) {
       }
       // manual rail (e.g. pay at pickup): show confirmation inline
       root.querySelector(".tg-cart-checkout").innerHTML = `
-        <p class="tg-cart-note">Order reserved — ${data.instructions || "pay at pickup"}.</p>
+        <p class="tg-cart-note">Order reserved. ${data.instructions || "pay at pickup"}.</p>
         <p><a href="/order-status/?ref=${encodeURIComponent(data.order_ref)}&token=${encodeURIComponent(data.status_token)}">View your order status →</a></p>`;
       return;
     }
     // order-level errors (sold out, cutoff, limit)
     button.disabled = false;
-    button.textContent = data.message || "Something went wrong — try again.";
+    button.textContent = data.message || "Something went wrong. Try again.";
   } catch (err) {
     button.disabled = false;
-    button.textContent = "Network error — try again";
+    button.textContent = "Network error, try again";
   }
 }
 
@@ -555,26 +580,79 @@ async function initOrderStatusPage() {
     }
     if (!res.ok) throw new Error(`status ${res.status}`);
     const order = await res.json();
-    // map item slugs -> display names via the availability data
+    // map item slugs -> display names and pickup slugs -> point details
+    // via the availability data
     let nameMap = {};
+    let pointMap = {};
     try {
       const availability = await tgFetchAvailability();
       for (const drop of availability.drops) {
         for (const item of drop["items"]) nameMap[item.slug] = item.name;
+        for (const opt of drop.fulfillment_options) {
+          for (const p of opt.pickup_points) pointMap[p.slug] = p;
+        }
       }
     } catch {
       // fail-soft: slugs are still readable
     }
-    renderOrderStatus(root, order, ref, token, nameMap);
+    renderOrderStatus(root, order, ref, token, nameMap, pointMap);
   } catch (err) {
     root.innerHTML = '<p class="tg-unavailable">Could not load your order right now.</p>';
   }
 }
 
-function renderOrderStatus(root, order, ref, token, nameMap = {}) {
+/** "See you at the market" card: market name, date/time, Maps link, hours.
+ * Falls back to the plain pickup line when data is missing (fail-soft). */
+function tgPickupCard(order, points = {}) {
+  const point = points[order.pickup_point];
+  const market = point && window.TAILGATE_MARKETS && window.TAILGATE_MARKETS[point.label];
+  if (!point || !market) {
+    return order.pickup_point ? `<p class="tg-muted">Pickup: ${order.pickup_point}</p>` : "";
+  }
+  let when = "";
+  if (order.pickup_at) {
+    try {
+      const date = new Date(order.pickup_at).toLocaleDateString([], {
+        weekday: "long",
+        month: "short",
+        day: "numeric",
+      });
+      const win = tgPickupWindow(point, order.pickup_at);
+      when = `<p class="tg-market-card__when">${[date, win].filter(Boolean).join(" · ")}</p>`;
+    } catch {
+      when = "";
+    }
+  }
+  const mapsLink = market.address
+    ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(market.address)}"
+          target="_blank" rel="noopener noreferrer" class="tg-market-card-map"
+          onclick="gtag('event', 'maps_click', {market: '${point.label.replace(/'/g, "\\'")}'});">${market.address}</a>`
+    : "";
+  const siteLink = market.url
+    ? `<a href="${market.url}" target="_blank" rel="noopener noreferrer">Market website →</a>`
+    : "";
+  const schedule = market.schedule_display
+    ? `<p class="tg-market-card-schedule">${market.schedule_display}</p>`
+    : "";
+  const heading =
+    order.status === "paid" || order.status === "fulfilled"
+      ? `See you at ${point.label}`
+      : `Pickup at ${point.label}`;
+  return `
+    <div class="tg-market-card">
+      <p class="tg-market-card-heading">${heading}</p>
+      ${when}
+      ${mapsLink ? `<p class="tg-market-card-address">${mapsLink}</p>` : ""}
+      ${schedule}
+      ${siteLink ? `<p class="tg-market-card-link">${siteLink}</p>` : ""}
+    </div>
+  `;
+}
+
+function renderOrderStatus(root, order, ref, token, nameMap = {}, points = {}) {
   const statusLabels = {
     pending: "Awaiting payment",
-    paid: "Paid — see you at pickup!",
+    paid: "Paid! See you at pickup.",
     fulfilled: "Picked up ✓",
     no_show: "Missed pickup",
     canceled: "Canceled",
@@ -592,15 +670,16 @@ function renderOrderStatus(root, order, ref, token, nameMap = {}) {
     ? `<p class="tg-muted">Cancellations close <strong>${formatCutoff(order.cancellation_deadline)}</strong>.</p>`
     : `<p class="tg-muted">Cancellations close at the order deadline.</p>`;
   root.innerHTML = `
-    <p><span class="tg-badge">${statusLabels[order.status] || order.status}</span></p>
+    <p><span class="tg-badge${order.status === "paid" ? " tg-badge--paid" : ""}">${statusLabels[order.status] || order.status}</span></p>
     <table class="tg-cart-table">
       ${rows}
       <tfoot><tr><th>Total</th><th>$${(order.total_cents / 100).toFixed(2)}</th></tr></tfoot>
     </table>
-    ${order.pickup_point ? `<p class="tg-muted">Pickup: ${order.pickup_point}</p>` : ""}
+    ${tgPickupCard(order, points)}
     ${cancellable ? `
       <button type="button" id="tg-cancel-order" class="tg-cancel-btn">Cancel order</button>
-      ${cancelDeadline}` : ""}
+      ${cancelDeadline}
+      <p class="tg-muted tg-status-hint">Lost this link? <a href="/orders/">Get a fresh one by email</a>.</p>` : ""}
   `;
   if (cancellable) {
     root.querySelector("#tg-cancel-order").addEventListener("click", async () => {
@@ -613,10 +692,10 @@ function renderOrderStatus(root, order, ref, token, nameMap = {}) {
         }
       );
       if (res.ok) {
-        renderOrderStatus(root, { ...order, status: "canceled" }, ref, token, nameMap);
+        renderOrderStatus(root, { ...order, status: "canceled" }, ref, token, nameMap, points);
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.message || "Could not cancel — contact us and we'll help.");
+        alert(data.message || "Could not cancel. Contact us and we'll help.");
       }
     });
   }
@@ -632,6 +711,7 @@ if (typeof document !== "undefined") {
     if (document.getElementById("tailgate-widget")) initPreorderWidget();
     if (document.getElementById("tg-cart-root")) initCartPage();
     if (document.getElementById("tg-status-root")) initOrderStatusPage();
+    if (document.getElementById("tg-lookup-form")) initLookupPage();
     if (document.querySelector("[data-tg-add-group]")) initAddToCartButtons();
   };
   if (document.readyState === "loading") {
@@ -639,6 +719,51 @@ if (typeof document !== "undefined") {
   } else {
     boot();
   }
+}
+
+// ---------------------------------------------------------------------------
+// /orders/ page — find-my-order recovery
+// ---------------------------------------------------------------------------
+
+function initLookupPage() {
+  const form = document.getElementById("tg-lookup-form");
+  if (!form || !window.TAILGATE_API_BASE) return;
+  const result = document.getElementById("tg-lookup-result");
+  const button = document.getElementById("tg-lookup-btn");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = document.getElementById("tg-lookup-email").value.trim();
+    if (!email) return;
+    button.disabled = true;
+    button.textContent = "Sending…";
+    try {
+      const res = await fetch(`${TG_API_BASE}/api/v1/orders/lookup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contact: email }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        let html = `<p>${data.message || "If an order exists for that email, we've sent the link(s)."}</p>`;
+        for (const order of data.orders || []) {
+          html += `
+            <div class="tg-lookup-order">
+              <p class="tg-lookup-order-status">${order.status === "paid" ? "Paid" : "Awaiting payment"} · $${(order.total_cents / 100).toFixed(2)}</p>
+              ${order.items.map((i) => `<p class="tg-lookup-order-item">${i}</p>`).join("")}
+              <p class="tg-muted">Link sent to ${order.contact_masked}</p>
+            </div>`;
+        }
+        result.innerHTML = html;
+      } else {
+        result.textContent = data.detail || data.message || "Something went wrong. Try again.";
+      }
+    } catch {
+      result.textContent = "Network error, try again";
+    }
+    result.hidden = false;
+    button.disabled = false;
+    button.textContent = "Email me my links";
+  });
 }
 
 /** Human cutoff: "Sunday, Sep 27 at 1:48 PM" — date always included. */
@@ -656,4 +781,94 @@ function formatCutoff(iso) {
   } catch {
     return iso;
   }
+}
+
+// ---------------------------------------------------------------------------
+// pickup-option helpers (all presentation math is client-side; the API only
+// publishes raw ISO timestamps)
+// ---------------------------------------------------------------------------
+
+/** "West Asheville Tailgate Market" → "West Asheville". */
+function tgShortMarketName(label) {
+  return label.replace(/\s+Tailgate Market$/i, "");
+}
+
+/** "15:30" → "3:30 PM". */
+function tgFormatClock(hhmm) {
+  const [h, m] = hhmm.split(":").map(Number);
+  if (Number.isNaN(h)) return hhmm;
+  const ampm = h >= 12 ? "PM" : "AM";
+  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
+/** Pickup window for display: "3:30–6:30 PM" from window fields, else the
+ * single pickup_at time, else null (fail-soft — segment is omitted). */
+function tgPickupWindow(point, pickupAtIso) {
+  if (point.window_start && point.window_end) {
+    return `${tgFormatClock(point.window_start)}–${tgFormatClock(point.window_end)}`;
+  }
+  if (pickupAtIso) {
+    try {
+      return new Date(pickupAtIso).toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+/** Relative day label: "This Tuesday" when the date falls within the next
+ * 7 days, else "Tue, Oct 6". */
+function tgRelativeDay(iso) {
+  try {
+    const d = new Date(iso);
+    const now = new Date();
+    const weekAhead = new Date(now);
+    weekAhead.setDate(weekAhead.getDate() + 7);
+    if (d >= now && d <= weekAhead) {
+      return `This ${d.toLocaleDateString([], { weekday: "long" })}`;
+    }
+    return d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+  } catch {
+    return "";
+  }
+}
+
+/** Countdown to an order cutoff: "2d 4h left" → "5h left" (<24h) →
+ * "45m left" (<1h) → "Closed". `soon` is true inside the last 24h. */
+function tgCountdown(cutoffIso, now = new Date()) {
+  let ms;
+  try {
+    ms = new Date(cutoffIso).getTime() - now.getTime();
+  } catch {
+    return { text: "", soon: false };
+  }
+  if (Number.isNaN(ms)) return { text: "", soon: false };
+  if (ms <= 0) return { text: "Closed", soon: true };
+  const mins = Math.floor(ms / 60000);
+  if (mins < 60) return { text: `${mins}m left`, soon: true };
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return { text: `${hours}h left`, soon: true };
+  const days = Math.floor(hours / 24);
+  const remH = hours % 24;
+  return { text: remH ? `${days}d ${remH}h left` : `${days}d left`, soon: false };
+}
+
+/** Live countdown ticker: updates only the countdown chips every 30s so the
+ * radio selection survives. Cleared and replaced on each cart re-render. */
+let tgPickupTickerId = null;
+function tgStartPickupTicker(group) {
+  if (tgPickupTickerId) clearInterval(tgPickupTickerId);
+  const tick = () => {
+    group.querySelectorAll(".tg-pickup-countdown").forEach((el) => {
+      const cd = tgCountdown(el.dataset.cutoff);
+      el.textContent = cd.text;
+      const card = el.closest(".tg-pickup-option");
+      if (card) card.classList.toggle("tg-pickup-option--soon", cd.soon);
+    });
+  };
+  tgPickupTickerId = setInterval(tick, 30000);
 }
