@@ -165,34 +165,8 @@
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
-    <nav class="nav" aria-label="Main navigation">
-      <div class="container">
-        <input type="checkbox"
-               id="nav-toggle"
-               class="nav__toggle"
-               aria-label="Toggle navigation menu">
-        <label for="nav-toggle" class="nav__toggle-label">
-          <span></span>
-        </label>
-        <ul class="nav__list">
-          <li class="nav__item">
-            <a href="#about" class="nav__link">Our Story</a>
-          </li>
-          <li class="nav__item">
-            <a href="#products" class="nav__link">Products</a>
-          </li>
-          <li class="nav__item">
-            <a href="#blog" class="nav__link">Blog</a>
-          </li>
-          <li class="nav__item">
-            <a href="#find-us" class="nav__link">Find Us</a>
-          </li>
-          <li class="nav__item">
-            <a href="#wholesale" class="nav__link">Wholesale</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    {% set nav_base = "" %}
+    {% include 'partials/nav.html' %}
     <main id="main-content">
       <section class="hero hero--with-image">
         <div class="container">
@@ -249,6 +223,7 @@
           </div>
         </div>
       </section>
+      {% include 'partials/preorder-widget.html' %}
       <section class="previously" id="previously">
         <div class="container">
           <h2 class="text-center">Previously Available</h2>
@@ -453,6 +428,8 @@
       </section>
       
     </main>
+    <script>window.TAILGATE_API_BASE = "{{ tailgate_api_base }}";</script>
+    <script src="/preorder.js?v={{ js_version }}"></script>
     <footer class="footer">
       <div class="container">
         <img src="images/logo.png"

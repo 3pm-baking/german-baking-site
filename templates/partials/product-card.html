@@ -39,4 +39,9 @@
   {% if product.has_page %}
   </a>
   {% endif %}
+  {# Unit buttons are injected by preorder.js from the availability API —
+     one stepper per sellable unit (slice / whole), with prices. They sit
+     OUTSIDE the card link so ordering clicks never navigate; the link
+     stretches over the card via CSS instead. #}
+  <div class="tg-add-group" data-tg-add-group data-slug="{{ product.slug }}" hidden></div>
 </article>

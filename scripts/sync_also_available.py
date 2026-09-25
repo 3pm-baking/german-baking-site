@@ -154,7 +154,7 @@ def main() -> None:
     print(f"\nDone. {created} created, {skipped_existing} already existed, {skipped_excluded} excluded.")
     if created:
         print("Review new files in content/products/also-available/, then run:")
-        print("  uv run python build.py")
+        print("  uv run python site/build.py")
 
 
 if __name__ == "__main__":

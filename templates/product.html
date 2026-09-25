@@ -30,6 +30,8 @@
             </div>
           {% endif %}
           <p class="product-detail__description">{{ page.description }}</p>
+          {# Pre-order: unit boxes injected by preorder.js from the order. API #}
+          <div class="tg-add-group tg-add-group--detail" data-tg-add-group data-slug="{{ page.slug }}" hidden></div>
           {% for section in page.sections %}
             <section class="product-detail__section">
               <h2>{{ section.title }}</h2>
@@ -69,5 +71,7 @@
       </div>
     </main>
     {% include 'partials/footer.html' %}
+    <script>window.TAILGATE_API_BASE = "{{ tailgate_api_base }}";</script>
+    <script src="../preorder.js?v={{ js_version }}"></script>
   </body>
 </html>

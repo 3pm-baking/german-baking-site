@@ -316,6 +316,9 @@ section {
   padding: var(--spacing-md);
   text-align: center;
   transition: box-shadow 0.2s ease;
+  /* flex column so the add-box group pins to the card bottom */
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
@@ -1747,11 +1750,25 @@ section {
 
 /* --------------------------------------------------------------------------
    Product Card Links (Homepage)
+   The link stretches over the whole card as an overlay so any click
+   navigates — EXCEPT the add-to-cart steppers, which sit outside the
+   <a> and layer above the overlay (z-index 2 > 1).
    -------------------------------------------------------------------------- */
+.product-card {
+  position: relative;
+}
+
 .product-card__link {
   display: block;
   color: inherit;
   text-decoration: none;
+}
+
+.product-card--linked .product-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .product-card__link:hover {
@@ -2017,3 +2034,309 @@ section {
   width: 100%;
   height: 100%;
 }
+
+/* --------------------------------------------------------------------------
+   Pre-order / tailgate components
+   -------------------------------------------------------------------------- */
+
+/* Floating cart button — fixed top-right, appears when the cart has items */
+.tg-float-cart {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-text);
+  color: var(--color-background);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.tg-float-cart:hover {
+  background: #3a3a3a;
+  transform: translateY(-1px);
+}
+
+/* explicit display must not defeat the hidden attribute (empty cart) */
+.tg-float-cart[hidden] {
+  display: none;
+}
+
+.tg-float-cart__count {
+  min-width: 1.1em;
+  text-align: center;
+}
+
+/* Pre-order strip on the homepage */
+.preorder {
+  padding: var(--spacing-lg) 0;
+  background: var(--color-background-warm);
+}
+
+.preorder__intro {
+  text-align: center;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
+}
+
+.tg-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border-light);
+  border-radius: 10px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.tg-strip--closed {
+  opacity: 0.6;
+}
+
+.tg-badge {
+  display: inline-block;
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.tg-badge--closed {
+  background: var(--color-background-warm);
+  color: var(--color-text-light);
+}
+
+.tg-unavailable {
+  color: var(--color-text-light);
+  text-align: center;
+}
+
+/* Cart page */
+.tg-cart-page {
+  padding: var(--spacing-lg) 0;
+  min-height: 50vh;
+}
+
+.tg-cart-title {
+  font-family: var(--font-heading);
+  text-align: center;
+}
+
+.tg-cart-intro {
+  text-align: center;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-sm);
+}
+
+.tg-cart-details {
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  max-width: 34rem;
+  margin: 0 auto var(--spacing-md);
+}
+
+.tg-cart-note {
+  background: var(--color-background-warm);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.tg-cart-empty {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: var(--spacing-md) 0;
+}
+
+.tg-cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-md);
+}
+
+.tg-cart-table td,
+.tg-cart-table th {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+  text-align: left;
+}
+
+.tg-cart-unit {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+}
+
+.tg-cart-qty input {
+  width: 4.5em;
+  padding: 0.35rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  font: inherit;
+}
+
+.tg-cart-remove {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--color-text-light);
+  padding: 0.2rem 0.5rem;
+}
+
+.tg-cart-remove:hover {
+  color: var(--color-text);
+}
+
+.tg-cart-total {
+  font-size: 1.1rem;
+}
+
+.tg-cart-field {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+}
+
+.tg-cart-field input,
+.tg-cart-pickup {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  font: inherit;
+  margin-left: 0.4rem;
+}
+
+.tg-cart-newsletter input {
+  margin-left: 0;
+  margin-right: 0.4rem;
+}
+
+.tg-cart-checkout-btn {
+  background: var(--color-text);
+  color: var(--color-background);
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.6rem;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tg-cart-checkout-btn:hover {
+  background: #3a3a3a;
+}
+
+.tg-cart-checkout-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.tg-cart-fineprint {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  margin-top: var(--spacing-xs);
+}
+
+.tg-cancel-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tg-muted {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+/* Add-to-cart unit boxes on product cards: compact steppers — click + to
+   add, − to remove, count shows what's in the order. The label shows the
+   unit name and price (e.g. "Slice · $6"). Sits above the stretched card
+   link so ordering clicks don't navigate. */
+.tg-add-group {
+  display: flex;
+  gap: var(--spacing-xs);
+  /* pinned to the card bottom, centered — consistent position across cards */
+  margin-top: auto;
+  padding-top: var(--spacing-sm);
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.tg-add-group[hidden] {
+  display: none;
+}
+
+.tg-add-box {
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.45rem;
+  border: 1.5px solid var(--color-border-light);
+  border-radius: 10px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.tg-add-box__label {
+  font-weight: 500;
+  flex: 1 1 auto;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-add-box:hover {
+  border-color: var(--color-border);
+  background: var(--color-background-warm);
+}
+
+.tg-add-box--in-cart {
+  border-color: var(--color-text);
+  background: var(--color-background-warm);
+}
+
+.tg-add-box__minus,
+.tg-add-box__plus {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5em;
+  height: 1.5em;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-text);
+  color: var(--color-background);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.tg-add-box__minus:hover,
+.tg-add-box__plus:hover {
+  background: #3a3a3a;
+}
+

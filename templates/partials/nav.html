@@ -1,0 +1,30 @@
+{# Site navigation. `nav_base` prefixes links: empty string on the homepage
+   (anchor links), the site URL from other surfaces (order pages, etc.). #}
+<nav class="nav" aria-label="Main navigation">
+  <div class="container">
+    <input type="checkbox"
+           id="nav-toggle"
+           class="nav__toggle"
+           aria-label="Toggle navigation menu">
+    <label for="nav-toggle" class="nav__toggle-label">
+      <span></span>
+    </label>
+    <ul class="nav__list">
+      <li class="nav__item">
+        <a href="{{ nav_base }}#about" class="nav__link">Our Story</a>
+      </li>
+      <li class="nav__item">
+        <a href="{{ nav_base }}#products" class="nav__link">Products</a>
+      </li>
+      <li class="nav__item">
+        <a href="{{ nav_base }}#blog" class="nav__link">Blog</a>
+      </li>
+      <li class="nav__item">
+        <a href="{{ nav_base }}#find-us" class="nav__link">Find Us</a>
+      </li>
+      <li class="nav__item">
+        <a href="{{ nav_base }}#wholesale" class="nav__link">Wholesale</a>
+      </li>
+    </ul>
+  </div>
+</nav>
