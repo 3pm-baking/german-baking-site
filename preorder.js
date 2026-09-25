@@ -439,6 +439,7 @@ function renderCart(root, { cart, issues }, availability) {
   form.innerHTML = `
     <label class="tg-cart-field"><span>Name</span> <input type="text" id="tg-cart-name" maxlength="200" required></label>
     <label class="tg-cart-field"><span>Email or phone</span> <input type="text" id="tg-cart-contact" maxlength="200" required></label>
+    <input type="text" name="website" class="tg-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     ${window.TAILGATE_NEWSLETTER ? `
     <label class="tg-cart-field tg-cart-newsletter">
       <input type="checkbox" id="tg-cart-newsletter">
@@ -528,6 +529,7 @@ async function checkout(root, availability) {
         name,
         contact,
         newsletter: newsletterInput ? newsletterInput.checked : false,
+        website: (root.querySelector("input[name='website']") || {}).value || "",
       }),
     });
     const data = await response.json();
@@ -734,13 +736,14 @@ function initLookupPage() {
     event.preventDefault();
     const email = document.getElementById("tg-lookup-email").value.trim();
     if (!email) return;
+    const hp = form.querySelector("input[name='website']");
     button.disabled = true;
     button.textContent = "Sending…";
     try {
       const res = await fetch(`${TG_API_BASE}/api/v1/orders/lookup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contact: email }),
+        body: JSON.stringify({ contact: email, website: hp ? hp.value : "" }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
