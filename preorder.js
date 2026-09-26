@@ -630,7 +630,7 @@ async function initOrderStatusPage() {
 
 /** "See you at the market" card: market name, date/time, Maps link, hours.
  * Falls back to the plain pickup line when data is missing (fail-soft). */
-function tgPickupCard(order, points = {}) {
+function tgPickupCard(order, points = {}, token = "") {
   const point = points[order.pickup_point];
   const market = point && window.TAILGATE_MARKETS && window.TAILGATE_MARKETS[point.label];
   if (!point || !market) {
@@ -665,6 +665,10 @@ function tgPickupCard(order, points = {}) {
     order.status === "paid" || order.status === "fulfilled"
       ? `See you at ${point.label}`
       : `Pickup at ${point.label}`;
+  const calLink = order.pickup_at
+    ? `<a href="${TG_API_BASE}/api/v1/orders/${encodeURIComponent(order.order_ref)}/calendar.ics?token=${encodeURIComponent(token)}"
+          class="tg-market-card-cal" download="pickup.ics">Add to calendar</a>`
+    : "";
   return `
     <div class="tg-market-card">
       <p class="tg-market-card-heading">${heading}</p>
@@ -672,6 +676,7 @@ function tgPickupCard(order, points = {}) {
       ${mapsLink ? `<p class="tg-market-card-address">${mapsLink}</p>` : ""}
       ${schedule}
       ${siteLink ? `<p class="tg-market-card-link">${siteLink}</p>` : ""}
+      ${calLink ? `<p class="tg-market-card-cal-row">${calLink}</p>` : ""}
     </div>
   `;
 }
@@ -696,13 +701,18 @@ function renderOrderStatus(root, order, ref, token, nameMap = {}, points = {}) {
   const cancelDeadline = order.cancellation_deadline
     ? `<p class="tg-muted">Cancellations close <strong>${formatCutoff(order.cancellation_deadline)}</strong>.</p>`
     : `<p class="tg-muted">Cancellations close at the order deadline.</p>`;
+  const waiting =
+    order.status === "pending"
+      ? `<p class="tg-muted tg-status-waiting">Confirming your payment — this page updates automatically, no need to refresh.</p>`
+      : "";
   root.innerHTML = `
-    <p><span class="tg-badge${order.status === "paid" ? " tg-badge--paid" : ""}">${statusLabels[order.status] || order.status}</span></p>
+    <p><span class="tg-badge${order.status === "paid" ? " tg-badge--paid" : ""}${order.status === "pending" ? " tg-badge--pending" : ""}">${statusLabels[order.status] || order.status}</span></p>
     <table class="tg-cart-table">
       ${rows}
       <tfoot><tr><th>Total</th><th>$${(order.total_cents / 100).toFixed(2)}</th></tr></tfoot>
     </table>
-    ${tgPickupCard(order, points)}
+    ${waiting}
+    ${tgPickupCard(order, points, token)}
     ${cancellable ? `
       <button type="button" id="tg-cancel-order" class="tg-cancel-btn">Cancel order</button>
       ${cancelDeadline}

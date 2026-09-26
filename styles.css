@@ -2122,6 +2122,28 @@ section {
   border-color: #bfe3c9;
 }
 
+.tg-badge--pending {
+  background: var(--color-background-warm);
+  color: var(--color-text);
+  animation: tg-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tg-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tg-badge--pending {
+    animation: none;
+  }
+}
+
+.tg-status-waiting {
+  margin-top: var(--spacing-xs);
+  font-size: 0.85rem;
+}
+
 .tg-unavailable {
   color: var(--color-text-light);
   text-align: center;
