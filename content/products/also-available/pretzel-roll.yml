@@ -8,6 +8,7 @@ german_name: Laugenbrötchen
 description: Lye-dipped yeast dough rolls, topped with sea salt
 badges: []
 price: 4.0
+image: pretzel-roll.jpg
 seasons:
 - fall
 season_order: 6

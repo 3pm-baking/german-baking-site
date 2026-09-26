@@ -8,6 +8,7 @@ german_name: Zwiebelkuchen
 description: Swabian onion cake on yeast dough with caramelized onions and cream
 badges: []
 price: 6.0
+image: onion-cake.jpg
 seasons:
 - fall
 season_order: 10
