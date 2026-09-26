@@ -572,32 +572,57 @@ async function initOrderStatusPage() {
     root.innerHTML = "<p>Missing order link information.</p>";
     return;
   }
+  // map item slugs -> display names and pickup slugs -> point details
+  // via the availability data
+  let nameMap = {};
+  let pointMap = {};
   try {
+    const availability = await tgFetchAvailability();
+    for (const drop of availability.drops) {
+      for (const item of drop["items"]) nameMap[item.slug] = item.name;
+      for (const opt of drop.fulfillment_options) {
+        for (const p of opt.pickup_points) pointMap[p.slug] = p;
+      }
+    }
+  } catch {
+    // fail-soft: slugs are still readable
+  }
+  const loadOrder = async () => {
     const res = await fetch(
       `${TG_API_BASE}/api/v1/orders/${encodeURIComponent(ref)}?token=${encodeURIComponent(token)}`
     );
     if (res.status === 403 || res.status === 404) {
       root.innerHTML = "<p>This order link is not valid.</p>";
-      return;
+      return null;
     }
     if (!res.ok) throw new Error(`status ${res.status}`);
-    const order = await res.json();
-    // map item slugs -> display names and pickup slugs -> point details
-    // via the availability data
-    let nameMap = {};
-    let pointMap = {};
-    try {
-      const availability = await tgFetchAvailability();
-      for (const drop of availability.drops) {
-        for (const item of drop["items"]) nameMap[item.slug] = item.name;
-        for (const opt of drop.fulfillment_options) {
-          for (const p of opt.pickup_points) pointMap[p.slug] = p;
-        }
-      }
-    } catch {
-      // fail-soft: slugs are still readable
-    }
+    return res.json();
+  };
+  try {
+    const order = await loadOrder();
+    if (!order) return;
     renderOrderStatus(root, order, ref, token, nameMap, pointMap);
+    // Square's webhook can land after the customer reaches this page, so a
+    // pending order re-checks until it flips to paid (or a terminal state).
+    const pending = order.status === "pending";
+    if (pending) {
+      let delay = 5000;
+      const poll = async () => {
+        try {
+          const fresh = await loadOrder();
+          if (!fresh) return;
+          if (fresh.status !== order.status) {
+            renderOrderStatus(root, fresh, ref, token, nameMap, pointMap);
+            return;
+          }
+        } catch {
+          // transient network/API hiccup — keep polling
+        }
+        delay = Math.min(delay * 2, 30000);
+        setTimeout(poll, delay);
+      };
+      setTimeout(poll, delay);
+    }
   } catch (err) {
     root.innerHTML = '<p class="tg-unavailable">Could not load your order right now.</p>';
   }
