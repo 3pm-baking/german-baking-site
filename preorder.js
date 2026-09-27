@@ -44,6 +44,15 @@ function tgCartAdd(slug, unit, qty) {
     cart.items.push({ slug, unit, qty });
   }
   tgCartSave(cart);
+  if (window.gtag) {
+    const info = tgAddBoxInfo.get(`${slug}:${unit}`);
+    window.gtag("event", "add_to_cart", {
+      item: slug,
+      unit: unit,
+      quantity: qty,
+      ...(info && info.priceCents != null ? { value: info.priceCents / 100 } : {}),
+    });
+  }
 }
 
 function tgCartRemove(slug, unit) {
@@ -627,7 +636,36 @@ function tgPickupCard(order, points = {}, token = "") {
   `;
 }
 
+/** GA4 purchase event when an order is (or flips to) paid. Guarded by
+ * sessionStorage so polling re-renders don't re-fire; GA4 also dedupes
+ * purchase events by transaction_id. No PII: ref, value, items only. */
+function tgTrackPurchase(order, nameMap = {}) {
+  if (!window.gtag) return;
+  if (order.status !== "paid" && order.status !== "fulfilled") return;
+  const key = `tg_purchase_${order.order_ref}`;
+  try {
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, "1");
+  } catch {
+    // storage blocked — GA4's transaction_id dedup still applies
+  }
+  window.gtag("event", "purchase", {
+    transaction_id: order.order_ref,
+    value: order.total_cents / 100,
+    currency: "USD",
+    market: order.pickup_point,
+    items: order.lines.map((line) => ({
+      item_id: line.item_slug,
+      item_name: nameMap[line.item_slug] || line.item_slug,
+      item_variant: line.unit_name,
+      price: line.unit_price_cents / 100,
+      quantity: line.quantity,
+    })),
+  });
+}
+
 function renderOrderStatus(root, order, ref, token, nameMap = {}, points = {}) {
+  tgTrackPurchase(order, nameMap);
   const statusLabels = {
     pending: "Awaiting payment",
     paid: "Paid! See you at pickup.",
