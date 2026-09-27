@@ -7,7 +7,7 @@
  * everything authoritatively at order creation.
  *
  * Surfaces:
- *   - availability widget on the homepage (initPreorderWidget)
+ *   - add-to-cart steppers on product cards (initAddToCartButtons)
  *   - cart badge in the nav (updateCartBadge — every page)
  *   - /cart/ page (initCartPage)
  *   - /order-status/ page (initOrderStatusPage)
@@ -126,62 +126,8 @@ function tgPrice(cents) {
 }
 
 // ---------------------------------------------------------------------------
-// homepage widget: availability strip + add-to-cart on the Available Now grid
+// add-to-cart on the Available Now grid
 // ---------------------------------------------------------------------------
-
-async function initPreorderWidget() {
-  const container = document.getElementById("tailgate-widget");
-  if (!container || !window.TAILGATE_API_BASE) return;
-  try {
-    const data = await tgFetchAvailability();
-    container.innerHTML = "";
-    renderOrderChip(container);
-    renderDropStrip(container, data);
-  } catch (err) {
-    container.innerHTML =
-      '<p class="tg-unavailable">Pre-orders are unavailable right now.</p>';
-  }
-}
-
-/** Nav chip: "your order for pickup — view" (from the last checkout).
- * Without a saved order, falls back to a "Find my order" chip so the
- * recovery flow is discoverable from every page. */
-function renderOrderChip(container) {
-  let saved;
-  try {
-    saved = JSON.parse(localStorage.getItem(TG_ORDER_KEY) || "null");
-  } catch {
-    saved = null;
-  }
-  const chip = document.createElement("a");
-  chip.className = "tg-chip";
-  if (saved && saved.ref) {
-    chip.href = `/order-status/?ref=${encodeURIComponent(saved.ref)}&token=${encodeURIComponent(saved.token)}`;
-    chip.textContent = `Your order for ${saved.pickup || "pickup"} · view status`;
-  } else {
-    chip.href = "/orders/";
-    chip.textContent = "Find my order";
-  }
-  container.prepend(chip);
-}
-
-function renderDropStrip(container, data) {
-  for (const drop of data.drops) {
-    const open = drop.fulfillment_options.some((o) => o.status === "open");
-    const section = document.createElement("div");
-    section.className = "tg-strip" + (open ? "" : " tg-strip--closed");
-    section.id = `tg-drop-${drop.drop_id}`;
-
-    const label = document.createElement("p");
-    label.className = "tg-strip__label";
-    const badge = document.createElement("span");
-    badge.className = "tg-badge" + (open ? "" : " tg-badge--closed");
-    badge.textContent = open ? "Pre-order open" : "Orders closed";
-    label.appendChild(badge);
-    section.appendChild(label);
-    container.appendChild(section);
-  }
-}
 
 /** Add-to-cart buttons on product cards (Available Now grid). */
 async function initAddToCartButtons() {
@@ -745,7 +691,6 @@ function renderOrderStatus(root, order, ref, token, nameMap = {}, points = {}) {
 if (typeof document !== "undefined") {
   const boot = () => {
     tgUpdateCartBadge();
-    if (document.getElementById("tailgate-widget")) initPreorderWidget();
     if (document.getElementById("tg-cart-root")) initCartPage();
     if (document.getElementById("tg-status-root")) initOrderStatusPage();
     if (document.getElementById("tg-lookup-form")) initLookupPage();
