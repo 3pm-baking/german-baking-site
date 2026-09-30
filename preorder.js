@@ -134,6 +134,23 @@ function tgPrice(cents) {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+/**
+ * Square collects sales tax on top of the line-item sum, so whenever a rate is
+ * configured the sum is a SUBTOTAL, not the amount the customer will pay.
+ * Label it "Total" and we under-quote by the tax; label it "Subtotal" with no
+ * note and it just looks unfinished. The rate comes from the API (never baked
+ * into the page) so there is one source of truth for it.
+ */
+function tgTotalLabel(taxPercent) {
+  return taxPercent == null ? "Total" : "Subtotal";
+}
+
+/** "2% added at checkout", or "" when untaxed. */
+function tgTaxNote(taxPercent) {
+  if (taxPercent == null) return "";
+  return `${taxPercent}% added at checkout`;
+}
+
 // ---------------------------------------------------------------------------
 // add-to-cart on the Available Now grid
 // ---------------------------------------------------------------------------
@@ -316,8 +333,14 @@ function renderCart(root, { cart, issues }, availability) {
   }
 
   if (cart.items.length === 0) {
-    root.innerHTML =
-      '<p class="tg-cart-empty">Your cart is empty. <a href="/#products">Browse what\'s baking →</a></p>';
+    // append, never assign: an innerHTML assignment here would wipe the
+    // "sold out" note above, leaving the customer with an empty cart and no
+    // idea why it emptied.
+    const empty = document.createElement("p");
+    empty.className = "tg-cart-empty";
+    empty.innerHTML =
+      'Your cart is empty. <a href="/#products">Browse what\'s baking →</a>';
+    root.appendChild(empty);
     tgUpdateCartBadge();
     return;
   }
@@ -343,8 +366,11 @@ function renderCart(root, { cart, issues }, availability) {
     `;
     table.appendChild(row);
   }
+  const taxPercent = availability.tax_percent;
   const totalRow = document.createElement("tfoot");
-  totalRow.innerHTML = `<tr><th>Total</th><th></th><th></th><th class="tg-cart-total">${tgPrice(totalCents)}</th><th></th></tr>`;
+  totalRow.innerHTML = `
+    <tr><th>${tgTotalLabel(taxPercent)}</th><th></th><th></th><th class="tg-cart-total">${tgPrice(totalCents)}</th><th></th></tr>
+    ${taxPercent == null ? "" : `<tr class="tg-cart-tax"><th>Sales tax</th><th></th><th></th><th class="tg-cart-tax-note">${tgTaxNote(taxPercent)}</th><th></th></tr>`}`;
   table.appendChild(totalRow);
   root.appendChild(table);
 
@@ -395,7 +421,7 @@ function renderCart(root, { cart, issues }, availability) {
     <label class="tg-cart-field"><span>Name</span> <input type="text" id="tg-cart-name" maxlength="200" required></label>
     <label class="tg-cart-field"><span>Email or phone</span> <input type="text" id="tg-cart-contact" maxlength="200" required></label>
     <input type="text" name="tg_verify" class="tg-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-    ${window.TAILGATE_NEWSLETTER ? `
+    ${availability.newsletter_enabled ? `
     <label class="tg-cart-field tg-cart-newsletter">
       <input type="checkbox" id="tg-cart-newsletter">
       Also send me the monthly newsletter
@@ -452,6 +478,49 @@ function tgCartClear() {
   tgUpdateCartBadge();
 }
 
+/* --- purchase attribution ----------------------------------------------
+ *
+ * Square redirects a paying customer back to /order-status/?ref=..&token=..
+ * (tailgate/src/tailgate/service.py builds that redirect_url), and
+ * renderOrderStatus fires `purchase` from there. Two additions on top of the
+ * original implementation:
+ *
+ *   - a localStorage flag set at checkout_click, reported as the
+ *     `checkout_initiated` parameter. The status page is also reachable via
+ *     "lost your order link", so a purchase fired from a browser that never
+ *     went through checkout is a *later check-in*, not a return-from-payment.
+ *     GA4 cannot tell those apart on its own, and `transaction_id` dedup does
+ *     not help across sessions.
+ *   - the flag is reported rather than used to suppress the event, so a
+ *     cross-device check-in still records a purchase instead of silently
+ *     losing it.
+ *
+ * The flag does not make GA4 a reliable count of orders: a customer who closes
+ * the tab after paying never fires anything. tailgate's database is the ground
+ * truth; `expenses preorders reconcile` is what measures the gap.
+ */
+
+const TG_CHECKOUT_FLAG = "tailgate_checkout_initiated";
+
+function tgMarkCheckoutInitiated() {
+  try {
+    localStorage.setItem(TG_CHECKOUT_FLAG, "1");
+  } catch {
+    // Private mode or storage disabled. The purchase event still fires; it
+    // just reports checkout_initiated=false.
+  }
+}
+
+function tgConsumeCheckoutFlag() {
+  try {
+    const wasSet = localStorage.getItem(TG_CHECKOUT_FLAG) === "1";
+    localStorage.removeItem(TG_CHECKOUT_FLAG);
+    return wasSet;
+  } catch {
+    return false;
+  }
+}
+
 async function checkout(root, availability) {
   const cart = tgCartLoad();
   if (cart.items.length === 0) return;
@@ -472,6 +541,11 @@ async function checkout(root, availability) {
   if (window.gtag) {
     window.gtag("event", "checkout_click", { items: cart.items.length });
   }
+  // Remember that THIS browser started a checkout. Square sends the customer
+  // back to /order-status/ after paying, and that redirect is the only place a
+  // purchase can be attributed to a session. Without this flag we cannot tell
+  // "paid and just came back" from "opened the link again a week later".
+  tgMarkCheckoutInitiated();
   try {
     const response = await fetch(`${TG_API_BASE}/api/v1/orders`, {
       method: "POST",
@@ -584,13 +658,16 @@ async function initOrderStatusPage() {
 }
 
 /** "See you at the market" card: market name, date/time, Maps link, hours.
- * Falls back to the plain pickup line when data is missing (fail-soft). */
+ *  The market name comes from the ORDER, not from /availability: availability
+ *  is unreachable exactly when it matters (the day after pickup, once the drop
+ *  has aged out of the publish window), and a card that falls back to the raw
+ *  slug would print "Pickup: west-asheville" at a customer. Fail-soft is
+ *  "less detail", never "raw identifier". */
 function tgPickupCard(order, points = {}, token = "") {
   const point = points[order.pickup_point];
-  const market = point && window.TAILGATE_MARKETS && window.TAILGATE_MARKETS[point.label];
-  if (!point || !market) {
-    return order.pickup_point ? `<p class="tg-muted">Pickup: ${order.pickup_point}</p>` : "";
-  }
+  const label = order.pickup_label || (point && point.label);
+  if (!label) return "";
+  const market = window.TAILGATE_MARKETS && window.TAILGATE_MARKETS[label];
   let when = "";
   if (order.pickup_at) {
     try {
@@ -599,27 +676,29 @@ function tgPickupCard(order, points = {}, token = "") {
         month: "short",
         day: "numeric",
       });
-      const win = tgPickupWindow(point, order.pickup_at);
+      const win = tgPickupWindow(point || {}, order.pickup_at);
       when = `<p class="tg-market-card__when">${[date, win].filter(Boolean).join(" · ")}</p>`;
     } catch {
       when = "";
     }
   }
-  const mapsLink = market.address
-    ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(market.address)}"
+  const mapsLink =
+    market && market.address
+      ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(market.address)}"
           target="_blank" rel="noopener noreferrer" class="tg-market-card-map"
-          onclick="gtag('event', 'maps_click', {market: '${point.label.replace(/'/g, "\\'")}'});">${market.address}</a>`
-    : "";
-  const siteLink = market.url
-    ? `<a href="${market.url}" target="_blank" rel="noopener noreferrer">Market website →</a>`
-    : "";
-  const schedule = market.schedule_display
+          onclick="gtag('event', 'maps_click', {market: '${label.replace(/'/g, "\\'")}'});">${market.address}</a>`
+      : "";
+  const siteLink =
+    market && market.url
+      ? `<a href="${market.url}" target="_blank" rel="noopener noreferrer">Market website →</a>`
+      : "";
+  const schedule = market && market.schedule_display
     ? `<p class="tg-market-card-schedule">${market.schedule_display}</p>`
     : "";
   const heading =
     order.status === "paid" || order.status === "fulfilled"
-      ? `See you at ${point.label}`
-      : `Pickup at ${point.label}`;
+      ? `See you at ${label}`
+      : `Pickup at ${label}`;
   const calLink = order.pickup_at
     ? `<a href="${TG_API_BASE}/api/v1/orders/${encodeURIComponent(order.order_ref)}/calendar.ics?token=${encodeURIComponent(token)}"
           class="tg-market-card-cal" download="pickup.ics">Add to calendar</a>`
@@ -638,10 +717,15 @@ function tgPickupCard(order, points = {}, token = "") {
 
 /** GA4 purchase event when an order is (or flips to) paid. Guarded by
  * sessionStorage so polling re-renders don't re-fire; GA4 also dedupes
- * purchase events by transaction_id. No PII: ref, value, items only. */
+ * purchase events by transaction_id. No PII: ref, value, items only.
+ *
+ * `no_show` is included because the money was still taken — excluding it would
+ * make GA4 disagree with tailgate's paid count for a reason that has nothing to
+ * do with tracking, which is exactly the kind of drift the reconciliation
+ * should be reserved for. */
 function tgTrackPurchase(order, nameMap = {}) {
   if (!window.gtag) return;
-  if (order.status !== "paid" && order.status !== "fulfilled") return;
+  if (order.status !== "paid" && order.status !== "fulfilled" && order.status !== "no_show") return;
   const key = `tg_purchase_${order.order_ref}`;
   try {
     if (sessionStorage.getItem(key)) return;
@@ -653,10 +737,13 @@ function tgTrackPurchase(order, nameMap = {}) {
     transaction_id: order.order_ref,
     value: order.total_cents / 100,
     currency: "USD",
-    market: order.pickup_point,
+    market: order.pickup_label || order.pickup_point,
+    // False means this browser never started a checkout: a later status check
+    // rather than a return from payment. Reported, not suppressed.
+    checkout_initiated: tgConsumeCheckoutFlag(),
     items: order.lines.map((line) => ({
       item_id: line.item_slug,
-      item_name: nameMap[line.item_slug] || line.item_slug,
+      item_name: line.item_name || nameMap[line.item_slug] || line.item_slug,
       item_variant: line.unit_name,
       price: line.unit_price_cents / 100,
       quantity: line.quantity,
@@ -674,12 +761,13 @@ function renderOrderStatus(root, order, ref, token, nameMap = {}, points = {}) {
     canceled: "Canceled",
     expired: "Expired",
   };
-  const displayName = (slug) => nameMap[slug] || slug;
+  // The order carries its own display names, resolved server-side from the
+  // drop's catalog. nameMap (from /availability) is only a backstop for
+  // responses predating that field — never the primary source, and never a
+  // reason to print a slug at a customer.
+  const displayName = (line) => line.item_name || nameMap[line.item_slug] || line.item_slug;
   const rows = order.lines
-    .map(
-      (line) =>
-        `<tr><td>${displayName(line.item_slug)} (${line.unit_name})</td><td>×${line.quantity}</td></tr>`
-    )
+    .map((line) => `<tr><td>${displayName(line)} (${line.unit_name})</td><td>×${line.quantity}</td></tr>`)
     .join("");
   const cancellable = order.cancellable && window.TAILGATE_API_BASE;
   const cancelDeadline = order.cancellation_deadline
@@ -693,7 +781,10 @@ function renderOrderStatus(root, order, ref, token, nameMap = {}, points = {}) {
     <p><span class="tg-badge${order.status === "paid" ? " tg-badge--paid" : ""}${order.status === "pending" ? " tg-badge--pending" : ""}">${statusLabels[order.status] || order.status}</span></p>
     <table class="tg-cart-table">
       ${rows}
-      <tfoot><tr><th>Total</th><th>$${(order.total_cents / 100).toFixed(2)}</th></tr></tfoot>
+      <tfoot>
+        <tr><th>${tgTotalLabel(order.tax_percent)}</th><th>$${(order.total_cents / 100).toFixed(2)}</th></tr>
+        ${order.tax_percent == null ? "" : `<tr class="tg-cart-tax"><th>Sales tax</th><th>${tgTaxNote(order.tax_percent)}</th></tr>`}
+      </tfoot>
     </table>
     ${waiting}
     ${tgPickupCard(order, points, token)}
