@@ -2017,10 +2017,25 @@ section {
   border-color: var(--color-border);
 }
 
+.diet-filter__hint {
+  color: var(--color-text-light);
+}
+
 /* A filtered card is hidden with the `hidden` attribute, which the card's own
  * `display: flex` would otherwise defeat. */
-.product-card[hidden] {
+.product-card[hidden],
+.previously__item[hidden] {
   display: none;
+}
+
+.diet-empty {
+  flex: 0 0 100%;
+  margin: 0;
+  padding: 0.5rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  break-inside: avoid;
 }
 
 .previously__intro {

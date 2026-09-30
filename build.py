@@ -354,8 +354,8 @@ def diet_filters(products: list[dict]) -> list[dict]:
     """Dietary filters the given products can actually satisfy.
 
     A chip is only rendered when at least one product carries the badge. A
-    filter that hides the entire grid is worse than no filter: it reads as
-    "we have nothing for you" instead of "nothing to filter by".
+    filter that hides every list on the page is worse than no filter: it reads
+    as "we have nothing for you" instead of "nothing to filter by".
     """
     offered = []
     for slug, label in DIET_FILTERS:
@@ -1047,7 +1047,9 @@ def build_landing_page(env, categories, locations, blog_posts, market_calendars=
 
     html = template.render(
         available_now=available_now,
-        diet_filters=diet_filters(available_now),
+        # The chips filter both product lists, so a badge that only a by-request
+        # bake carries still earns a chip.
+        diet_filters=diet_filters(available_now + groups["previously"]),
         in_season_count=len(groups["in_season"]),
         previously=groups["previously"],
         pantry_products=categories["pantry"],

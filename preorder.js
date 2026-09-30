@@ -270,82 +270,136 @@ function tgFindDropForItem(availability, slug) {
 // ---------------------------------------------------------------------------
 
 /**
- * Chips that narrow the product grid to one dietary need.
+ * Chips that narrow the page's product lists by dietary need. Any number of
+ * them can be lit at once, and an item has to match **all** of them.
  *
- * One chip at a time, and clicking the lit chip clears it: the alternative —
- * several chips at once — needs a stated rule for combining them (any or all),
- * and a customer who taps two chips has not said which they meant. The lit chip
- * plus the count line below is what tells the customer a filter is applied at
- * all; without the count, a half-empty grid just looks like a short lineup.
+ * "All", not "any": someone who needs to be both gluten-free and dairy-free is
+ * asking for the intersection, and a union would put back exactly the items
+ * they cannot eat. The consequence is that some combinations are legitimately
+ * empty, so a list that empties says so where the customer is looking rather
+ * than leaving a gap, and the line above names the filters and both counts.
  *
- * Filtering is client-side because the answer is already in the page: each card
+ * One set of chips drives both lists — what is in the case now and what can be
+ * baked to order — because both answer the same question ("is there anything I
+ * can eat?"), and a customer with a restriction should not have to learn two
+ * controls to find out.
+ *
+ * Filtering is client-side because the answer is already in the page: every item
  * carries its own badges as `data-badges`, set from the same product file the
- * card was built from.
+ * item was built from. Only badges something on the page actually carries get a
+ * chip, so no combination starts from a chip that could only ever return zero.
  */
 function initDietaryFilter() {
   const group = document.querySelector("[data-diet-filter-group]");
   if (!group) return;
-  const section = group.closest("section");
-  const grid = section && section.querySelector(".products__grid");
-  if (!grid) return;
 
   const chips = [...group.querySelectorAll(".diet-filter__chip")];
   const status = group.querySelector("[data-diet-status]");
-  const cards = [...grid.querySelectorAll(".product-card")];
+  const active = new Set();
 
-  function apply(slug) {
-    let shown = 0;
-    for (const card of cards) {
-      const badges = (card.dataset.badges || "").split(/\s+/);
-      const match = !slug || badges.includes(slug);
-      card.hidden = !match;
-      if (match) shown += 1;
-    }
+  const sections = [
+    { name: "available now", selector: ".product-card", host: ".products__grid", tag: "p" },
+    { name: "by request", selector: ".previously__item", host: ".previously__list", tag: "li" },
+  ]
+    .map((section) => {
+      const el = document.querySelector(section.host);
+      if (!el) return null;
+      const items = [...el.querySelectorAll(section.selector)];
+      if (!items.length) return null;
+      // A list emptied by the filter explains itself in place. The customer is
+      // looking at that list when they notice, not at the chips.
+      const note = document.createElement(section.tag);
+      note.className = "diet-empty";
+      note.textContent = "Nothing matches this filter.";
+      note.hidden = true;
+      el.append(note);
+      return { ...section, el, items, note };
+    })
+    .filter(Boolean);
+  if (!sections.length) return;
 
-    let active = null;
+  function apply() {
+    const shown = sections.map((section) => {
+      let count = 0;
+      for (const item of section.items) {
+        const badges = (item.dataset.badges || "").split(/\s+/);
+        const match = [...active].every((slug) => badges.includes(slug));
+        item.hidden = !match;
+        if (match) count += 1;
+      }
+      section.note.hidden = active.size === 0 || count > 0;
+      return count;
+    });
+
     for (const chip of chips) {
-      const isActive = chip.dataset.diet === slug;
-      chip.setAttribute("aria-pressed", String(isActive));
-      if (isActive) active = chip;
+      chip.setAttribute("aria-pressed", String(active.has(chip.dataset.diet)));
     }
 
-    if (!status) return;
-    // No filter: the status line itself is the answer to "is a filter
-    // applied?", so it goes away rather than restating the full lineup.
-    status.textContent = "";
-    status.hidden = !active;
-    if (active) {
-      const summary = document.createElement("span");
-      summary.textContent = `Showing ${shown} of ${cards.length} — ${active.textContent}`;
-      const clear = document.createElement("button");
-      clear.type = "button";
-      clear.className = "diet-filter__clear";
-      clear.textContent = "Show all";
-      clear.addEventListener("click", () => apply(null));
-      status.append(summary, clear);
+    if (status) {
+      // No filter: the status line itself is the answer to "is a filter
+      // applied?", so it goes away rather than restating both full lists.
+      status.textContent = "";
+      status.hidden = active.size === 0;
+      if (active.size) {
+        // The chip labels, in the order the chips render, so the line reads the
+        // way the controls do.
+        const names = chips
+          .filter((chip) => active.has(chip.dataset.diet))
+          .map((chip) => chip.textContent.trim());
+        const counts = sections
+          .map((section, i) => `${shown[i]} of ${section.items.length} ${section.name}`)
+          .join(", ");
+        const summary = document.createElement("span");
+        summary.textContent = `${names.join(" + ")} — ${counts}`;
+        status.append(summary);
+        if (shown.every((count) => count === 0)) {
+          const hint = document.createElement("span");
+          hint.className = "diet-filter__hint";
+          hint.textContent = " — try turning one off";
+          status.append(hint);
+        }
+        const clear = document.createElement("button");
+        clear.type = "button";
+        clear.className = "diet-filter__clear";
+        clear.textContent = "Show all";
+        clear.addEventListener("click", () => {
+          active.clear();
+          apply();
+        });
+        status.append(clear);
+      }
     }
 
-    tgDietInUrl(slug);
+    tgDietInUrl(active);
   }
 
   for (const chip of chips) {
-    chip.addEventListener("click", () =>
-      apply(chip.getAttribute("aria-pressed") === "true" ? null : chip.dataset.diet)
-    );
+    chip.addEventListener("click", () => {
+      const slug = chip.dataset.diet;
+      if (active.has(slug)) {
+        active.delete(slug);
+      } else {
+        active.add(slug);
+      }
+      apply();
+    });
   }
 
   // A filtered view is worth being able to share, so it survives a reload and
-  // lives in the URL: /#products?diet=vegan
-  const requested = new URLSearchParams(window.location.search).get("diet");
-  const known = chips.some((chip) => chip.dataset.diet === requested);
-  apply(known ? requested : null);
+  // lives in the URL: /?diet=gf,dairy-free. A single value is the same thing
+  // with one name in it, so `?diet=gf` links keep working.
+  const requested = (new URLSearchParams(window.location.search).get("diet") || "")
+    .split(",")
+    .filter((slug) => chips.some((chip) => chip.dataset.diet === slug));
+  requested.forEach((slug) => active.add(slug));
+  apply();
 }
 
-/** Record the active filter in the URL so a refresh (or a shared link) keeps it. */
-function tgDietInUrl(slug) {
+/** Record the active filters in the URL so a refresh (or a shared link) keeps them. */
+function tgDietInUrl(active) {
   const url = new URL(window.location.href);
-  if (slug) {
-    url.searchParams.set("diet", slug);
+  if (active.size) {
+    url.searchParams.set("diet", [...active].join(","));
   } else {
     url.searchParams.delete("diet");
   }
