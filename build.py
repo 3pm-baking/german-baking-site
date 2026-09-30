@@ -339,6 +339,31 @@ def load_homepage_available_now_count() -> int:
 BADGE_LABELS = {b.value: b.aria_label for b in Badge}
 BADGE_NAMES = {b.value: b.display_name for b in Badge}
 
+#: Dietary filters offered above the Available Now grid, as (badge slug, label),
+#: in the order the chips render. Only the badges actually in use today — an
+#: "option available" badge means the item can be adapted on request, which is
+#: not the same promise as the item being free of it, so it gets no chip.
+DIET_FILTERS = (
+    ("gf", "Gluten-Free"),
+    ("dairy-free", "Dairy-Free"),
+    ("vegan", "Vegan"),
+)
+
+
+def diet_filters(products: list[dict]) -> list[dict]:
+    """Dietary filters the given products can actually satisfy.
+
+    A chip is only rendered when at least one product carries the badge. A
+    filter that hides the entire grid is worse than no filter: it reads as
+    "we have nothing for you" instead of "nothing to filter by".
+    """
+    offered = []
+    for slug, label in DIET_FILTERS:
+        if any(slug in (product.get("badges") or []) for product in products):
+            offered.append({"slug": slug, "label": label})
+    return offered
+
+
 # Author emails for RSS feed attribution (single source of truth)
 AUTHOR_EMAILS = {
     "William": "william@germanbakingasheville.com",
@@ -1018,9 +1043,11 @@ def build_landing_page(env, categories, locations, blog_posts, market_calendars=
     recent_posts = blog_posts[:3] if blog_posts else []
     groups = split_catalog(categories["catalog"])
     available_now_count = load_homepage_available_now_count()
+    available_now = groups["in_season"][:available_now_count] + groups["always_available"]
 
     html = template.render(
-        available_now=groups["in_season"][:available_now_count] + groups["always_available"],
+        available_now=available_now,
+        diet_filters=diet_filters(available_now),
         in_season_count=len(groups["in_season"]),
         previously=groups["previously"],
         pantry_products=categories["pantry"],

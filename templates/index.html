@@ -217,6 +217,24 @@
             online, and pick up at our booth. A few favorites stay in the
             freezer year-round.
           </p>
+          {# Dietary chips filter the grid client-side. Rendered only for badges
+             something in the grid actually carries, so there is never a filter
+             that hides everything. #}
+          {% if diet_filters %}
+            <div class="diet-filter"
+                 data-diet-filter-group
+                 role="group"
+                 aria-label="Filter by dietary need">
+              <span class="diet-filter__label">Dietary needs</span>
+              {% for diet in diet_filters %}
+                <button type="button"
+                        class="diet-filter__chip"
+                        data-diet="{{ diet.slug }}"
+                        aria-pressed="false">{{ diet.label }}</button>
+              {% endfor %}
+              <p class="diet-filter__status" data-diet-status hidden></p>
+            </div>
+          {% endif %}
           <div class="products__grid">
             {% for product in available_now %}
               {% include 'partials/product-card.html' %}
@@ -230,9 +248,7 @@
           <div class="divider">
             <span class="divider__icon">✿</span>
           </div>
-          <p class="previously__intro">
-            Our full menu is available by order — email us and we'll bake it for you.
-          </p>
+          <p class="previously__intro">Our full menu is available by order — email us and we'll bake it for you.</p>
           <ul class="previously__list">
             {% for product in previously %}
               {% include 'partials/previously-item.html' %}
@@ -323,9 +339,15 @@
             </div>
             <p class="market-calendar__disclaimer">
               Schedule may change — follow us on
-              <a href="https://instagram.com/3pmgermanbaking" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'social_click', {network: 'instagram'});">Instagram</a>
+              <a href="https://instagram.com/3pmgermanbaking"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 onclick="gtag('event', 'social_click', {network: 'instagram'});">Instagram</a>
               and
-              <a href="https://facebook.com/3pmgermanbaking" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'social_click', {network: 'facebook'});">Facebook</a>
+              <a href="https://facebook.com/3pmgermanbaking"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 onclick="gtag('event', 'social_click', {network: 'facebook'});">Facebook</a>
               for the latest updates.
             </p>
           {% endif %}
@@ -339,7 +361,9 @@
                 Reach out to arrange an order—we'd love to bring a little Germany to your door.
               </p>
               <p class="find-us__option-text">
-                <a href="mailto:info@germanbakingasheville.com" class="find-us__email" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
+                <a href="mailto:info@germanbakingasheville.com"
+                   class="find-us__email"
+                   onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
               </p>
             </div>
             <div class="find-us__option">
@@ -350,7 +374,9 @@
                 on hand regularly. Get in touch by email or find us at a market to talk through what you have in mind.
               </p>
               <p class="find-us__option-text">
-                <a href="mailto:info@germanbakingasheville.com" class="find-us__email" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
+                <a href="mailto:info@germanbakingasheville.com"
+                   class="find-us__email"
+                   onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
               </p>
             </div>
           </div>
@@ -386,9 +412,7 @@
           <p>
             <a href="https://newsletter.germanbakingasheville.com"
                class="newsletter-cta__link"
-               onclick="gtag('event', 'newsletter_cta_click');">
-              Join Our Mailing List &rarr;
-            </a>
+               onclick="gtag('event', 'newsletter_cta_click');">Join Our Mailing List &rarr;</a>
           </p>
         </div>
       </section>
@@ -426,7 +450,6 @@
           </article>
         </div>
       </section>
-      
     </main>
     <script>window.TAILGATE_API_BASE = "{{ tailgate_api_base }}";</script>
     <script src="/preorder.js?v={{ js_version }}"></script>
@@ -438,14 +461,14 @@
              height="400"
              class="footer__logo">
         <div class="footer__contact">
-          <a href="mailto:info@germanbakingasheville.com" class="footer__email" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
+          <a href="mailto:info@germanbakingasheville.com"
+             class="footer__email"
+             onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
         </div>
         <div class="footer__newsletter">
           <a href="https://newsletter.germanbakingasheville.com"
              class="footer__newsletter-link"
-             onclick="gtag('event', 'newsletter_footer_click');">
-            Join our mailing list &rarr;
-          </a>
+             onclick="gtag('event', 'newsletter_footer_click');">Join our mailing list &rarr;</a>
         </div>
         <div class="footer__social">
           <a href="https://facebook.com/3pmgermanbaking"

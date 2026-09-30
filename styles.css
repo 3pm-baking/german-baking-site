@@ -1949,6 +1949,80 @@ section {
   color: var(--color-text-light);
 }
 
+/* --- dietary chips over the Available Now grid --------------------------- */
+
+.diet-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto var(--spacing-md);
+}
+
+.diet-filter__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+}
+
+.diet-filter__chip {
+  font: inherit;
+  font-size: 0.9rem;
+  /* 44px: the smallest target a thumb can hit reliably */
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 999px;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.diet-filter__chip:hover {
+  border-color: var(--color-border);
+}
+
+/* The lit state is the whole point of the control: it is what tells a customer
+ * a filter is applied, so it has to out-read the unlit chips. */
+.diet-filter__chip[aria-pressed="true"] {
+  background-color: #2e7d32;
+  border-color: #2e7d32;
+  color: #ffffff;
+}
+
+.diet-filter__status {
+  flex-basis: 100%;
+  margin: 0.25rem 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+.diet-filter__clear {
+  font: inherit;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  background: none;
+  color: var(--color-text);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.diet-filter__clear:hover {
+  border-color: var(--color-border);
+}
+
+/* A filtered card is hidden with the `hidden` attribute, which the card's own
+ * `display: flex` would otherwise defeat. */
+.product-card[hidden] {
+  display: none;
+}
+
 .previously__intro {
   text-align: center;
   max-width: 42rem;
@@ -2190,11 +2264,15 @@ section {
   font-size: 0.85rem;
 }
 
-.tg-cart-qty input {
-  width: 4.5em;
-  padding: 0.35rem;
+.tg-cart-qty select {
+  min-width: 4.5em;
+  /* 44px: the smallest target a thumb can hit reliably */
+  min-height: 2.75rem;
+  padding: 0.35rem 1.75rem 0.35rem 0.5rem;
   border: 1px solid var(--color-border-light);
   border-radius: 6px;
+  background-color: var(--color-background);
+  color: inherit;
   font: inherit;
 }
 
@@ -2575,4 +2653,3 @@ label.tg-cart-field > span {
 .tg-add-box__plus:hover {
   background: #3a3a3a;
 }
-

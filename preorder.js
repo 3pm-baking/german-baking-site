@@ -8,6 +8,7 @@
  *
  * Surfaces:
  *   - add-to-cart steppers on product cards (initAddToCartButtons)
+ *   - dietary chips over the Available Now grid (initDietaryFilter)
  *   - cart badge in the nav (updateCartBadge — every page)
  *   - /cart/ page (initCartPage)
  *   - /order-status/ page (initOrderStatusPage)
@@ -147,9 +148,29 @@ function tgTotalLabel(taxPercent) {
 
 /** "2% added at checkout", or "" when untaxed. */
 function tgTaxNote(taxPercent) {
-  if (taxPercent == null) return "";
-  return `${taxPercent}% added at checkout`;
+  return taxPercent == null ? "" : `${taxPercent}% added at checkout`;
 }
+
+/**
+ * Highest quantity the cart's quantity dropdown offers for a line.
+ *
+ * A number input asks the customer to type on a phone keyboard, which is the
+ * wrong shape for a number that is always small: a drop caps each item at its
+ * `item_cap` (6), so the whole legal range fits in a dropdown.
+ *
+ * `remaining` is null when the drop does not cap the item, which still needs a
+ * ceiling — a 99-option list nobody scrolls. The quantity already in the cart
+ * always survives the ceiling, so the dropdown can never contradict the line it
+ * is showing.
+ */
+const QTY_MAX_UNCAPPED = 12;
+
+function tgQtyMax(item, qty) {
+  const remaining = item && typeof item.remaining === "number" ? item.remaining : null;
+  const ceiling = remaining == null ? QTY_MAX_UNCAPPED : remaining;
+  return Math.max(ceiling, qty, 1);
+}
+
 
 // ---------------------------------------------------------------------------
 // add-to-cart on the Available Now grid
@@ -245,6 +266,93 @@ function tgFindDropForItem(availability, slug) {
 }
 
 // ---------------------------------------------------------------------------
+// dietary filter on the Available Now grid
+// ---------------------------------------------------------------------------
+
+/**
+ * Chips that narrow the product grid to one dietary need.
+ *
+ * One chip at a time, and clicking the lit chip clears it: the alternative —
+ * several chips at once — needs a stated rule for combining them (any or all),
+ * and a customer who taps two chips has not said which they meant. The lit chip
+ * plus the count line below is what tells the customer a filter is applied at
+ * all; without the count, a half-empty grid just looks like a short lineup.
+ *
+ * Filtering is client-side because the answer is already in the page: each card
+ * carries its own badges as `data-badges`, set from the same product file the
+ * card was built from.
+ */
+function initDietaryFilter() {
+  const group = document.querySelector("[data-diet-filter-group]");
+  if (!group) return;
+  const section = group.closest("section");
+  const grid = section && section.querySelector(".products__grid");
+  if (!grid) return;
+
+  const chips = [...group.querySelectorAll(".diet-filter__chip")];
+  const status = group.querySelector("[data-diet-status]");
+  const cards = [...grid.querySelectorAll(".product-card")];
+
+  function apply(slug) {
+    let shown = 0;
+    for (const card of cards) {
+      const badges = (card.dataset.badges || "").split(/\s+/);
+      const match = !slug || badges.includes(slug);
+      card.hidden = !match;
+      if (match) shown += 1;
+    }
+
+    let active = null;
+    for (const chip of chips) {
+      const isActive = chip.dataset.diet === slug;
+      chip.setAttribute("aria-pressed", String(isActive));
+      if (isActive) active = chip;
+    }
+
+    if (!status) return;
+    // No filter: the status line itself is the answer to "is a filter
+    // applied?", so it goes away rather than restating the full lineup.
+    status.textContent = "";
+    status.hidden = !active;
+    if (active) {
+      const summary = document.createElement("span");
+      summary.textContent = `Showing ${shown} of ${cards.length} — ${active.textContent}`;
+      const clear = document.createElement("button");
+      clear.type = "button";
+      clear.className = "diet-filter__clear";
+      clear.textContent = "Show all";
+      clear.addEventListener("click", () => apply(null));
+      status.append(summary, clear);
+    }
+
+    tgDietInUrl(slug);
+  }
+
+  for (const chip of chips) {
+    chip.addEventListener("click", () =>
+      apply(chip.getAttribute("aria-pressed") === "true" ? null : chip.dataset.diet)
+    );
+  }
+
+  // A filtered view is worth being able to share, so it survives a reload and
+  // lives in the URL: /#products?diet=vegan
+  const requested = new URLSearchParams(window.location.search).get("diet");
+  const known = chips.some((chip) => chip.dataset.diet === requested);
+  apply(known ? requested : null);
+}
+
+/** Record the active filter in the URL so a refresh (or a shared link) keeps it. */
+function tgDietInUrl(slug) {
+  const url = new URL(window.location.href);
+  if (slug) {
+    url.searchParams.set("diet", slug);
+  } else {
+    url.searchParams.delete("diet");
+  }
+  window.history.replaceState({}, "", url);
+}
+
+// ---------------------------------------------------------------------------
 // /cart/ page
 // ---------------------------------------------------------------------------
 
@@ -302,6 +410,13 @@ function reconcileCart(cart, availability) {
       issues.push({ slug: line.slug, reason: "sold_out" });
       continue;
     }
+    // Nothing left to sell is the same outcome as sold out, and the cart's
+    // quantity dropdown has no 0: a clamped-to-0 line would render a row whose
+    // dropdown disagrees with the quantity stored against it.
+    if (item.remaining !== null && item.remaining <= 0) {
+      issues.push({ slug: line.slug, reason: "sold_out" });
+      continue;
+    }
     if (item.remaining !== null && line.qty > item.remaining) {
       issues.push({ slug: line.slug, reason: "clamped", to: item.remaining });
       line.qty = item.remaining;
@@ -356,11 +471,16 @@ function renderCart(root, { cart, issues }, availability) {
     totalCents += lineTotal;
     const row = document.createElement("tr");
     row.className = "tg-cart-row";
+    const max = tgQtyMax(item, line.qty);
+    let options = "";
+    for (let q = 1; q <= max; q++) {
+      options += `<option value="${q}"${q === line.qty ? " selected" : ""}>${q}</option>`;
+    }
     row.innerHTML = `
       <td class="tg-cart-item">${item.name} <span class="tg-cart-unit">(${unit.name})</span></td>
       <td class="tg-cart-price">${tgPrice(unit.price_cents)}</td>
-      <td class="tg-cart-qty"><input type="number" min="0" value="${line.qty}"
-            data-slug="${line.slug}" data-unit="${line.unit}" aria-label="Quantity"></td>
+      <td class="tg-cart-qty"><select class="tg-cart-qty-select" data-slug="${line.slug}" data-unit="${line.unit}"
+            aria-label="Quantity for ${item.name} (${unit.name})">${options}</select></td>
       <td class="tg-cart-line-total" data-line-total>${tgPrice(lineTotal)}</td>
       <td><button type="button" class="tg-cart-remove" data-slug="${line.slug}" data-unit="${line.unit}">×</button></td>
     `;
@@ -432,9 +552,9 @@ function renderCart(root, { cart, issues }, availability) {
   root.appendChild(form);
 
   // wire quantity changes + remove buttons
-  root.querySelectorAll(".tg-cart-qty input").forEach((input) => {
+  root.querySelectorAll(".tg-cart-qty select").forEach((input) => {
     input.addEventListener("change", () => {
-      tgCartSetQuantity(input.dataset.slug, input.dataset.unit, parseInt(input.value, 10) || 0);
+      tgCartSetQuantity(input.dataset.slug, input.dataset.unit, parseInt(input.value, 10) || 1);
       rerenderCart(root, availability);
     });
   });
@@ -820,6 +940,7 @@ function renderOrderStatus(root, order, ref, token, nameMap = {}, points = {}) {
 if (typeof document !== "undefined") {
   const boot = () => {
     tgUpdateCartBadge();
+    initDietaryFilter();
     if (document.getElementById("tg-cart-root")) initCartPage();
     if (document.getElementById("tg-status-root")) initOrderStatusPage();
     if (document.getElementById("tg-lookup-form")) initLookupPage();

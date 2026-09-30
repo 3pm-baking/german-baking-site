@@ -183,7 +183,7 @@ test("clamps a quantity to what remains and says so", async () => {
   await page.settle();
 
   assert.match(page.text(".tg-cart-note"), /quantity reduced to 1/i);
-  assert.equal(page.value(".tg-cart-qty input"), "1");
+  assert.equal(page.value(".tg-cart-qty select"), "1");
   assert.equal(page.text(".tg-cart-total"), "$6.00");
   await page.close();
 });
@@ -201,6 +201,85 @@ test("ignores a closed drop when resolving a cart line", async () => {
   await page.settle();
 
   assert.match(page.text(".tg-cart-note"), /sold out/i);
+  await page.close();
+});
+
+// --- quantity control -------------------------------------------------------
+// A number input makes a phone customer type. The whole legal range is small
+// (a drop caps an item at 6), so it is a dropdown instead.
+
+test("quantity is a dropdown, not a field to type into", async () => {
+  const page = cart();
+  await page.settle();
+
+  assert.equal(page.$(".tg-cart-qty input"), null, "no typing required on a phone");
+  const select = page.$(".tg-cart-qty select");
+  assert.ok(select, "quantity must be a select");
+  assert.match(select.getAttribute("aria-label"), /German Cheesecake/);
+  assert.equal(select.value, "2", "the current quantity is the selected option");
+  await page.close();
+});
+
+test("the quantity dropdown offers 1 to what remains, and never 0", async () => {
+  const page = cart();
+  await page.settle();
+
+  const options = page.$$(".tg-cart-qty select option").map((o) => o.value);
+  assert.deepEqual(options, ["1", "2", "3", "4", "5", "6"], "one option per remaining unit");
+  assert.ok(!options.includes("0"), "removing a line is the × button's job");
+  await page.close();
+});
+
+test("an uncapped item still gets a bounded dropdown", async () => {
+  const uncapped = availability();
+  uncapped.drops[0].items[0].remaining = null;
+
+  const page = mount({
+    page: "cart",
+    routes: { "GET /api/v1/availability": uncapped },
+    globals: { TAILGATE_MARKETS: marketsMap() },
+    cart: { items: [{ slug: "german-cheesecake", unit: "slice", qty: 2 }] },
+  });
+  await page.settle();
+
+  const options = page.$$(".tg-cart-qty select option").map((o) => o.value);
+  assert.ok(options.length > 2, "still more than the one option in the cart");
+  assert.ok(options.length <= 12, `bounded, not a 99-row list (got ${options.length})`);
+  await page.close();
+});
+
+test("picking a quantity re-quotes the line and the subtotal", async () => {
+  const page = cart();
+  await page.settle();
+
+  const select = page.$(".tg-cart-qty select");
+  select.value = "4";
+  select.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+
+  assert.equal(page.value(".tg-cart-qty select"), "4");
+  assert.equal(page.text("[data-line-total]"), "$24.00");
+  assert.equal(page.text(".tg-cart-total"), "$24.00");
+  const stored = JSON.parse(page.window.localStorage.getItem("tailgate_cart"));
+  assert.equal(stored.items[0].qty, 4, "the choice is saved, not just rendered");
+  await page.close();
+});
+
+test("a line with nothing left is dropped rather than shown at 0", async () => {
+  // The dropdown has no 0, so a remaining=0 item cannot be represented as a row.
+  const gone = availability();
+  gone.drops[0].items[0].remaining = 0;
+
+  const page = mount({
+    page: "cart",
+    routes: { "GET /api/v1/availability": gone },
+    globals: { TAILGATE_MARKETS: marketsMap() },
+    cart: { items: [{ slug: "german-cheesecake", unit: "slice", qty: 2 }] },
+  });
+  await page.settle();
+
+  assert.equal(page.$$(".tg-cart-row").length, 0);
+  assert.match(page.bodyText("#tg-cart-root"), /cart is empty/i);
   await page.close();
 });
 
