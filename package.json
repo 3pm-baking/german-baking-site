@@ -1,0 +1,14 @@
+{
+  "name": "german-baking-site-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DOM tests for preorder.js — the ordering layer. Built by build.py, no bundler; this exists only to test it.",
+  "scripts": {
+    "test": "node --test tests/",
+    "check": "node --check preorder.js"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}

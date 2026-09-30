@@ -1,0 +1,61 @@
+name: Pre-order Frontend Tests
+
+# The pre-order (tailgate) ordering layer lives in preorder.js and the pages
+# build.py generates. A regression there is invisible until a customer tries
+# to order, so the tests run on every push rather than only on the daily
+# rebuild.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preorder.js'
+      - 'preorder_checks.py'
+      - 'build.py'
+      - 'templates/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    paths:
+      - 'preorder.js'
+      - 'preorder_checks.py'
+      - 'build.py'
+      - 'templates/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+concurrency:
+  group: frontend-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install Python dependencies
+        run: uv sync
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install frontend test dependencies
+        run: npm ci
+
+      # build.py also runs the pre-order wiring checks, so a failure here is a
+      # broken ordering layer, not a template typo.
+      - name: Build site
+        run: uv run python build.py
+
+      - name: Check preorder.js parses
+        run: node --check preorder.js
+
+      - name: Run frontend tests
+        run: npm test
