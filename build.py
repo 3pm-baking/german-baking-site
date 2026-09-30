@@ -339,6 +339,13 @@ def load_homepage_available_now_count() -> int:
 BADGE_LABELS = {b.value: b.aria_label for b in Badge}
 BADGE_NAMES = {b.value: b.display_name for b in Badge}
 
+#: Prefix that walks from a generated page back to the site root. Empty for a
+#: page served from ``/``; ``../`` for one served from a subdirectory. Shared
+#: partials (the product card) use it so the same markup works at either depth —
+#: without it, a card rendered under /products/ asks for /products/images/… and
+#: the customer gets a broken-image icon.
+RELATIVE_ROOT_SUBDIR = "../"
+
 #: Dietary filters offered above the Available Now grid, as (badge slug, label),
 #: in the order the chips render. Only the badges actually in use today — an
 #: "option available" badge means the item can be adapted on request, which is
@@ -818,6 +825,9 @@ def build_products_index(env: Environment, categories: dict) -> None:
         pantry=categories["pantry"],
         badge_icons=BADGE_ICONS,
         badge_labels=BADGE_LABELS,
+        # This page is served from /products/, so the shared product card needs
+        # a way back to the site root for its images and links.
+        root=RELATIVE_ROOT_SUBDIR,
     )
 
     output_dir = Path(__file__).parent / "products"
@@ -1056,6 +1066,8 @@ def build_landing_page(env, categories, locations, blog_posts, market_calendars=
         locations=locations,
         badge_icons=BADGE_ICONS,
         badge_labels=BADGE_LABELS,
+        # Served from the site root, so its cards need no prefix.
+        root="",
         recent_posts=recent_posts,
         market_calendars=market_calendars or [],
         tomorrow_markets=tomorrow_markets or [],
@@ -1102,6 +1114,9 @@ def build_product_pages(env, categories, product_to_blog_posts=None):
             html = template.render(
                 page=product_data,
                 badge_names=BADGE_NAMES,
+                # Served from /products/<slug>.html; product.html spells its own
+                # "../images/" paths, so it does not need the shared prefix.
+                root=RELATIVE_ROOT_SUBDIR,
                 tailgate_api_base=TAILGATE_API_BASE,
             )
 

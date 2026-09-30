@@ -1,18 +1,29 @@
+{# Product card. Shared by the homepage (at the site root) and the full-menu
+   page (one directory down), so every URL here is prefixed with `root` — the
+   includer sets it to "" or "../". Without it, a card rendered on
+   /products/ asks the browser for /products/images/..., which 404s and leaves
+   the customer with a broken-image icon. #}
 <article class="product-card{% if product.has_page %} product-card--linked{% endif %}"
          id="{{ product.slug }}"
          data-badges="{{ product.badges | join(' ') }}">
-  {% if product.has_page %}<a href="products/{{ product.slug }}.html" class="product-card__link">{% endif %}
+  {% if product.has_page %}
+    <a href="{{ root }}products/{{ product.slug }}.html"
+       class="product-card__link">
+    {% endif %}
     <div class="product-card__image">
       <picture>
-        {% if product.image %}<source srcset="images/{{ product.image | webp }}" type="image/webp">{% endif %}
         {% if product.image %}
-          <img src="images/{{ product.image }}"
+          <source srcset="{{ root }}images/{{ product.image | webp }}"
+                  type="image/webp">
+        {% endif %}
+        {% if product.image %}
+          <img src="{{ root }}images/{{ product.image }}"
                alt="{{ product.title }} ({{ product.german_name }}) - Authentic German baking in Asheville, NC"
                loading="lazy"
                width="400"
                height="400">
         {% else %}
-          <img src="images/hero-couple-sharing-cake.jpg"
+          <img src="{{ root }}images/hero-couple-sharing-cake.jpg"
                alt=""
                loading="lazy"
                width="400"
