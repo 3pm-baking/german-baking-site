@@ -200,6 +200,14 @@ export function mount({
   const alerts = [];
   window.alert = (message) => alerts.push(message);
 
+  // Record GA4 events. The real page loads gtag from an external script the
+  // harness does not fetch, so without this every `if (window.gtag)` guard
+  // short-circuits and the funnel is silently untested.
+  const events = [];
+  window.gtag = (...args) => {
+    events.push(args);
+  };
+
   // --- localStorage pre-seed --------------------------------------------
   if (cart) window.localStorage.setItem("tailgate_cart", JSON.stringify(cart));
 
@@ -222,6 +230,7 @@ export function mount({
     ctx,
     alerts,
     calls,
+    events,
     apiBase,
 
     /** First matching element, or null. */
@@ -322,6 +331,19 @@ export function mount({
     requestBody(index) {
       const call = calls[index];
       return call?.body ? JSON.parse(call.body) : undefined;
+    },
+
+    /** GA4 events with the given name, as {name, payload} objects. */
+    eventsNamed(name) {
+      return events
+        .filter((args) => args[0] === "event" && args[1] === name)
+        .map((args) => ({ name: args[1], payload: args[2] ?? {} }));
+    },
+
+    /** The single GA4 event with the given name, or undefined. */
+    event(name) {
+      const found = page_.eventsNamed(name);
+      return found.length === 1 ? found[0] : undefined;
     },
 
     /** Swap a route after mount, then optionally re-run the ordering layer. */
