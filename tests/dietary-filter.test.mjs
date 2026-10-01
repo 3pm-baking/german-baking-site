@@ -29,18 +29,29 @@ function homepage(search = "") {
  * Each list is scoped to its own container: the chips drive both the Available
  * Now grid and the "Previously Available" list, so an unscoped query would let
  * one list's items answer about the other.
+ *
+ * `badges` is what the item satisfies, which is its declared badges plus what
+ * they imply (see IMPLIES) — the same set preorder.js filters on. `declared` is
+ * kept alongside so a test can tell a baked vegan item from a badged one.
  */
+const IMPLIES = { vegan: ["dairy-free"] };
+
+function satisfiedBy(declared) {
+  const all = new Set(declared);
+  for (const badge of declared) for (const implied of IMPLIES[badge] || []) all.add(implied);
+  return [...all];
+}
+
 function items(page, list = "products__grid") {
   const selector = list === "products__grid" ? ".product-card" : ".previously__item";
   const nameOf = (el) => (el.id || el.textContent || "").trim().split("\n")[0];
   return page
     .$$(selector)
     .filter((el) => el.closest(`.${list}`))
-    .map((el) => ({
-      slug: nameOf(el),
-      badges: (el.dataset.badges || "").split(/\s+/).filter(Boolean),
-      hidden: el.hidden,
-    }));
+    .map((el) => {
+      const declared = (el.dataset.badges || "").split(/\s+/).filter(Boolean);
+      return { slug: nameOf(el), declared, badges: satisfiedBy(declared), hidden: el.hidden };
+    });
 }
 
 const availableNow = (page) => items(page, "products__grid");
@@ -58,6 +69,46 @@ const chip = (page, diet) => page.$(`.diet-filter__chip[data-diet="${diet}"]`);
 
 const click = (page, el) =>
   el.dispatchEvent(new page.window.MouseEvent("click", { bubbles: true }));
+
+test("a vegan bake satisfies Dairy-Free, because it is", async () => {
+  // The vegan bakes are not badged dairy-free in their product files, but a
+  // vegan bake has no dairy in it. Filtering on the declared badge alone showed
+  // a customer who is both vegan and dairy-free an empty page for a
+  // combination the bakery actually has.
+  const page = homepage();
+  await page.settle();
+
+  const veganOnly = availableNow(page).filter((i) => i.declared.includes("vegan"));
+  const untagged = veganOnly.filter((i) => !i.declared.includes("dairy-free"));
+  if (!untagged.length) return; // every vegan bake is also badged dairy-free
+
+  click(page, chip(page, "dairy-free"));
+  await page.settle();
+
+  for (const item of untagged) {
+    assert.ok(!item.hidden, `${item.slug} is vegan, so it is dairy-free`);
+  }
+  await page.close();
+});
+
+test("Dairy-Free and Vegan together return the vegan bakes", async () => {
+  const page = homepage();
+  await page.settle();
+
+  const veganCount = availableNow(page).filter((i) => i.declared.includes("vegan")).length;
+  click(page, chip(page, "dairy-free"));
+  click(page, chip(page, "vegan"));
+  await page.settle();
+
+  const shown = visible(availableNow(page));
+  if (!veganCount) return;
+  assert.ok(shown.length > 0, "the combination the bakery can actually bake");
+  assert.equal(shown.length, veganCount, "which is exactly the vegan bakes");
+  for (const item of shown) {
+    assert.ok(item.badges.includes("vegan") && item.badges.includes("dairy-free"));
+  }
+  await page.close();
+});
 
 test("the chips sit above the product lists, not below them", async () => {
   const page = homepage();

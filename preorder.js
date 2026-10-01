@@ -322,7 +322,7 @@ function initDietaryFilter() {
     const shown = sections.map((section) => {
       let count = 0;
       for (const item of section.items) {
-        const badges = (item.dataset.badges || "").split(/\s+/);
+        const badges = tgBadges(item);
         const match = [...active].every((slug) => badges.includes(slug));
         item.hidden = !match;
         if (match) count += 1;
@@ -404,6 +404,28 @@ function tgDietInUrl(active) {
     url.searchParams.delete("diet");
   }
   window.history.replaceState({}, "", url);
+}
+
+/** Badge a product claims, plus everything that badge implies.
+ *
+ * A vegan bake is dairy-free by definition, so "Dairy-Free" has to match it.
+ * Without this, a customer who ticks both chips gets an empty page for a
+ * combination the bakery actually has — the vegan apricot tart satisfies both.
+ * A product's own badges are authoritative; this only ever adds to them.
+ */
+const TG_BADGE_IMPLIES = {
+  vegan: ["dairy-free"],
+};
+
+function tgBadges(el) {
+  const claimed = (el.dataset.badges || "").split(/\s+/).filter(Boolean);
+  const withImplied = new Set(claimed);
+  for (const badge of claimed) {
+    for (const implied of TG_BADGE_IMPLIES[badge] || []) {
+      withImplied.add(implied);
+    }
+  }
+  return [...withImplied];
 }
 
 // ---------------------------------------------------------------------------
