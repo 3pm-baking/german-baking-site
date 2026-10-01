@@ -1960,7 +1960,13 @@ section {
   margin: 0 auto var(--spacing-md);
 }
 
+/* The label takes a row of its own, so the chips always read as one group
+   beneath it. Sharing a line with the first chip on a narrow screen made the
+   label look like a button and left the chips ragged across two rows. */
 .diet-filter__label {
+  flex-basis: 100%;
+  text-align: center;
+  margin-bottom: 0.25rem;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
