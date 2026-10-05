@@ -13,7 +13,3 @@ schedule:
   frequency:
     interval_weeks: 1
     offset_weeks: 0
-  exclude_dates:
-  - '2026-09-01'
-  - '2026-09-08'
-  - '2026-09-15'

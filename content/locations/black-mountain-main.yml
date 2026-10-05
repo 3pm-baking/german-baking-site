@@ -14,4 +14,4 @@ schedule:
     interval_weeks: 2
     offset_weeks: 0
   exclude_dates:
-  - '2026-09-05'
+  - '2026-10-17'
