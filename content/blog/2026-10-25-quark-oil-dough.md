@@ -14,7 +14,7 @@ page_title: "Quark-Oil Dough: The German Bakery Staple Behind Our Star Coins"
 ---
 
 Selling [Star Coins](/products/star-coins.html) at the market stand has led to
-the same conversation a few times now. Someone picks one up, takes a bite, and asks what it is. I have
+the same conversation a few times now. Someone picks one up and asks what it is. I have
 been trying to explain it ever since, and the best I have come up with is
 this: at least to my American palate, it tastes like nothing I grew up with.
 Light, a little tangy, tender all the way through.
