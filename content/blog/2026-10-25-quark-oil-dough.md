@@ -42,10 +42,10 @@ since the streusel on top is half the point. The build is always the same:
 quark-oil dough on the bottom, a layer of jam, the fruit, and *Streusel* over
 everything. What changes from one Streuseltaler to the next is the fruit.
 
-Our two versions are Star Coins, *Sternentaler*, with plums and cherry jam,
-and Sun Coins, *Sonnentaler*, with apples and apricot jam. On top of those, I
-have been trying the dough at home with other fruits: cherries and pears.
-Personally, I like the cherry one the most; the ones in the photo are the plum
+Our two main versions are Star Coins, *Sternentaler*, with plums and cherry
+jam, and Sun Coins, *Sonnentaler*, with apples and apricot jam. Alongside
+those, we have been selling others at the market with different fruits:
+cherries and pears. Personally, I like the cherry one the most; the ones in the photo are the plum
 version. Either way, they are the kind of pastry that disappears from the tray
 quickly.
 
