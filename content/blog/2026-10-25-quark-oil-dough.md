@@ -24,8 +24,9 @@ of the staples of any bakery counter, the quick dough you reach for when you
 want a tray of pastries without fussing with yeast or letting anything rise
 overnight. It bakes up crisp at the edge and stays tender underneath, which is
 exactly the base a fruit pastry wants. Quark itself is the common thread: you
-will find it in *Quarkbällchen*, little quark dumplings dusted with powdered
-sugar, and in German cheesecake, which is baked with quark instead of cream
+will find it in *Quarkbällchen*, little fried doughnut holes dusted with
+powdered sugar, and in German cheesecake, which is baked with quark instead
+of cream
 cheese.
 
 The ingredient doing the work is, of course, quark. If you have been reading
