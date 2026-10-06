@@ -2694,3 +2694,27 @@ label.tg-cart-field > span {
 .tg-add-box__plus:hover {
   background: #3a3a3a;
 }
+
+/* GitHub-style heading anchors: # appears on hover, links to the section */
+.heading-anchor {
+  display: inline-block;
+  margin-left: 0.4rem;
+  color: var(--color-text-light);
+  text-decoration: none;
+  font-weight: normal;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+h2:hover .heading-anchor,
+h2:focus-within .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+/* Touch devices have no hover: keep anchors faintly visible */
+@media (hover: none) {
+  .heading-anchor {
+    opacity: 0.4;
+  }
+}
