@@ -15,10 +15,11 @@ page_title: "Asheville Fall Colors: Where the Leaf Season Peaks | 3pm German Bak
 My mother-in-law is visiting from Germany right now, here for all of October.
 It is the first time she has seen Mary in America since Mary moved here with
 her Green Card. She has always been interested in the American Indian Summer,
-that stretch of warm days after the first cold spell. In Germany we call it
-*Altweibersommer*. Whether she gets the textbook version of it or not, she
-came at the right month, because the leaves are about to do the thing the
-Blue Ridge Mountains are famous for.
+that stretch of warm days after the first cold spell. In German, it is
+  called *Altweibersommer*, though Mary favors another term for the same
+  stretch: *goldener Herbst*, the golden autumn. Whether she gets the
+  textbook version of it or not, her mom came at the right month, because the
+  leaves are about to do the thing the Blue Ridge Mountains are famous for.
 
 How the leaves do it is worth knowing before you plan a drive, because
 Asheville's fall color is not one peak, it is a cascade. The color starts

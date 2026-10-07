@@ -1,6 +1,6 @@
 ---
 title: "Quark-Oil Dough: The German Bakery Staple Behind Our Star Coins"
-date: 2026-10-25
+date: 2026-10-07
 slug: quark-oil-dough
 author: William
 image: star-coins-blog.jpg
