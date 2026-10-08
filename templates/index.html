@@ -359,6 +359,37 @@
               {% endfor %}
             </div>
           {% endif %}
+          {% if popups %}
+            <h3 class="find-us__subheading">At Pop-Up Markets</h3>
+            <div class="locations-grid">
+              {% for location in popups %}
+                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}">
+                  <p class="location-card__name">
+                    {% if location.url %}
+                      <a href="{{ location.url }}" target="_blank" rel="noopener noreferrer">{{ location.name }}</a>
+                    {% else %}
+                      {{ location.name }}
+                    {% endif %}
+                  </p>
+                  <p class="location-card__details">
+                    {{ location.schedule }}
+                    {% if location.address %}
+                      <br>
+                      <a href="https://www.google.com/maps/search/?api=1&query={{ location.address | urlencode }}"
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         class="location-card__map-link"
+                         onclick="gtag('event', 'maps_click', {market: '{{ location.name | e }}'});">{{ location.address }}</a>
+                    {% endif %}
+                    {% if location.note %}
+                      <br>
+                      <em>{{ location.note }}</em>
+                    {% endif %}
+                  </p>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
           {% if market_calendars %}
             <h3 class="find-us__subheading">Market Calendar</h3>
             <div class="market-calendars">

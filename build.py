@@ -217,6 +217,10 @@ class Location(BaseModel):
     notes: str | None = None
     start_date: date | None = None
     end_date: date | None = None
+    type: str | None = None
+    # Pop-ups: explicit occurrence dates (ISO strings) instead of a recurring
+    # schedule. Stale when every date is in the past.
+    dates: list[date] | None = None
     # Computed at validation time — not read from YAML
     upcoming: bool = False
     active: bool = True
@@ -239,6 +243,10 @@ class Location(BaseModel):
                     stripped = note[len(match.group(1)) :].lstrip(" —:,-–")
                     data["note"] = stripped if stripped else None
                     break
+
+        # Pop-ups carry a display-only schedule string, not a structured block
+        if data.get("schedule_display") and not isinstance(data.get("schedule"), dict):
+            data["schedule"] = data["schedule_display"]
 
         # Handle structured schedule (new format)
         sched = data.get("schedule")
@@ -266,7 +274,12 @@ class Location(BaseModel):
 
     @model_validator(mode="after")
     def compute_status(self) -> Self:
-        if self.start_date and self.end_date:
+        if self.dates:
+            today = _today_et()
+            self.upcoming = all(d > today for d in self.dates)
+            self.active = today in self.dates
+            self.stale = max(self.dates) < today
+        elif self.start_date and self.end_date:
             today = _today_et()
             self.upcoming = self.start_date > today
             self.active = self.start_date <= today <= self.end_date
@@ -1046,7 +1059,15 @@ def split_catalog(catalog: list[dict]) -> dict[str, list[dict]]:
     return {"in_season": in_season, "always_available": always, "previously": previously}
 
 
-def build_landing_page(env, categories, locations, blog_posts, market_calendars=None, tomorrow_markets=None):
+def build_landing_page(
+    env,
+    categories,
+    locations,
+    blog_posts,
+    market_calendars=None,
+    tomorrow_markets=None,
+    popups=None,
+):
     """Generate the landing page (index.html) from template."""
     template = env.get_template("index.html")
 
@@ -1064,6 +1085,7 @@ def build_landing_page(env, categories, locations, blog_posts, market_calendars=
         previously=groups["previously"],
         pantry_products=categories["pantry"],
         locations=locations,
+        popups=popups or [],
         badge_icons=BADGE_ICONS,
         badge_labels=BADGE_LABELS,
         # Served from the site root, so its cards need no prefix.
@@ -1315,8 +1337,10 @@ def build_all():
     # Load products by category
     categories = load_products_by_category(content_dir)
 
-    # Load farmers market locations
-    locations = load_locations(content_dir)
+    # Load farmers market locations (pop-ups get their own Find Us block)
+    all_locations = load_locations(content_dir)
+    locations = [loc for loc in all_locations if loc.get("type") != "popup"]
+    popups = [loc for loc in all_locations if loc.get("type") == "popup"]
 
     # Build market calendars for Find Us section
     market_calendars = build_market_calendars(base_dir / "content" / "locations")
@@ -1357,7 +1381,13 @@ def build_all():
         when = tomorrow_markets[0]["when"]
         print(f"  popup: {tomorrow_markets[0]['name']} ({when})")
     build_landing_page(
-        env, categories, locations, blog_posts, market_calendars=market_calendars, tomorrow_markets=tomorrow_markets
+        env,
+        categories,
+        locations,
+        blog_posts,
+        market_calendars=market_calendars,
+        tomorrow_markets=tomorrow_markets,
+        popups=popups,
     )
 
     # Build static pages (privacy, terms, etc.)
