@@ -31,9 +31,12 @@ jobs:
         run: uv run python build.py
 
       - name: Remove source files before deploy
+        # Build source isn't part of the public site; anything missed here gets
+        # served at the site root (site repo #69: mdext/ and preorder_checks.py
+        # were publicly served until this list was extended).
         run: |
-          rm -rf content/ templates/ scripts/ .agents/ .github/
-          rm -f build.py pyproject.toml Makefile uv.lock .python-version AGENTS.md TODO.md test.md
+          rm -rf content/ templates/ scripts/ .agents/ .github/ mdext/ tests/ node_modules/
+          rm -f build.py pyproject.toml Makefile uv.lock .python-version AGENTS.md TODO.md test.md preorder_checks.py package.json package-lock.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
