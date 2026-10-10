@@ -18,10 +18,6 @@
 const TG_API_BASE = (window.TAILGATE_API_BASE || "").replace(/\/$/, "");
 const TG_CART_KEY = "tailgate_cart";
 const TG_ORDER_KEY = "tailgate_order";
-// Pre-fill the delivery address with a public corridor address: it gives the
-// customer a real nearby starting point without ever suggesting where the
-// bakery's home is. Customers edit it before checking out.
-const TG_DELIVERY_SEED_ADDRESS = "644 Long Shoals Rd, Arden, NC 28704";
 
 // ---------------------------------------------------------------------------
 // cart state (localStorage)
@@ -817,7 +813,8 @@ function tgRenderDeliveryGroup(root, availability, cart) {
   addressRow.hidden = !tgDeliveryState.checked;
   addressRow.innerHTML = `
     <input type="text" id="tg-delivery-address" maxlength="200"
-      placeholder="Your street address, city, ZIP" value="${(tgDeliveryState.address || TG_DELIVERY_SEED_ADDRESS).replace(/"/g, "&quot;")}">
+      placeholder="Your street address, city, ZIP"
+      value="${tgDeliveryState.address.replace(/"/g, "&quot;")}">
     <button type="button" id="tg-delivery-check">Check</button>
     <p class="tg-delivery-status" data-delivery-status>
       ${tgDeliveryState.quote ? "" : "Enter your address to check the delivery fee and time."}
