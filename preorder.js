@@ -18,6 +18,10 @@
 const TG_API_BASE = (window.TAILGATE_API_BASE || "").replace(/\/$/, "");
 const TG_CART_KEY = "tailgate_cart";
 const TG_ORDER_KEY = "tailgate_order";
+// Pre-fill the delivery address with a public corridor address: it gives the
+// customer a real nearby starting point without ever suggesting where the
+// bakery's home is. Customers edit it before checking out.
+const TG_DELIVERY_SEED_ADDRESS = "644 Long Shoals Rd, Arden, NC 28704";
 
 // ---------------------------------------------------------------------------
 // cart state (localStorage)
@@ -177,17 +181,14 @@ async function tgQuoteDelivery(dropId, address) {
 }
 
 /** Human rule text, rendered from the drop's quote policy — numbers from
- *  the server, never baked into the front end. */
+ *  the server, never baked into the front end. Deliberately short: the
+ *  range, the rate, and one worked example. */
 function tgDeliveryRuleText(quote) {
   const maxMin = quote.max_one_way_minutes;
   const perHour = tgPrice(quote.cents_per_hour);
   const fee15 = tgPrice(Math.round((quote.cents_per_hour * 2 * 15) / 60));
-  const feeMax = tgPrice(Math.round((quote.cents_per_hour * 2 * maxMin) / 60));
-  return (
-    `We deliver within ${maxMin} minutes one way. The fee is ${perHour}/hour ` +
-    `for the round trip there and back: 15 minutes out is ${fee15}, ` +
-    `${maxMin} minutes out is the ${feeMax} maximum.`
-  );
+  return `We deliver within ${maxMin} minutes one way. Delivery is ${perHour}/hour ` +
+    `of driving: 15 minutes out is ${fee15}.`;
 }
 
 // ---------------------------------------------------------------------------
@@ -675,7 +676,7 @@ function renderCart(root, { cart, issues }, availability) {
     const legend = document.createElement("legend");
     legend.textContent = "Pickup at";
     group.appendChild(legend);
-    pickupOptions.forEach((o, i) => {
+    const addPickupCard = (o, i) => {
       const cd = tgCountdown(o.cutoff);
       const day = tgRelativeDay(o.pickupAt || o.cutoff);
       const win = tgPickupWindow(o.point, o.pickupAt);
@@ -688,8 +689,23 @@ function renderCart(root, { cart, issues }, availability) {
         <span class="tg-pickup-countdown" data-cutoff="${o.cutoff}">${cd.text}</span>
         <span class="tg-pickup-deadline">Order by ${formatCutoff(o.cutoff)}</span>
       `;
-      group.appendChild(label);
-    });
+      return label;
+    };
+    // the imminent markets are what nearly everyone picks; the long tail
+    // (three weeks out) collapses behind a details toggle so the checkout
+    // form stays within one screen
+    const visible = pickupOptions.slice(0, 3);
+    visible.forEach((o, i) => group.appendChild(addPickupCard(o, i)));
+    if (pickupOptions.length > visible.length) {
+      const more = document.createElement("details");
+      more.className = "tg-more-pickup";
+      more.innerHTML = `<summary>${pickupOptions.length - visible.length} later pickup dates</summary><div class="tg-more-pickup-list"></div>`;
+      const list = more.querySelector(".tg-more-pickup-list");
+      pickupOptions.slice(visible.length).forEach((o, i) => list.appendChild(addPickupCard(o, i + visible.length)));
+      group.appendChild(more);
+      // the countdown ticker queries the whole fieldset, hidden cards
+      // included, so collapsed dates still tick
+    }
     root.appendChild(group);
     tgStartPickupTicker(group);
   }
@@ -801,7 +817,7 @@ function tgRenderDeliveryGroup(root, availability, cart) {
   addressRow.hidden = !tgDeliveryState.checked;
   addressRow.innerHTML = `
     <input type="text" id="tg-delivery-address" maxlength="200"
-      placeholder="Your street address, city, ZIP" value="${tgDeliveryState.address.replace(/"/g, "&quot;")}">
+      placeholder="Your street address, city, ZIP" value="${(tgDeliveryState.address || TG_DELIVERY_SEED_ADDRESS).replace(/"/g, "&quot;")}">
     <button type="button" id="tg-delivery-check">Check</button>
     <p class="tg-delivery-status" data-delivery-status>
       ${tgDeliveryState.quote ? "" : "Enter your address to check the delivery fee and time."}
@@ -881,8 +897,7 @@ function tgShowDeliveryResult(root, quote) {
   const checkoutButton = root.querySelector("#tg-cart-checkout");
   if (quote.ok) {
     status.textContent =
-      `${quote.minutes_one_way} min away · ${tgPrice(quote.fee_cents)} delivery ` +
-      `(${quote.round_trip_minutes} min round trip)`;
+      `${quote.minutes_one_way} min away · ${tgPrice(quote.fee_cents)} delivery`;
     checkoutButton.disabled = false;
     const table = root.querySelector(".tg-cart-table tfoot");
     if (table) {
@@ -894,8 +909,8 @@ function tgShowDeliveryResult(root, quote) {
     }
   } else if (quote.reason === "too_far") {
     status.textContent =
-      `${quote.minutes_one_way} min away — that is outside our delivery range. ` +
-      "Pickup is still open.";
+      `${quote.minutes_one_way} minutes away is outside our ` +
+      `${quote.max_one_way_minutes || 30}-minute delivery range. Pickup is still open.`;
     checkoutButton.disabled = false;
   } else {
     status.textContent =

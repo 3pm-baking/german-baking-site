@@ -2733,8 +2733,12 @@ h2:focus-within .heading-anchor,
   padding: 0 0.4rem;
 }
 
+/* delivery card mirrors the pickup card's visual language (border, hover,
+   checked state, custom radio knob) so the two fulfillment groups read as
+   the same component; the grid differs only for its content */
 .tg-delivery-option {
   display: grid;
+  position: relative;
   grid-template-columns: auto 1fr;
   column-gap: 0.6rem;
   align-items: start;
@@ -2742,7 +2746,6 @@ h2:focus-within .heading-anchor,
   border: 1px solid var(--color-border-light);
   border-radius: 8px;
   cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .tg-delivery-option:hover {
@@ -2754,8 +2757,41 @@ h2:focus-within .heading-anchor,
   background: rgba(0, 0, 0, 0.03);
 }
 
-.tg-delivery-option input[type="radio"] {
-  margin-top: 0.2rem;
+.tg-delivery-option input[type="radio"],
+.tg-pickup-option input[type="radio"] {
+  appearance: none;
+  margin: 0.15rem 0 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--color-text-light);
+  display: grid;
+  place-content: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.tg-pickup-option input[type="radio"] {
+  margin-top: 0.45rem;
+}
+
+.tg-delivery-option input[type="radio"]::before {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  transform: scale(0);
+  transition: transform 0.12s ease-in-out;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  background: var(--color-background);
+}
+
+.tg-delivery-option input[type="radio"]:checked {
+  border-color: var(--color-text);
+  background: var(--color-text);
+}
+
+.tg-delivery-option input[type="radio"]:checked::before {
+  transform: scale(1);
 }
 
 .tg-delivery-option--disabled {
@@ -2768,28 +2804,21 @@ h2:focus-within .heading-anchor,
   cursor: not-allowed;
 }
 
-.tg-delivery-rule {
-  grid-column: 2;
-  font-size: 0.85rem;
+.tg-delivery-label {
+  font-weight: 600;
+}
+
+/* collapsed long-tail pickup dates */
+.tg-more-pickup summary {
+  cursor: pointer;
+  font-size: 0.9rem;
   color: var(--color-text-light);
+  padding: 0.4rem 0.7rem;
 }
 
-.tg-delivery-address {
-  margin-top: 0.5rem;
-  display: grid;
-  gap: 0.4rem;
+.tg-more-pickup[open] summary {
+  padding-bottom: 0.6rem;
 }
-
-.tg-delivery-address input[type="text"] {
-  width: 100%;
-}
-
-.tg-delivery-status {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--color-text-light);
-}
-
 .tg-delivery-row-label {
   text-align: left;
 }

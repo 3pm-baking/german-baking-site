@@ -404,7 +404,7 @@ test("checking the address quotes minutes and fee in the status line", async () 
   await page.settle();
 
   assert.match(page.text("[data-delivery-status]"), /15 min away/);
-  assert.match(page.text("[data-delivery-status]"), /30 min round trip/);
+  assert.match(page.text("[data-delivery-status]"), /\$10\.00 delivery/);
   const post = page.calls.find((c) => c.route === "POST /api/v1/quote");
   assert.equal(page.requestBody(page.calls.indexOf(post)).address, "22 Haywood Rd, Asheville, NC 28806");
   await page.close();
@@ -440,8 +440,8 @@ test("too far: names the distance and keeps pickup open, no fee row", async () =
     "tgShowDeliveryResult(document, { ok: false, reason: 'too_far', minutes_one_way: 45 })"
   );
 
-  assert.match(page.text("[data-delivery-status]"), /45 min away/);
-  assert.match(page.text("[data-delivery-status]"), /outside our delivery range/);
+  assert.match(page.text("[data-delivery-status]"), /45 minutes away/);
+  assert.match(page.text("[data-delivery-status]"), /30-minute delivery range/);
   assert.ok(!page.has(".tg-delivery-fee"));
   assert.equal(page.$$(".tg-pickup-option").length, 1);
   await page.close();
@@ -511,6 +511,37 @@ test("at the minimum delivery is selectable and quotes", async () => {
   const radio = page.$("input[name='tg-delivery']");
   assert.equal(radio.disabled, false);
   assert.equal(radio.checked, false);
+  await page.close();
+});
+
+test("more than three pickup dates collapse behind a details toggle", async () => {
+  const fivePoints = [1, 2, 3, 4, 5].map((n) => ({
+    slug: `point-${n}`,
+    label: `Market ${n}`,
+    window_start: "15:30",
+    window_end: "18:30",
+  }));
+  // same-day cutoffs so the sort order is stable: point-1..3 visible
+  const page = mount({
+    page: "cart",
+    routes: {
+      "GET /api/v1/availability": availability({
+        cutoff: "2026-09-27T13:48:00+00:00",
+        pickupPoints: fivePoints,
+      }),
+    },
+    globals: { TAILGATE_MARKETS: marketsMap() },
+    cart: { items: [{ slug: "german-cheesecake", unit: "slice", qty: 1 }] },
+  });
+  await page.waitFor("#tg-cart-checkout");
+
+  const visibleCards = [...page.$(".tg-pickup-options")?.querySelectorAll(":scope > .tg-pickup-option") ?? []];
+  assert.equal(visibleCards.length, 3, "three imminent cards stay visible");
+  assert.ok(page.has(".tg-more-pickup"));
+  const hiddenCards = [...page.$(".tg-more-pickup")?.querySelectorAll(".tg-pickup-option") ?? []];
+  assert.equal(hiddenCards.length, 2, "the tail collapses behind the toggle");
+  // every card is still a real radio, collapsed or not
+  assert.equal(page.$$("input[name='tg-pickup']").length, 5);
   await page.close();
 });
 
