@@ -10,7 +10,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { availability, marketsMap, mount } from "./harness.mjs";
+import { availability, deliveryOptionFixture, marketsMap, mount, reply } from "./harness.mjs";
 
 function cart({ taxPercent, newsletterEnabled, ...rest } = {}) {
   return mount({
@@ -332,5 +332,195 @@ test("an empty cart invites the customer back to the products", async () => {
 
   assert.match(page.bodyText("#tg-cart-root"), /cart is empty/i);
   assert.ok(page.$('a[href="/#products"]'));
+  await page.close();
+});
+
+/* -------------------------------------------------------------------------
+ * delivery on the cart page (address quote, 30-min rule, minimum, fail-soft)
+ * ------------------------------------------------------------------------ */
+
+const TG_QUOTE_OK = {
+  ok: true,
+  minutes_one_way: 15,
+  round_trip_minutes: 30,
+  fee_cents: 1000,
+  max_one_way_minutes: 30,
+  cents_per_hour: 2000,
+};
+
+/** Deliverable-unit map for the fixtures: the whole is deliverable, the
+ *  slice is not — exactly what seed_drops' `units: [whole]` policy produces
+ *  and what the availability wire format carries. */
+const DELIVERABLE_ITEMS = [
+  {
+    slug: "german-cheesecake",
+    name: "German Cheesecake",
+    capacity: 20,
+    remaining: 6,
+    units: [
+      { name: "slice", price_cents: 600 },
+      { name: "whole", price_cents: 4500, fulfillment_types: ["pickup", "delivery"] },
+    ],
+  },
+  {
+    slug: "apple-streusel",
+    name: "Apple Streusel",
+    capacity: 12,
+    remaining: 12,
+    units: [{ name: "slice", price_cents: 700 }],
+  },
+];
+
+function deliveryCartPage({
+  deliveryOption = deliveryOptionFixture(),
+  quote = null,
+  items = DELIVERABLE_ITEMS,
+  cart = { items: [{ slug: "german-cheesecake", unit: "whole", qty: 1 }] },
+} = {}) {
+  const routes = {
+    "GET /api/v1/availability": availability({ deliveryOption, items }),
+  };
+  if (quote) routes["POST /api/v1/quote"] = quote;
+  return mount({
+    page: "cart",
+    routes,
+    globals: { TAILGATE_MARKETS: marketsMap() },
+    cart,
+  });
+}
+
+test("checking the address quotes minutes and fee in the status line", async () => {
+  const page = await deliveryCartPage({ quote: TG_QUOTE_OK });
+  await page.waitFor("#tg-cart-checkout");
+
+  const radio = page.$("input[name='tg-delivery']");
+  radio.checked = true;
+  radio.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+
+  assert.ok(page.has("#tg-delivery-address"), "address box appears with the radio");
+  page.$("#tg-delivery-address").value = "22 Haywood Rd, Asheville, NC 28806";
+  page.$("#tg-delivery-check").click();
+  await page.settle();
+
+  assert.match(page.text("[data-delivery-status]"), /15 min away/);
+  assert.match(page.text("[data-delivery-status]"), /30 min round trip/);
+  const post = page.calls.find((c) => c.route === "POST /api/v1/quote");
+  assert.equal(page.requestBody(page.calls.indexOf(post)).address, "22 Haywood Rd, Asheville, NC 28806");
+  await page.close();
+});
+
+test("a quoted fee adds a delivery row to the totals", async () => {
+  const page = await deliveryCartPage();
+  await page.waitFor("#tg-cart-checkout");
+  page.eval(`tgShowDeliveryResult(document, ${JSON.stringify(TG_QUOTE_OK)})`);
+
+  assert.match(page.text(".tg-delivery-fee"), /\$10\.00/);
+  assert.match(page.bodyText("tfoot"), /Delivery fee/);
+  // the labeled total stays the items subtotal: the disclosed charge is
+  // items + fee rows (with tax on top at checkout, same as pickup)
+  assert.equal(page.text(".tg-cart-total"), "$45.00");
+  await page.close();
+});
+
+test("the rule text is rendered from the drop's numbers, not baked copy", async () => {
+  const page = await deliveryCartPage(); // 30-min range, $20/h
+  await page.waitFor("#tg-cart-checkout");
+
+  assert.match(page.bodyText(".tg-delivery-rule"), /30 minutes one way/);
+  assert.match(page.bodyText(".tg-delivery-rule"), /\$20\.00\/hour/);
+  assert.match(page.bodyText(".tg-delivery-rule"), /15 minutes out is \$10\.00/);
+  await page.close();
+});
+
+test("too far: names the distance and keeps pickup open, no fee row", async () => {
+  const page = await deliveryCartPage();
+  await page.waitFor("#tg-cart-checkout");
+  page.eval(
+    "tgShowDeliveryResult(document, { ok: false, reason: 'too_far', minutes_one_way: 45 })"
+  );
+
+  assert.match(page.text("[data-delivery-status]"), /45 min away/);
+  assert.match(page.text("[data-delivery-status]"), /outside our delivery range/);
+  assert.ok(!page.has(".tg-delivery-fee"));
+  assert.equal(page.$$(".tg-pickup-option").length, 1);
+  await page.close();
+});
+
+test("quote failure fails soft and keeps pickup fully intact", async () => {
+  const page = await deliveryCartPage({ quote: reply(503, {}) });
+  await page.waitFor("#tg-cart-checkout");
+  page.eval("tgShowDeliveryResult(document, { ok: false, reason: 'unavailable' })");
+
+  assert.match(page.text("[data-delivery-status]"), /still order for pickup/);
+  assert.equal(page.$$(".tg-pickup-option").length, 1);
+  assert.equal(page.$("input[name='tg-pickup']").disabled, false);
+  await page.close();
+});
+
+test("zone fallback appears when the quote is unreachable and tiers are set", async () => {
+  const page = await deliveryCartPage();
+  await page.waitFor("#tg-cart-checkout");
+  page.eval("tgShowDeliveryResult(document, { ok: false, reason: 'unavailable' })");
+
+  const zone = page.$("#tg-delivery-zone");
+  assert.ok(zone, "zone select renders");
+  zone.value = "asheville-city";
+  zone.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+  assert.match(page.text(".tg-delivery-fee"), /\$5\.00/); // the tier's fee
+  await page.close();
+});
+
+test("below the configurable minimum the radio is greyed with its reason", async () => {
+  const page = await deliveryCartPage({
+    deliveryOption: deliveryOptionFixture({ minOrderCents: 5000 }),
+  });
+  await page.waitFor("#tg-cart-checkout");
+
+  const radio = page.$("input[name='tg-delivery']");
+  assert.equal(radio.disabled, true, "radio disabled below the minimum");
+  assert.match(
+    page.bodyText(".tg-delivery-option--disabled"),
+    /minimum of \$50\.00/,
+    "the reason is visible, the option is not silently gone"
+  );
+  await page.close();
+});
+
+test("slices never count toward the delivery minimum", async () => {
+  const page = await deliveryCartPage({
+    deliveryOption: deliveryOptionFixture({ minOrderCents: 5000 }),
+    cart: {
+      items: [
+        { slug: "german-cheesecake", unit: "whole", qty: 1 }, // deliverable 4500
+        { slug: "german-cheesecake", unit: "slice", qty: 2 }, // pickup 1200
+      ],
+    },
+  });
+  await page.waitFor("#tg-cart-checkout");
+
+  assert.equal(page.$("input[name='tg-delivery']").disabled, true);
+  await page.close();
+});
+
+test("at the minimum delivery is selectable and quotes", async () => {
+  const page = await deliveryCartPage({ quote: TG_QUOTE_OK });
+  await page.waitFor("#tg-cart-checkout");
+
+  const radio = page.$("input[name='tg-delivery']");
+  assert.equal(radio.disabled, false);
+  assert.equal(radio.checked, false);
+  await page.close();
+});
+
+test("no deliverable line: no delivery card at all, pickup unaffected", async () => {
+  const page = await deliveryCartPage({
+    cart: { items: [{ slug: "apple-streusel", unit: "slice", qty: 2 }] },
+  });
+  await page.waitFor("#tg-cart-checkout");
+
+  assert.ok(!page.has(".tg-delivery-option"));
+  assert.equal(page.$$(".tg-pickup-option").length, 1);
   await page.close();
 });

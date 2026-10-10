@@ -10,7 +10,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { availability, marketsMap, mount, reply } from "./harness.mjs";
+import { availability, deliveryOptionFixture, marketsMap, mount, reply } from "./harness.mjs";
 
 /** Cart page with a filled cart, ready for checkout. */
 async function cart({ payload = availability(), orderReply, cart, fill = true } = {}) {
@@ -192,5 +192,114 @@ test("shows an inline confirmation for a rail with no redirect", async () => {
 
   assert.match(page.bodyText(".tg-cart-checkout"), /Pay at the market/);
   assert.ok(page.$('a[href^="/order-status/"]'), "must offer a way to view the order");
+  await page.close();
+});
+
+
+/* -------------------------------------------------------------------------
+ * delivery checkout (same goal: address quote becomes the disclosed fee)
+ * ------------------------------------------------------------------------ */
+
+async function deliveryCheckoutPage() {
+  // whole cake deliverable, slice not — what the availability wire carries
+  const deliverableItems = [
+    {
+      slug: "german-cheesecake",
+      name: "German Cheesecake",
+      capacity: 20,
+      remaining: 6,
+      units: [
+        { name: "slice", price_cents: 600 },
+        { name: "whole", price_cents: 4500, fulfillment_types: ["pickup", "delivery"] },
+      ],
+    },
+  ];
+  const page = mount({
+    page: "cart",
+    routes: {
+      "GET /api/v1/availability": availability({
+        deliveryOption: deliveryOptionFixture(),
+        items: deliverableItems,
+      }),
+      "POST /api/v1/quote": {
+        ok: true,
+        minutes_one_way: 15,
+        round_trip_minutes: 30,
+        fee_cents: 1000,
+        max_one_way_minutes: 30,
+        cents_per_hour: 2000,
+      },
+      "POST /api/v1/orders": reply(201, {
+        order_ref: "deliver01",
+        status_token: "tok2",
+        redirect_url: "https://square.link/u/TESTCHECKOUT",
+      }),
+    },
+    globals: { TAILGATE_MARKETS: marketsMap() },
+    cart: { items: [{ slug: "german-cheesecake", unit: "whole", qty: 1 }] },
+  });
+  // the checkout form renders after availability resolves; settle() is not
+  // always enough rounds on the page that also mounts the delivery group
+  await page.waitFor("#tg-cart-checkout");
+  return page;
+}
+
+
+test("delivery checkout posts the delivery contract shape", async () => {
+  const page = await deliveryCheckoutPage();
+  console.log(
+    "PROBE:",
+    "roots=", page.eval("document.querySelectorAll('#tg-cart-root').length"),
+    "btns=", page.eval("document.querySelectorAll('#tg-cart-checkout').length"),
+    "bodyHasBtn=", page.eval("document.body.innerHTML.includes('tg-cart-checkout')"),
+    "len=", page.eval("document.body.innerHTML.length"),
+    "docId=", page.eval("document.getElementById('tg-cart-name')?.id || 'none'"),
+    "calls=", page.calls.map((c) => c.route).join(","),
+    "unavail=", page.eval("document.body.innerHTML.includes('unavailable')"),
+    "emptyCart=", page.eval("!!document.querySelector('.tg-cart-empty')"),
+  );
+  page.eval(
+    `document.getElementById("tg-cart-name").value = "Jane Doe";
+     document.getElementById("tg-cart-contact").value = "jane@example.com";`
+  );
+  const radio = page.$("input[name='tg-delivery']");
+  radio.checked = true;
+  radio.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+  const input = page.$("#tg-delivery-address");
+  input.value = "22 Haywood Rd, Asheville, NC 28806";
+  page.$("#tg-delivery-check").click();
+  await page.settle();
+  await clickCheckout(page);
+
+  const post = page.calls.find((c) => c.path === "/api/v1/orders");
+  assert.ok(post, "delivery checkout must POST an order");
+  assert.deepEqual(page.requestBody(page.calls.indexOf(post)), {
+    drop_id: "2026-09-29",
+    fulfillment_type: "delivery",
+    address: "22 Haywood Rd, Asheville, NC 28806",
+    lines: [{ item: "german-cheesecake", unit: "whole", quantity: 1 }],
+    name: "Jane Doe",
+    contact: "jane@example.com",
+    newsletter: false,
+    tg_verify: "",
+  });
+  await page.close();
+});
+
+test("delivery checkout is blocked until the address is checked", async () => {
+  const page = await deliveryCheckoutPage();
+  page.eval(
+    `document.getElementById("tg-cart-name").value = "Jane Doe";
+     document.getElementById("tg-cart-contact").value = "jane@example.com";`
+  );
+  const radio = page.$("input[name='tg-delivery']");
+  radio.checked = true;
+  radio.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+  await clickCheckout(page);
+
+  assert.equal(page.calls.find((c) => c.path === "/api/v1/orders"), undefined);
+  assert.match(page.alerts.join(" "), /check/i);
   await page.close();
 });

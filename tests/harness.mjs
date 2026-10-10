@@ -388,7 +388,20 @@ export function availability({
   cutoff = "2026-09-27T13:48:00+00:00",
   pickupAt = "2026-09-29T15:30:00+00:00",
   status = "open",
+  deliveryOption = null, // {@link deliveryOptionFixture} when the drop delivers
 } = {}) {
+  const options = [
+    {
+      type: "pickup",
+      cutoff,
+      pickup_at: pickupAt,
+      status,
+      next_open_drop_id: null,
+      pickup_points: pickupPoints,
+      delivery: null,
+    },
+  ];
+  if (deliveryOption) options.push(deliveryOption);
   return {
     generated_at: "2026-09-25T10:00:00+00:00",
     tax_percent: taxPercent,
@@ -409,19 +422,30 @@ export function availability({
             fulfillment_types: unit.fulfillment_types ?? ["pickup"],
           })),
         })),
-        fulfillment_options: [
-          {
-            type: "pickup",
-            cutoff,
-            pickup_at: pickupAt,
-            status,
-            next_open_drop_id: null,
-            pickup_points: pickupPoints,
-            delivery: null,
-          },
-        ],
+        fulfillment_options: options,
       },
     ],
+  };
+}
+
+/** The delivery fulfillment option, in the shape the API emits. Default
+ *  minimum $40 (a typical per-drop policy); quoting on, 30-minute range. */
+export function deliveryOptionFixture({ minOrderCents = 4000, quote = { enabled: true, max_one_way_minutes: 30, cents_per_hour: 2000 } } = {}) {
+  return {
+    type: "delivery",
+    cutoff: "2026-09-27T13:48:00+00:00",
+    pickup_at: "2026-09-29T15:30:00+00:00",
+    status: "open",
+    next_open_drop_id: null,
+    pickup_points: [],
+    delivery: {
+      zones: ["asheville-city"],
+      fee_tiers: [["asheville-city", 500]],
+      default_fee_cents: 1000,
+      origin: "718 Haywood Rd., Asheville, NC 28806",
+      min_order_cents: minOrderCents,
+      quote,
+    },
   };
 }
 

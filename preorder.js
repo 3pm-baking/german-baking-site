@@ -112,6 +112,85 @@ function tgUpdateCartBadge() {
 }
 
 // ---------------------------------------------------------------------------
+// delivery quoting (cart page)
+// ---------------------------------------------------------------------------
+
+/** In-memory quote state, kept across cart re-renders. Reset when the cart
+ *  page boots. NOTHING here is authoritative: the server re-quotes at order
+ *  creation from the same drop, so a stale display cannot misprice an order. */
+const tgDeliveryState = {
+  dropId: null,
+  address: "",
+  quote: null, // last /api/v1/quote response
+  checked: false, // the "deliver to me" radio
+  options: [], // open delivery options seen at render
+  zone: null, // zone fallback choice when the quoter is unreachable
+  zoneFeeCents: null,
+};
+
+function tgResetDeliveryState() {
+  tgDeliveryState.dropId = null;
+  tgDeliveryState.address = "";
+  tgDeliveryState.quote = null;
+  tgDeliveryState.checked = false;
+  tgDeliveryState.options = [];
+  tgDeliveryState.zone = null;
+  tgDeliveryState.zoneFeeCents = null;
+}
+
+/** Open delivery options across drops, earliest cutoff first. */
+function tgDeliveryOptions(availability) {
+  const options = [];
+  for (const drop of availability.drops) {
+    const opt = drop.fulfillment_options.find(
+      (o) => o.type === "delivery" && o.status === "open"
+    );
+    if (opt) options.push({ dropId: drop.drop_id, cutoff: opt.cutoff, delivery: opt.delivery });
+  }
+  return options.sort((a, b) => new Date(a.cutoff) - new Date(b.cutoff));
+}
+
+/** Cart lines whose unit is deliverable on the given drop. */
+function tgDeliverableLines(cart, availability, dropId) {
+  const drop = availability.drops.find((d) => d.drop_id === dropId);
+  if (!drop) return [];
+  return cart.items.filter((line) => {
+    const item = drop.items.find((i) => i.slug === line.slug);
+    const unit = item && item.units.find((u) => u.name === line.unit);
+    return Boolean(unit && (unit.fulfillment_types || []).includes("delivery"));
+  });
+}
+
+/** Quote the chosen drop's delivery fee for an address. Server-cached per
+ *  drop+address; the browser keeps its own last answer so re-renders don't
+ *  re-bill the provider. */
+async function tgQuoteDelivery(dropId, address) {
+  const res = await fetch(`${TG_API_BASE}/api/v1/quote`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ drop_id: dropId, address }),
+  });
+  if (!res.ok) {
+    return { ok: false, reason: res.status === 429 ? "unavailable" : "unavailable", message: "Could not check delivery for that address right now." };
+  }
+  return res.json();
+}
+
+/** Human rule text, rendered from the drop's quote policy — numbers from
+ *  the server, never baked into the front end. */
+function tgDeliveryRuleText(quote) {
+  const maxMin = quote.max_one_way_minutes;
+  const perHour = tgPrice(quote.cents_per_hour);
+  const fee15 = tgPrice(Math.round((quote.cents_per_hour * 2 * 15) / 60));
+  const feeMax = tgPrice(Math.round((quote.cents_per_hour * 2 * maxMin) / 60));
+  return (
+    `We deliver within ${maxMin} minutes one way. The fee is ${perHour}/hour ` +
+    `for the round trip there and back: 15 minutes out is ${fee15}, ` +
+    `${maxMin} minutes out is the ${feeMax} maximum.`
+  );
+}
+
+// ---------------------------------------------------------------------------
 // availability fetching (shared by widget + cart page)
 // ---------------------------------------------------------------------------
 
@@ -447,8 +526,13 @@ async function initCartPage() {
     return;
   }
 
-  const cart = reconcileCart(tgCartLoad(), availability);
-  renderCart(root, cart, availability);
+  try {
+    const cart = reconcileCart(tgCartLoad(), availability);
+    renderCart(root, cart, availability);
+  } catch (err) {
+    window.TG_INIT_ERR = String(err && err.stack || err);
+    throw err;
+  }
 }
 
 /** Prefill from query params: ?item=slug&unit=name&qty=N */
@@ -610,6 +694,10 @@ function renderCart(root, { cart, issues }, availability) {
     tgStartPickupTicker(group);
   }
 
+  // delivery option — address-based quoting with the pickup cards kept
+  // intact as the fail-soft alternative
+  tgRenderDeliveryGroup(root, availability, cart);
+
   // contact + newsletter + checkout
   const form = document.createElement("div");
   form.className = "tg-cart-checkout";
@@ -652,6 +740,216 @@ function findItemAnywhere(availability, slug) {
     if (item) return item;
   }
   return null;
+}
+
+/** The delivery fieldset: one radio card per open delivery drop, an address
+ *  box that quotes the fee, and the rule spelled out in the drop's own
+ *  numbers. Purely additive over the pickup cards — an unreachable quote
+ *  service degrades to "can't check right now", never to a broken cart. */
+function tgRenderDeliveryGroup(root, availability, cart) {
+  const options = tgDeliveryOptions(availability);
+  if (options.length === 0) {
+    tgDeliveryState.checked = false;
+    tgDeliveryState.dropId = null;
+    return;
+  }
+  // seed/pin the state to the first open option; a stale drop from a
+  // previous render resolves here
+  tgDeliveryState.dropId = options[0].dropId;
+  tgDeliveryState.options = options;
+  const deliverable = tgDeliverableLines(
+    tgCartLoad(),
+    availability,
+    tgDeliveryState.dropId
+  );
+  if (deliverable.length === 0) return; // nothing in the cart can be delivered
+
+  const first = options[0];
+  // the per-drop delivery minimum counts deliverable items only — slices
+  // riding along for pickup never meet it on their own
+  const deliverableTotalCents = deliverable.reduce((sum, line) => {
+    const item = findItemAnywhere(availability, line.slug);
+    const unit = item && item.units.find((u) => u.name === line.unit);
+    return sum + (unit ? unit.price_cents * line.qty : 0);
+  }, 0);
+  const minCents = first.delivery ? first.delivery.min_order_cents : null;
+  const belowMinimum = minCents != null && deliverableTotalCents < minCents;
+  if (belowMinimum) tgDeliveryState.checked = false; // greyed: not selectable
+
+  const group = document.createElement("fieldset");
+  group.className = "tg-cart-field tg-delivery-options";
+  const legend = document.createElement("legend");
+  legend.textContent = "Or deliver to me";
+  group.appendChild(legend);
+  const ruleText = first.delivery && first.delivery.quote ? tgDeliveryRuleText(first.delivery.quote) : "";
+  const minNote =
+    belowMinimum && minCents != null
+      ? `Delivery needs a minimum of ${tgPrice(minCents)} in whole items — slices only deliver with them.`
+      : "";
+  const label = document.createElement("label");
+  label.className =
+    "tg-delivery-option" + (belowMinimum ? " tg-delivery-option--disabled" : "");
+  label.innerHTML = `
+    <input type="radio" name="tg-delivery" value="${first.dropId}" ${tgDeliveryState.checked ? "checked" : ""} ${belowMinimum ? "disabled" : ""}>
+    <span class="tg-delivery-label">Deliver to me</span>
+    <span class="tg-delivery-rule">${ruleText}${minNote ? ` ${minNote}` : ""}</span>
+  `;
+  group.appendChild(label);
+
+  const addressRow = document.createElement("div");
+  addressRow.className = "tg-delivery-address";
+  addressRow.hidden = !tgDeliveryState.checked;
+  addressRow.innerHTML = `
+    <input type="text" id="tg-delivery-address" maxlength="200"
+      placeholder="Your street address, city, ZIP" value="${tgDeliveryState.address.replace(/"/g, "&quot;")}">
+    <button type="button" id="tg-delivery-check">Check</button>
+    <p class="tg-delivery-status" data-delivery-status>
+      ${tgDeliveryState.quote ? "" : "Enter your address to check the delivery fee and time."}
+    </p>
+  `;
+  group.appendChild(addressRow);
+  root.appendChild(group);
+
+  const radio = label.querySelector("input");
+  radio.addEventListener("change", () => {
+    tgDeliveryState.checked = radio.checked;
+    if (radio.checked) {
+      // pickup and delivery are exclusive choices
+      const checkedPickup = root.querySelector("input[name='tg-pickup']:checked");
+      if (checkedPickup) checkedPickup.checked = false;
+      const quote = tgDeliveryState.quote;
+      if (quote && quote.ok) tgShowDeliveryResult(root, quote);
+      else tgQuoteRequested(root);
+    }
+    addressRow.hidden = !radio.checked;
+  });
+
+  const addressInput = addressRow.querySelector("#tg-delivery-address");
+  addressInput.addEventListener("input", () => {
+    tgDeliveryState.address = addressInput.value;
+  });
+  addressInput.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      addressRow.querySelector("#tg-delivery-check").click();
+    }
+  });
+
+  const checkButton = addressRow.querySelector("#tg-delivery-check");
+  checkButton.addEventListener("click", async () => {
+    const address = addressInput.value.trim();
+    if (address.length < 5) return;
+    checkButton.disabled = true;
+    checkButton.textContent = "Checking…";
+    try {
+      const quote = await tgQuoteDelivery(tgDeliveryState.dropId, address);
+      tgDeliveryState.quote = quote;
+      tgShowDeliveryResult(root, quote);
+    } catch {
+      tgShowDeliveryResult(root, { ok: false, reason: "unavailable" });
+    } finally {
+      checkButton.disabled = false;
+      checkButton.textContent = "Check";
+    }
+  });
+
+  // a later pickup click unselects delivery
+  root.querySelectorAll("input[name='tg-pickup']").forEach((pickupRadio) => {
+    pickupRadio.addEventListener("change", () => {
+      if (pickupRadio.checked) {
+        tgDeliveryState.checked = false;
+        radio.checked = false;
+        tgRemoveDeliveryTotal(root);
+        const status = root.querySelector("[data-delivery-status]");
+        if (status) status.textContent = "Enter your address to check the delivery fee and time.";
+      }
+    });
+  });
+
+  // re-show the cached quote after a re-render
+  if (tgDeliveryState.checked && tgDeliveryState.quote) {
+    tgShowDeliveryResult(root, tgDeliveryState.quote);
+  }
+}
+
+/** Render the quote result into the delivery status line and the total row.
+ *  All customer-safe: a quote failure says what to do (pick up), not "error 500". */
+function tgShowDeliveryResult(root, quote) {
+  const status = root.querySelector("[data-delivery-status]");
+  if (!status) return;
+  tgRemoveDeliveryTotal(root);
+  const checkoutButton = root.querySelector("#tg-cart-checkout");
+  if (quote.ok) {
+    status.textContent =
+      `${quote.minutes_one_way} min away · ${tgPrice(quote.fee_cents)} delivery ` +
+      `(${quote.round_trip_minutes} min round trip)`;
+    checkoutButton.disabled = false;
+    const table = root.querySelector(".tg-cart-table tfoot");
+    if (table) {
+      const row = document.createElement("tr");
+      row.className = "tg-cart-delivery";
+      // row IS the <tr>; assigning another would be discarded by the parser
+      row.innerHTML = `<th class="tg-delivery-row-label">Delivery fee</th><th></th><th></th><th class="tg-delivery-fee">${tgPrice(quote.fee_cents)}</th><th></th>`;
+      table.appendChild(row);
+    }
+  } else if (quote.reason === "too_far") {
+    status.textContent =
+      `${quote.minutes_one_way} min away — that is outside our delivery range. ` +
+      "Pickup is still open.";
+    checkoutButton.disabled = false;
+  } else {
+    status.textContent =
+      "Could not check delivery from that address right now. You can still order for pickup.";
+    checkoutButton.disabled = false;
+    tgRenderZoneFallback(root);
+  }
+}
+
+/** Quote-unreachable fallback when the drop carries zone pricing: the fee
+ *  comes from the same tiers the server would charge. Absent tiers, nothing
+ *  renders — delivery simply cannot be quoted here. */
+function tgRenderZoneFallback(root) {
+  const delivery =
+    tgDeliveryState.options.length > 0 ? tgDeliveryState.options[0].delivery : null;
+  if (!delivery || !delivery.fee_tiers || delivery.fee_tiers.length === 0) return;
+  if (root.querySelector("#tg-delivery-zone")) return; // already rendered
+  const host = root.querySelector(".tg-delivery-address");
+  if (!host) return;
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <label class="tg-delivery-zone-label">Or choose your area
+      <select id="tg-delivery-zone">
+        ${delivery.fee_tiers.map(([zone, cents]) => `<option value="${zone}">${zone.replace(/-/g, " ")} · ${tgPrice(cents)}</option>`).join("")}
+        <option value="" ${delivery.default_fee_cents ? "" : "selected"}>Other · ${tgPrice(delivery.default_fee_cents)}</option>
+      </select>
+    </label>
+  `;
+  host.appendChild(wrap);
+  wrap.querySelector("#tg-delivery-zone").addEventListener("change", (ev) => {
+    const zone = ev.target.value;
+    const tiers = Object.fromEntries(delivery.fee_tiers);
+    tgDeliveryState.zoneFeeCents = tiers[zone] != null ? tiers[zone] : delivery.default_fee_cents;
+    tgDeliveryState.zone = zone;
+    const row = root.querySelector(".tg-cart-table tfoot");
+    if (row) {
+      tgRemoveDeliveryTotal(root);
+      const tr = document.createElement("tr");
+      tr.className = "tg-cart-delivery";
+      tr.innerHTML = `<th class="tg-delivery-row-label">Delivery fee</th><th></th><th></th><th class="tg-delivery-fee">${tgPrice(tgDeliveryState.zoneFeeCents)}</th><th></th>`;
+      row.appendChild(tr);
+    }
+  });
+}
+
+function tgRemoveDeliveryTotal(root) {
+  root.querySelectorAll(".tg-cart-delivery").forEach((el) => el.remove());
+}
+
+/** A freshly-requested quote clears the old display. */
+function tgQuoteRequested(root) {
+  const status = root.querySelector("[data-delivery-status]");
+  if (status) status.textContent = "";
+  tgRemoveDeliveryTotal(root);
 }
 
 function tgCartSetQuantity(slug, unit, qty) {
@@ -722,15 +1020,95 @@ async function checkout(root, availability) {
   if (cart.items.length === 0) return;
   const name = root.querySelector("#tg-cart-name").value.trim();
   const contact = root.querySelector("#tg-cart-contact").value.trim();
-  const pickupInput = root.querySelector("input[name='tg-pickup']:checked");
-  const pickupValue = pickupInput ? pickupInput.value : "";
-  if (!pickupValue) return;
-  const [dropId, pickupSlug] = pickupValue.split("|");
   const newsletterInput = root.querySelector("#tg-cart-newsletter");
   if (!name || !contact) {
     alert("Please fill in your name and contact.");
     return;
   }
+
+  // delivery radio checked → delivery checkout; slots ineligible lines
+  // (slices) out — the server would reject them, and they never counted
+  // toward the minimum either
+  const deliveryRadio = root.querySelector("input[name='tg-delivery']:checked");
+  if (deliveryRadio && tgDeliveryState.checked) {
+    const dropId = deliveryRadio.value;
+    const deliverable = tgDeliverableLines(cart, availability, dropId);
+    if (deliverable.length === 0) {
+      alert("None of the items in your cart can be delivered — choose pickup instead.");
+      return;
+    }
+    const quote = tgDeliveryState.quote;
+    const zoneFee = tgDeliveryState.zoneFeeCents;
+    // a valid quote or a chosen zone must exist; the server re-quotes
+    // authoritatively and re-enforces the minimum
+    const needsQuote = !quote || !quote.ok;
+    if (needsQuote && zoneFee == null) {
+      alert("Please enter and check your delivery address first.");
+      return;
+    }
+    // read the live input — the module state is not authoritative here, a
+    // customer who edits the address after checking must not repost a
+    // stale one
+    const addressInput = root.querySelector("#tg-delivery-address");
+    const address = (addressInput ? addressInput.value : tgDeliveryState.address).trim();
+    tgDeliveryState.address = address;
+    if (address.length < 5) {
+      alert("Please enter the delivery address.");
+      return;
+    }
+    const button = root.querySelector("#tg-cart-checkout");
+    button.disabled = true;
+    button.textContent = "Starting checkout…";
+    if (window.gtag) window.gtag("event", "checkout_click", { items: deliverable.length, fulfillment: "delivery" });
+    tgMarkCheckoutInitiated();
+    try {
+      const response = await fetch(`${TG_API_BASE}/api/v1/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          drop_id: dropId,
+          fulfillment_type: "delivery",
+          address,
+          lines: deliverable.map((i) => ({ item: i.slug, unit: i.unit, quantity: i.qty })),
+          name,
+          contact,
+          newsletter: newsletterInput ? newsletterInput.checked : false,
+          tg_verify: (root.querySelector("input[name='tg_verify']") || {}).value || "",
+        }),
+      });
+      const data = await response.json();
+      if (response.status === 201) {
+        localStorage.setItem(
+          TG_ORDER_KEY,
+          JSON.stringify({ ref: data.order_ref, token: data.status_token, pickup: "delivery" })
+        );
+        tgCartClear();
+        if (data.redirect_url) {
+          window.location.href = data.redirect_url; // → Square hosted checkout
+          return;
+        }
+        root.querySelector(".tg-cart-checkout").innerHTML = `
+          <p class="tg-cart-note">Order reserved. ${data.instructions || "pay on delivery"}.</p>
+          <p><a href="/order-status/?ref=${encodeURIComponent(data.order_ref)}&token=${encodeURIComponent(data.status_token)}">View your order status →</a></p>`;
+        return;
+      }
+      // server-side rules (too far, minimum, cutoff, limit) surface verbatim
+      button.disabled = false;
+      button.textContent = data.message || "Something went wrong. Try again.";
+    } catch (err) {
+      button.disabled = false;
+      button.textContent = "Network error, try again";
+    }
+    return;
+  }
+
+  const pickupInput = root.querySelector("input[name='tg-pickup']:checked");
+  const pickupValue = pickupInput ? pickupInput.value : "";
+  if (!pickupValue) {
+    alert("Choose pickup or delivery to continue.");
+    return;
+  }
+  const [dropId, pickupSlug] = pickupValue.split("|");
   const button = root.querySelector("#tg-cart-checkout");
   button.disabled = true;
   button.textContent = "Starting checkout…";

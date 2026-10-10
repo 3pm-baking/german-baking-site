@@ -2718,3 +2718,78 @@ h2:focus-within .heading-anchor,
     opacity: 0.4;
   }
 }
+
+/* delivery option (cart page) — sits under the pickup cards, same visual
+   language: a card per fulfillment choice, the address box inside it */
+.tg-delivery-options {
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: var(--spacing-sm);
+  margin: var(--spacing-sm) 0;
+}
+
+.tg-delivery-options legend {
+  font-weight: 600;
+  padding: 0 0.4rem;
+}
+
+.tg-delivery-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.6rem;
+  align-items: start;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.tg-delivery-option:hover {
+  border-color: var(--color-text-light);
+}
+
+.tg-delivery-option:has(input:checked) {
+  border-color: var(--color-text);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.tg-delivery-option input[type="radio"] {
+  margin-top: 0.2rem;
+}
+
+.tg-delivery-option--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+.tg-delivery-option--disabled input[type="radio"] {
+  cursor: not-allowed;
+}
+
+.tg-delivery-rule {
+  grid-column: 2;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+.tg-delivery-address {
+  margin-top: 0.5rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.tg-delivery-address input[type="text"] {
+  width: 100%;
+}
+
+.tg-delivery-status {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+.tg-delivery-row-label {
+  text-align: left;
+}

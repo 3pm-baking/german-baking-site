@@ -14,6 +14,14 @@ This Privacy Policy explains how **3pm German Baking, LLC** ("we," "us," or "our
 - Delivery address (for direct orders)
 - Order details and purchase history
 
+**When you choose delivery for a pre-order**, we additionally collect your
+home address so we can check the delivery time and route your order. That
+address is checked against an open-source routing service
+(open-distance.com, built on public map data) to estimate drive time; only
+the address you enter is sent (no cookies, no identifiers, no analytics),
+and we store the address only on your order record so the driver knows
+where to bring it. It is never used to place you on a mailing list.
+
 **When you sign up for our mailing list**, we collect:
 
 - Your email address
@@ -48,6 +56,9 @@ We do **not** sell, trade, or rent your personal information to third parties.
 We may share necessary information with:
 
 - Delivery service providers (for order fulfillment)
+- A routing service (open-distance.com) that estimates our drive time to
+  your address when you request delivery — it receives only the address
+  you typed, no account or payment information
 - Our bookkeeping and tax professionals (as required for business operations)
 - Legal authorities if required by law
 
