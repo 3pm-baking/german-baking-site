@@ -287,6 +287,57 @@ test("delivery checkout posts the delivery contract shape", async () => {
   await page.close();
 });
 
+test("a mixed cart refuses delivery outright instead of dropping the slices", async () => {
+  const deliverableItems = [
+    {
+      slug: "german-cheesecake",
+      name: "German Cheesecake",
+      capacity: 20,
+      remaining: 6,
+      units: [
+        { name: "slice", price_cents: 600 },
+        { name: "whole", price_cents: 4500, fulfillment_types: ["pickup", "delivery"] },
+      ],
+    },
+  ];
+  const page = mount({
+    page: "cart",
+    routes: {
+      "GET /api/v1/availability": availability({
+        deliveryOption: deliveryOptionFixture(),
+        items: deliverableItems,
+      }),
+      "POST /api/v1/quote": { ok: true, minutes_one_way: 15, fee_cents: 1000 },
+      "POST /api/v1/orders": reply(201, { order_ref: "should-not-happen" }),
+    },
+    globals: { TAILGATE_MARKETS: marketsMap() },
+    // a whole cake AND a slice: the slice cannot ship
+    cart: {
+      items: [
+        { slug: "german-cheesecake", unit: "whole", qty: 1 },
+        { slug: "german-cheesecake", unit: "slice", qty: 2 },
+      ],
+    },
+  });
+  await page.waitFor("#tg-cart-checkout");
+  page.eval(
+    `document.getElementById("tg-cart-name").value = "Jane";
+     document.getElementById("tg-cart-contact").value = "jane@e.com";`
+  );
+  const radio = page.$("input[name='tg-delivery']");
+  radio.checked = true;
+  radio.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+  page.$("#tg-delivery-address").value = "22 Haywood Rd";
+  page.$("#tg-delivery-check").click();
+  await page.settle();
+  await clickCheckout(page);
+
+  assert.equal(page.calls.find((c) => c.path === "/api/v1/orders"), undefined);
+  assert.match(page.alerts.join(" "), /Slices cannot be delivered/);
+  await page.close();
+});
+
 test("delivery checkout is blocked until the address is checked", async () => {
   const page = await deliveryCheckoutPage();
   page.eval(

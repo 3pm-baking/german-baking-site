@@ -448,12 +448,12 @@ function initDietaryFilter() {
           .map((section, i) => `${shown[i]} of ${section.items.length} ${section.name}`)
           .join(", ");
         const summary = document.createElement("span");
-        summary.textContent = `${names.join(" + ")} — ${counts}`;
+        summary.textContent = `${names.join(" + ")}: ${counts}`;
         status.append(summary);
         if (shown.every((count) => count === 0)) {
           const hint = document.createElement("span");
           hint.className = "diet-filter__hint";
-          hint.textContent = " — try turning one off";
+          hint.textContent = ": try turning one off";
           status.append(hint);
         }
         const clear = document.createElement("button");
@@ -837,9 +837,9 @@ function tgRenderDeliveryGroup(root, availability, cart) {
   group.appendChild(legend);
   const ruleText = first.delivery && first.delivery.quote ? tgDeliveryRuleText(first.delivery.quote) : "";
   const minNote = informational
-    ? "Delivery applies to whole items — add a whole cake or strudel to have it brought to you."
+    ? "Delivery applies to whole items. Add a whole cake or strudel to have it brought to you."
     : belowMinimum && minCents != null
-      ? `Delivery needs a minimum of ${tgPrice(minCents)} in whole items — slices only deliver with them.`
+      ? `Delivery needs a minimum of ${tgPrice(minCents)} in whole items. Slices only deliver with them.`
       : "";
   // the radio's value tracks the user-chosen delivery date's drop, not a
   // static first option: picking a date rebinds checkout
@@ -1134,8 +1134,10 @@ async function checkout(root, availability) {
   if (deliveryRadio && tgDeliveryState.checked) {
     const dropId = deliveryRadio.value;
     const deliverable = tgDeliverableLines(cart, availability, dropId);
-    if (deliverable.length === 0) {
-      alert("None of the items in your cart can be delivered — choose pickup instead.");
+    // a slice can never ship: a mixed cart must go pickup, not silently
+    // lose the slices the customer was going to pay for
+    if (deliverable.length < cart.items.length) {
+      alert("Slices cannot be delivered. Remove them or choose pickup instead.");
       return;
     }
     const quote = tgDeliveryState.quote;
