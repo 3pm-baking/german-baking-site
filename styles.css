@@ -2819,6 +2819,31 @@ h2:focus-within .heading-anchor,
 .tg-more-pickup[open] summary {
   padding-bottom: 0.6rem;
 }
+
 .tg-delivery-row-label {
   text-align: left;
+}
+
+.tg-delivery-address,
+.tg-delivery-date {
+  margin-top: 0.5rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.tg-delivery-address input[type="text"],
+.tg-delivery-date input[type="date"] {
+  width: 100%;
+}
+
+.tg-delivery-status,
+.tg-delivery-date-status {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+.tg-delivery-date-note {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
 }

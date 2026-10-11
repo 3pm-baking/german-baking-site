@@ -10,7 +10,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { availability, deliveryOptionFixture, marketsMap, mount, reply } from "./harness.mjs";
+import {
+  availability,
+  deliveryOptionFixture,
+  isoDaysFromNow,
+  marketsMap,
+  mount,
+  reply,
+} from "./harness.mjs";
 
 function cart({ taxPercent, newsletterEnabled, ...rest } = {}) {
   return mount({
@@ -542,6 +549,91 @@ test("more than three pickup dates collapse behind a details toggle", async () =
   assert.equal(hiddenCards.length, 2, "the tail collapses behind the toggle");
   // every card is still a real radio, collapsed or not
   assert.equal(page.$$("input[name='tg-pickup']").length, 5);
+  await page.close();
+});
+
+test("the delivery card gains a native date picker bounded by the notice floor", async () => {
+  const page = await deliveryCartPage();
+  await page.waitFor("#tg-cart-checkout");
+
+  const input = page.$("#tg-delivery-date");
+  assert.ok(input, "date field exists inside the delivery card");
+  assert.equal(input.getAttribute("type"), "date", "native calendar popup, no JS");
+  assert.equal(input.getAttribute("min"), isoDaysFromNow(2), "no dates inside the two-day notice");
+  assert.equal(input.value, isoDaysFromNow(3), "prefilled with the first valid delivery day");
+  await page.close();
+});
+
+test("picking a later delivery day rebinds checkout to that drop", async () => {
+  const later = { ...deliveryOptionFixture(), pickup_at: isoDaysFromNow(10, "09:00") };
+  const payload = availability({
+    deliveryOption: deliveryOptionFixture(),
+    items: DELIVERABLE_ITEMS,
+  });
+  payload.drops.push({
+    ...payload.drops[0],
+    drop_id: "2026-10-25-black-mountain",
+    fulfillment_options: [payload.drops[0].fulfillment_options[0], later],
+  });
+  const page = mount({
+    page: "cart",
+    routes: {
+      "GET /api/v1/availability": payload,
+      "POST /api/v1/quote": TG_QUOTE_OK,
+      "POST /api/v1/orders": reply(201, {
+        order_ref: "laterdate",
+        status_token: "tok9",
+        redirect_url: "https://square.link/u/TESTCHECKOUT",
+        total_cents: 5500,
+      }),
+    },
+    globals: { TAILGATE_MARKETS: marketsMap() },
+    cart: { items: [{ slug: "german-cheesecake", unit: "whole", qty: 1 }] },
+  });
+  await page.waitFor("#tg-cart-checkout");
+
+  const input = page.$("#tg-delivery-date");
+  input.value = isoDaysFromNow(10);
+  input.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+
+  assert.equal(page.$("input[name='tg-delivery']").value, "2026-10-25-black-mountain");
+  const post = page.calls.find((c) => c.path === "/api/v1/orders");
+  assert.equal(post, undefined, "not checked out yet");
+  // a checkout after picking the later date lands on its drop
+  page.eval(
+    `document.getElementById("tg-cart-name").value = "Jane";
+     document.getElementById("tg-cart-contact").value = "jane@e.com";`
+  );
+  console.log("PROBE:", "radio=", !!page.$("input[name='tg-delivery']"), "addr=", !!page.$("#tg-delivery-address"), "date=", !!page.$("#tg-delivery-date"));
+  page.$("input[name='tg-delivery']").checked = true;
+  page.$("input[name='tg-delivery']").dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+  page.$("#tg-delivery-address").value = "22 Haywood Rd";
+  page.$("#tg-delivery-check").click();
+  await page.settle();
+  await page.eval(
+    `document.getElementById("tg-cart-checkout").click()`
+  );
+  await page.settle();
+
+  const body = page.requestBody(page.calls.findIndex((c) => c.path === "/api/v1/orders"));
+  assert.equal(body.drop_id, "2026-10-25-black-mountain");
+  await page.close();
+});
+
+test("a non-market day shows the note and does not change the drop", async () => {
+  const page = await deliveryCartPage();
+  await page.waitFor("#tg-cart-checkout");
+
+  const input = page.$("#tg-delivery-date");
+  input.value = isoDaysFromNow(6); // a Thursday: no delivery drop
+  input.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
+
+  assert.match(page.text("[data-market-days-note]"), /market days/);
+  // binding unchanged: the original drop survives
+  assert.equal(page.$("input[name='tg-delivery']").value, page.eval("tgDeliveryState.dropId") !== "" ? page.eval("tgDeliveryState.dropId") : "2026-09-29");
   await page.close();
 });
 

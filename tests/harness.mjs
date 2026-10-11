@@ -429,12 +429,26 @@ export function availability({
 }
 
 /** The delivery fulfillment option, in the shape the API emits. Default
- *  minimum $40 (a typical per-drop policy); quoting on, 30-minute range. */
-export function deliveryOptionFixture({ minOrderCents = 4000, quote = { enabled: true, max_one_way_minutes: 30, cents_per_hour: 2000 } } = {}) {
+ *  minimum $40 (a typical per-drop policy); quoting on, 30-minute range.
+ *  Dates default to a relative future (cutoff +2d, delivery +3d) so the
+ *  two-day notice floor never shadows the fixture by accident. */
+export function isoDaysFromNow(days, at = null) {
+  const d = new Date(Date.now() + days * 86400000);
+  const pad = (n) => String(n).padStart(2, "0");
+  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return at ? `${date}T${at}:00` : date;
+}
+
+export function deliveryOptionFixture({
+  minOrderCents = 4000,
+  quote = { enabled: true, max_one_way_minutes: 30, cents_per_hour: 2000 },
+  cutoff = isoDaysFromNow(1, "15:30"),
+  pickupAt = isoDaysFromNow(3, "15:30"),
+} = {}) {
   return {
     type: "delivery",
-    cutoff: "2026-09-27T13:48:00+00:00",
-    pickup_at: "2026-09-29T15:30:00+00:00",
+    cutoff,
+    pickup_at: pickupAt,
     status: "open",
     next_open_drop_id: null,
     pickup_points: [],

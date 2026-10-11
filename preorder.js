@@ -126,6 +126,7 @@ const tgDeliveryState = {
   options: [], // open delivery options seen at render
   zone: null, // zone fallback choice when the quoter is unreachable
   zoneFeeCents: null,
+  deliveryDateISO: null, // user-chosen delivery day (bound to its drop)
 };
 
 function tgResetDeliveryState() {
@@ -136,6 +137,7 @@ function tgResetDeliveryState() {
   tgDeliveryState.options = [];
   tgDeliveryState.zone = null;
   tgDeliveryState.zoneFeeCents = null;
+  tgDeliveryState.deliveryDateISO = null;
 }
 
 /** Open delivery options across drops, earliest cutoff first. */
@@ -145,9 +147,29 @@ function tgDeliveryOptions(availability) {
     const opt = drop.fulfillment_options.find(
       (o) => o.type === "delivery" && o.status === "open"
     );
-    if (opt) options.push({ dropId: drop.drop_id, cutoff: opt.cutoff, delivery: opt.delivery });
+    if (opt)
+      options.push({
+        dropId: drop.drop_id,
+        cutoff: opt.cutoff,
+        deliveryAt: opt.pickup_at, // the day the delivery runs
+        delivery: opt.delivery,
+      });
   }
   return options.sort((a, b) => new Date(a.cutoff) - new Date(b.cutoff));
+}
+
+/** ISO date (yyyy-mm-dd) of a delivery run. local-origin safe. */
+function tgDeliveryDateISO(deliveryAt) {
+  const d = new Date(deliveryAt);
+  if (isNaN(d.getTime())) return "";
+  // local date, not UTC: a 9:00 AM ET drop must not read as the 13th in UTC
+  const off = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - off).toISOString().slice(0, 10);
+}
+
+/** Date string two calendar days from today — the notice floor. */
+function tgDeliveryNoticeFloor() {
+  return tgDeliveryDateISO(Date.now() + 2 * 86400000);
 }
 
 /** Cart lines whose unit is deliverable on the given drop. */
@@ -765,9 +787,14 @@ function tgRenderDeliveryGroup(root, availability, cart) {
     tgDeliveryState.dropId = null;
     return;
   }
-  // seed/pin the state to the first open option; a stale drop from a
-  // previous render resolves here
-  tgDeliveryState.dropId = options[0].dropId;
+  // seed/pin the state to the first open option that meets the two-day
+  // notice; a stale drop from a previous render resolves here. When no
+  // option qualifies (e.g. a holiday week), the notice floor still holds
+  // server-side, and the picker shows it via its `min`.
+  const floor = tgDeliveryNoticeFloor();
+  const qualifying =
+    options.find((o) => tgDeliveryDateISO(o.deliveryAt) >= floor) || options[0];
+  tgDeliveryState.dropId = qualifying.dropId;
   tgDeliveryState.options = options;
   const deliverable = tgDeliverableLines(
     tgCartLoad(),
@@ -788,6 +815,17 @@ function tgRenderDeliveryGroup(root, availability, cart) {
   const belowMinimum = minCents != null && deliverableTotalCents < minCents;
   if (belowMinimum) tgDeliveryState.checked = false; // greyed: not selectable
 
+  // dates survive re-renders; fall back to the first option that meets the
+  // two-day notice when the state was never touched
+  if (!tgDeliveryState.deliveryDateISO) {
+    tgDeliveryState.deliveryDateISO = tgDeliveryDateISO(qualifying.deliveryAt);
+  }
+  const validDates = options.map((o) => ({
+    iso: tgDeliveryDateISO(o.deliveryAt),
+    dropId: o.dropId,
+    label: new Date(o.deliveryAt).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }),
+  }));
+
   const group = document.createElement("fieldset");
   group.className = "tg-cart-field tg-delivery-options";
   const legend = document.createElement("legend");
@@ -798,11 +836,13 @@ function tgRenderDeliveryGroup(root, availability, cart) {
     belowMinimum && minCents != null
       ? `Delivery needs a minimum of ${tgPrice(minCents)} in whole items — slices only deliver with them.`
       : "";
+  // the radio's value tracks the user-chosen delivery date's drop, not a
+  // static first option: picking a date rebinds checkout
   const label = document.createElement("label");
   label.className =
     "tg-delivery-option" + (belowMinimum ? " tg-delivery-option--disabled" : "");
   label.innerHTML = `
-    <input type="radio" name="tg-delivery" value="${first.dropId}" ${tgDeliveryState.checked ? "checked" : ""} ${belowMinimum ? "disabled" : ""}>
+    <input type="radio" name="tg-delivery" value="${qualifying.dropId}" ${tgDeliveryState.checked ? "checked" : ""} ${belowMinimum ? "disabled" : ""}>
     <span class="tg-delivery-label">Deliver to me</span>
     <span class="tg-delivery-rule">${ruleText}${minNote ? ` ${minNote}` : ""}</span>
   `;
@@ -821,6 +861,23 @@ function tgRenderDeliveryGroup(root, availability, cart) {
     </p>
   `;
   group.appendChild(addressRow);
+
+  // the delivery day: a native popup calendar, restricted to market days
+  // by validation on change (a plain date min can only guard the floor)
+  const dateRow = document.createElement("div");
+  dateRow.className = "tg-delivery-date";
+  dateRow.hidden = !tgDeliveryState.checked;
+  const fallbackDates = validDates.slice(0, 3).map((v) => v.label).join(", ");
+  dateRow.innerHTML = `
+    <input type="date" id="tg-delivery-date"
+      min="${floor}" value="${tgDeliveryState.deliveryDateISO}"
+      aria-label="Delivery date">
+    <p class="tg-delivery-date-status" data-delivery-date-status></p>
+    <span class="tg-delivery-date-note" hidden data-market-days-note>
+      We deliver on market days: ${fallbackDates}
+    </span>
+  `;
+  group.appendChild(dateRow);
   root.appendChild(group);
 
   const radio = label.querySelector("input");
@@ -835,6 +892,24 @@ function tgRenderDeliveryGroup(root, availability, cart) {
       else tgQuoteRequested(root);
     }
     addressRow.hidden = !radio.checked;
+    dateRow.hidden = !radio.checked;
+  });
+
+  // delivery date — native calendar popup; on choice it must be a market
+  // day carrying a delivery option, and the delivery radio's value rebinds
+  const dateInput = dateRow.querySelector("#tg-delivery-date");
+  dateInput.addEventListener("change", () => {
+    const picked = dateInput.value;
+    tgDeliveryState.deliveryDateISO = picked;
+    const note = dateRow.querySelector("[data-market-days-note]");
+    const match = validDates.find((v) => v.iso === picked);
+    if (picked && match) {
+      tgDeliveryState.dropId = match.dropId;
+      radio.value = match.dropId;
+      note.hidden = true;
+    } else if (picked) {
+      note.hidden = false;
+    }
   });
 
   const addressInput = addressRow.querySelector("#tg-delivery-address");
