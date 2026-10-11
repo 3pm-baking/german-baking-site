@@ -2859,8 +2859,22 @@ h2:focus-within .heading-anchor,
   min-width: 0;
 }
 
+/* the Check push must own its row: input, button on one line reads cramped
+   on a phone */
 .tg-delivery-address button {
   flex: none;
+}
+
+@media (max-width: 480px) {
+  .tg-delivery-address input[type="text"],
+  .tg-delivery-date input[type="date"] {
+    flex-basis: 100%;
+  }
+
+  .tg-delivery-address button {
+    flex-basis: 100%;
+    padding: 0.6rem 1.6rem;
+  }
 }
 
 #tg-delivery-check {
