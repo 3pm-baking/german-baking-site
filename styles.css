@@ -2754,6 +2754,7 @@ h2:focus-within .heading-anchor,
 
 .tg-delivery-option input[type="radio"] {
   grid-area: radio;
+  box-sizing: border-box;
 }
 
 .tg-delivery-label {
@@ -2778,22 +2779,19 @@ h2:focus-within .heading-anchor,
   background: rgba(0, 0, 0, 0.03);
 }
 
-.tg-delivery-option input[type="radio"],
-.tg-pickup-option input[type="radio"] {
+.tg-delivery-option input[type="radio"] {
   appearance: none;
-  margin: 0.15rem 0 0;
-  width: 1.1rem;
-  height: 1.1rem;
+  margin-top: 0.45rem;
+  width: 1.15rem;
+  height: 1.15rem;
   flex: none;
-  border-radius: 50%;
-  border: 1px solid var(--color-text-light);
+  padding: 0;
+  border: 2px solid var(--color-text-light);
+  border-radius: 3px;
+  background: var(--color-background);
   display: grid;
   place-content: center;
   transition: border-color 0.15s ease, background-color 0.15s ease;
-}
-
-.tg-pickup-option input[type="radio"] {
-  margin-top: 0.45rem;
 }
 
 .tg-delivery-option input[type="radio"]::before {
