@@ -14,9 +14,11 @@
           content="Whole gluten-free cakes for your Thanksgiving table. Baked from scratch, delivered frozen. Thaw, serve, done.">
     <meta property="og:url" content="https://germanbakingasheville.com/thanksgiving/">
     <meta property="og:image"
-          content="https://germanbakingasheville.com/images/logo.png">
+          content="https://germanbakingasheville.com/images/thanksgiving-og.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:image:alt"
-          content="3pm German Baking logo — authentic German baking in Asheville, NC">
+          content="A slice of German cheesecake beside the words Thanksgiving Cakes, order by Nov 21">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title"
@@ -24,9 +26,9 @@
     <meta name="twitter:description"
           content="Whole gluten-free cakes for your Thanksgiving table. Baked from scratch, delivered frozen. Thaw, serve, done.">
     <meta name="twitter:image"
-          content="https://germanbakingasheville.com/images/logo.png">
+          content="https://germanbakingasheville.com/images/thanksgiving-og.jpg">
     <meta name="twitter:image:alt"
-          content="3pm German Baking logo — authentic German baking in Asheville, NC">
+          content="A slice of German cheesecake beside the words Thanksgiving Cakes, order by Nov 21">
     <link rel="canonical" href="https://germanbakingasheville.com/thanksgiving/">
     <title>Thanksgiving Cakes | 3pm German Baking — Asheville, NC</title>
     <link rel="icon" type="image/png" href="/images/logo.png">
@@ -62,6 +64,26 @@
         "name": "Thanksgiving Cakes",
         "item": "https://germanbakingasheville.com/thanksgiving"
       }
+    ]
+  }
+    </script>
+    <!-- ItemList schema: tells crawlers this is a curated collection of
+         specific products, and carries the per-cake links. -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Thanksgiving Cakes",
+    "description": "Whole German cakes for Thanksgiving, baked from scratch in Asheville, NC",
+    "itemListElement": [
+      {% for product in products %}
+      {
+        "@type": "ListItem",
+        "position": {{ loop.index }},
+        "url": "https://germanbakingasheville.com/products/{{ product.slug }}.html",
+        "name": "{{ product.title }}"
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
     ]
   }
     </script>
