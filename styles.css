@@ -2740,12 +2740,33 @@ h2:focus-within .heading-anchor,
   display: grid;
   position: relative;
   grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "radio label"
+    ".    rule";
   column-gap: 0.6rem;
+  row-gap: 0.15rem;
   align-items: start;
   padding: 0.6rem 0.7rem;
   border: 1px solid var(--color-border-light);
   border-radius: 8px;
   cursor: pointer;
+}
+
+.tg-delivery-option input[type="radio"] {
+  grid-area: radio;
+}
+
+.tg-delivery-label {
+  grid-area: label;
+}
+
+/* the rule text is information, not a form label: it drops a full row
+   beneath the radio+label, aligned with the label */
+.tg-delivery-rule {
+  grid-area: rule;
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
 }
 
 .tg-delivery-option:hover {
@@ -2827,23 +2848,53 @@ h2:focus-within .heading-anchor,
 .tg-delivery-address,
 .tg-delivery-date {
   margin-top: 0.5rem;
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 0.4rem;
 }
 
 .tg-delivery-address input[type="text"],
 .tg-delivery-date input[type="date"] {
-  width: 100%;
+  flex: 1 1 12rem;
+  width: auto;
+  min-width: 0;
+}
+
+.tg-delivery-address button {
+  flex: none;
+}
+
+#tg-delivery-check {
+  background: var(--color-text);
+  color: var(--color-background);
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+#tg-delivery-check:hover {
+  background: #3a3a3a;
+}
+
+#tg-delivery-check:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .tg-delivery-status,
 .tg-delivery-date-status {
+  flex-basis: 100%;
   margin: 0;
   font-size: 0.85rem;
   color: var(--color-text-light);
 }
 
 .tg-delivery-date-note {
+  flex-basis: 100%;
   font-size: 0.8rem;
   color: var(--color-text-light);
 }

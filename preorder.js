@@ -801,7 +801,9 @@ function tgRenderDeliveryGroup(root, availability, cart) {
     availability,
     tgDeliveryState.dropId
   );
-  if (deliverable.length === 0) return; // nothing in the cart can be delivered
+  // a cart that cannot be delivered (slices only) still shows WHAT delivery
+  // is — details are informational, the radio disabled, no quote/address UI
+  const informational = deliverable.length === 0;
 
   const first = options[0];
   // the per-drop delivery minimum counts deliverable items only — slices
@@ -812,7 +814,9 @@ function tgRenderDeliveryGroup(root, availability, cart) {
     return sum + (unit ? unit.price_cents * line.qty : 0);
   }, 0);
   const minCents = first.delivery ? first.delivery.min_order_cents : null;
-  const belowMinimum = minCents != null && deliverableTotalCents < minCents;
+  const belowMinimum =
+    informational ||
+    (minCents != null && deliverableTotalCents < minCents);
   if (belowMinimum) tgDeliveryState.checked = false; // greyed: not selectable
 
   // dates survive re-renders; fall back to the first option that meets the
@@ -832,8 +836,9 @@ function tgRenderDeliveryGroup(root, availability, cart) {
   legend.textContent = "Or deliver to me";
   group.appendChild(legend);
   const ruleText = first.delivery && first.delivery.quote ? tgDeliveryRuleText(first.delivery.quote) : "";
-  const minNote =
-    belowMinimum && minCents != null
+  const minNote = informational
+    ? "Delivery applies to whole items — add a whole cake or strudel to have it brought to you."
+    : belowMinimum && minCents != null
       ? `Delivery needs a minimum of ${tgPrice(minCents)} in whole items — slices only deliver with them.`
       : "";
   // the radio's value tracks the user-chosen delivery date's drop, not a
@@ -848,10 +853,14 @@ function tgRenderDeliveryGroup(root, availability, cart) {
   `;
   group.appendChild(label);
 
-  const addressRow = document.createElement("div");
-  addressRow.className = "tg-delivery-address";
-  addressRow.hidden = !tgDeliveryState.checked;
-  addressRow.innerHTML = `
+  // interactive rows exist only when the cart can actually use delivery
+  const addressRow = informational
+    ? null
+    : (() => {
+        const row = document.createElement("div");
+        row.className = "tg-delivery-address";
+        row.hidden = !tgDeliveryState.checked;
+        row.innerHTML = `
     <input type="text" id="tg-delivery-address" maxlength="200"
       placeholder="Your street address, city, ZIP"
       value="${tgDeliveryState.address.replace(/"/g, "&quot;")}">
@@ -860,25 +869,9 @@ function tgRenderDeliveryGroup(root, availability, cart) {
       ${tgDeliveryState.quote ? "" : "Enter your address to check the delivery fee and time."}
     </p>
   `;
-  group.appendChild(addressRow);
-
-  // the delivery day: a native popup calendar, restricted to market days
-  // by validation on change (a plain date min can only guard the floor)
-  const dateRow = document.createElement("div");
-  dateRow.className = "tg-delivery-date";
-  dateRow.hidden = !tgDeliveryState.checked;
-  const fallbackDates = validDates.slice(0, 3).map((v) => v.label).join(", ");
-  dateRow.innerHTML = `
-    <input type="date" id="tg-delivery-date"
-      min="${floor}" value="${tgDeliveryState.deliveryDateISO}"
-      aria-label="Delivery date">
-    <p class="tg-delivery-date-status" data-delivery-date-status></p>
-    <span class="tg-delivery-date-note" hidden data-market-days-note>
-      We deliver on market days: ${fallbackDates}
-    </span>
-  `;
-  group.appendChild(dateRow);
-  root.appendChild(group);
+        return row;
+      })();
+  if (addressRow) group.appendChild(addressRow);
 
   const radio = label.querySelector("input");
   radio.addEventListener("change", () => {
@@ -891,55 +884,74 @@ function tgRenderDeliveryGroup(root, availability, cart) {
       if (quote && quote.ok) tgShowDeliveryResult(root, quote);
       else tgQuoteRequested(root);
     }
-    addressRow.hidden = !radio.checked;
-    dateRow.hidden = !radio.checked;
+    if (addressRow) addressRow.hidden = !radio.checked;
+    if (dateRow) dateRow.hidden = !radio.checked;
   });
 
-  // delivery date — native calendar popup; on choice it must be a market
-  // day carrying a delivery option, and the delivery radio's value rebinds
-  const dateInput = dateRow.querySelector("#tg-delivery-date");
-  dateInput.addEventListener("change", () => {
-    const picked = dateInput.value;
-    tgDeliveryState.deliveryDateISO = picked;
-    const note = dateRow.querySelector("[data-market-days-note]");
-    const match = validDates.find((v) => v.iso === picked);
-    if (picked && match) {
-      tgDeliveryState.dropId = match.dropId;
-      radio.value = match.dropId;
-      note.hidden = true;
-    } else if (picked) {
-      note.hidden = false;
-    }
-  });
+  if (!informational) {
+    // the delivery day: a native popup calendar, restricted to market days
+    // by validation on change (a plain date min can only guard the floor)
+    const dateRow = document.createElement("div");
+    dateRow.className = "tg-delivery-date";
+    dateRow.hidden = !tgDeliveryState.checked;
+    const fallbackDates = validDates.slice(0, 3).map((v) => v.label).join(", ");
+    dateRow.innerHTML = `
+    <input type="date" id="tg-delivery-date"
+      min="${floor}" value="${tgDeliveryState.deliveryDateISO}"
+      aria-label="Delivery date">
+    <p class="tg-delivery-date-status" data-delivery-date-status></p>
+    <span class="tg-delivery-date-note" hidden data-market-days-note>
+      We deliver on market days: ${fallbackDates}
+    </span>
+  `;
+    group.appendChild(dateRow);
 
-  const addressInput = addressRow.querySelector("#tg-delivery-address");
-  addressInput.addEventListener("input", () => {
-    tgDeliveryState.address = addressInput.value;
-  });
-  addressInput.addEventListener("keydown", (ev) => {
-    if (ev.key === "Enter") {
-      ev.preventDefault();
-      addressRow.querySelector("#tg-delivery-check").click();
-    }
-  });
+    // delivery date — native calendar popup; on choice it must be a market
+    // day carrying a delivery option, and the delivery radio's value rebinds
+    const dateInput = dateRow.querySelector("#tg-delivery-date");
+    dateInput.addEventListener("change", () => {
+      const picked = dateInput.value;
+      tgDeliveryState.deliveryDateISO = picked;
+      const note = dateRow.querySelector("[data-market-days-note]");
+      const match = validDates.find((v) => v.iso === picked);
+      if (picked && match) {
+        tgDeliveryState.dropId = match.dropId;
+        radio.value = match.dropId;
+        note.hidden = true;
+      } else if (picked) {
+        note.hidden = false;
+      }
+    });
 
-  const checkButton = addressRow.querySelector("#tg-delivery-check");
-  checkButton.addEventListener("click", async () => {
-    const address = addressInput.value.trim();
-    if (address.length < 5) return;
-    checkButton.disabled = true;
-    checkButton.textContent = "Checking…";
-    try {
-      const quote = await tgQuoteDelivery(tgDeliveryState.dropId, address);
-      tgDeliveryState.quote = quote;
-      tgShowDeliveryResult(root, quote);
-    } catch {
-      tgShowDeliveryResult(root, { ok: false, reason: "unavailable" });
-    } finally {
-      checkButton.disabled = false;
-      checkButton.textContent = "Check";
-    }
-  });
+    const addressInput = addressRow.querySelector("#tg-delivery-address");
+    addressInput.addEventListener("input", () => {
+      tgDeliveryState.address = addressInput.value;
+    });
+    addressInput.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        addressRow.querySelector("#tg-delivery-check").click();
+      }
+    });
+
+    const checkButton = addressRow.querySelector("#tg-delivery-check");
+    checkButton.addEventListener("click", async () => {
+      const address = addressInput.value.trim();
+      if (address.length < 5) return;
+      checkButton.disabled = true;
+      checkButton.textContent = "Checking…";
+      try {
+        const quote = await tgQuoteDelivery(tgDeliveryState.dropId, address);
+        tgDeliveryState.quote = quote;
+        tgShowDeliveryResult(root, quote);
+      } catch {
+        tgShowDeliveryResult(root, { ok: false, reason: "unavailable" });
+      } finally {
+        checkButton.disabled = false;
+        checkButton.textContent = "Check";
+      }
+    });
+  }
 
   // a later pickup click unselects delivery
   root.querySelectorAll("input[name='tg-pickup']").forEach((pickupRadio) => {
@@ -958,6 +970,8 @@ function tgRenderDeliveryGroup(root, availability, cart) {
   if (tgDeliveryState.checked && tgDeliveryState.quote) {
     tgShowDeliveryResult(root, tgDeliveryState.quote);
   }
+
+  root.appendChild(group);
 }
 
 /** Render the quote result into the delivery status line and the total row.
@@ -968,8 +982,8 @@ function tgShowDeliveryResult(root, quote) {
   tgRemoveDeliveryTotal(root);
   const checkoutButton = root.querySelector("#tg-cart-checkout");
   if (quote.ok) {
-    status.textContent =
-      `${quote.minutes_one_way} min away · ${tgPrice(quote.fee_cents)} delivery`;
+    // fee only: the drive time is our business, the price is theirs
+    status.textContent = `${tgPrice(quote.fee_cents)} delivery`;
     checkoutButton.disabled = false;
     const table = root.querySelector(".tg-cart-table tfoot");
     if (table) {

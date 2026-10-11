@@ -396,7 +396,7 @@ function deliveryCartPage({
   });
 }
 
-test("checking the address quotes minutes and fee in the status line", async () => {
+test("checking the address states the fee in the status line", async () => {
   const page = await deliveryCartPage({ quote: TG_QUOTE_OK });
   await page.waitFor("#tg-cart-checkout");
 
@@ -410,8 +410,12 @@ test("checking the address quotes minutes and fee in the status line", async () 
   page.$("#tg-delivery-check").click();
   await page.settle();
 
-  assert.match(page.text("[data-delivery-status]"), /15 min away/);
   assert.match(page.text("[data-delivery-status]"), /\$10\.00 delivery/);
+  assert.doesNotMatch(
+    page.text("[data-delivery-status]"),
+    /min away/,
+    "the drive time is ours, not the customer's: fee only"
+  );
   const post = page.calls.find((c) => c.route === "POST /api/v1/quote");
   assert.equal(page.requestBody(page.calls.indexOf(post)).address, "22 Haywood Rd, Asheville, NC 28806");
   await page.close();
@@ -637,13 +641,23 @@ test("a non-market day shows the note and does not change the drop", async () =>
   await page.close();
 });
 
-test("no deliverable line: no delivery card at all, pickup unaffected", async () => {
+test("slice-only cart: delivery card stays informational, checkout path hidden", async () => {
   const page = await deliveryCartPage({
     cart: { items: [{ slug: "apple-streusel", unit: "slice", qty: 2 }] },
   });
   await page.waitFor("#tg-cart-checkout");
 
-  assert.ok(!page.has(".tg-delivery-option"));
-  assert.equal(page.$$(".tg-pickup-option").length, 1);
+  const radio = page.$("input[name='tg-delivery']");
+  assert.ok(radio, "the delivery card still renders");
+  assert.equal(radio.disabled, true, "radio disabled: not orderable for slices only");
+  assert.match(
+    page.bodyText(".tg-delivery-rule"),
+    /whole items/,
+    "the whole-items note rides on the info text"
+  );
+  assert.ok(!page.has("#tg-delivery-address"), "no address box to quote an unusable option");
+  assert.ok(!page.has("#tg-delivery-date"), "no date picker either");
+  assert.match(page.bodyText(".tg-delivery-rule"), /30 minutes one way/, "service info stays");
+  assert.equal(page.$$(".tg-pickup-option").length, 1, "pickup unaffected");
   await page.close();
 });
