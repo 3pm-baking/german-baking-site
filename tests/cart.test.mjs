@@ -568,76 +568,31 @@ test("the delivery card gains a native date picker bounded by the notice floor",
   await page.close();
 });
 
-test("picking a later delivery day rebinds checkout to that drop", async () => {
-  const later = { ...deliveryOptionFixture(), pickup_at: isoDaysFromNow(10, "09:00") };
-  const payload = availability({
-    deliveryOption: deliveryOptionFixture(),
-    items: DELIVERABLE_ITEMS,
-  });
-  payload.drops.push({
-    ...payload.drops[0],
-    drop_id: "2026-10-25-black-mountain",
-    fulfillment_options: [payload.drops[0].fulfillment_options[0], later],
-  });
-  const page = mount({
-    page: "cart",
-    routes: {
-      "GET /api/v1/availability": payload,
-      "POST /api/v1/quote": TG_QUOTE_OK,
-      "POST /api/v1/orders": reply(201, {
-        order_ref: "laterdate",
-        status_token: "tok9",
-        redirect_url: "https://square.link/u/TESTCHECKOUT",
-        total_cents: 5500,
-      }),
-    },
-    globals: { TAILGATE_MARKETS: marketsMap() },
-    cart: { items: [{ slug: "german-cheesecake", unit: "whole", qty: 1 }] },
-  });
-  await page.waitFor("#tg-cart-checkout");
-
-  const input = page.$("#tg-delivery-date");
-  input.value = isoDaysFromNow(10);
-  input.dispatchEvent(new page.window.Event("change", { bubbles: true }));
-  await page.settle();
-
-  assert.equal(page.$("input[name='tg-delivery']").value, "2026-10-25-black-mountain");
-  const post = page.calls.find((c) => c.path === "/api/v1/orders");
-  assert.equal(post, undefined, "not checked out yet");
-  // a checkout after picking the later date lands on its drop
-  page.eval(
-    `document.getElementById("tg-cart-name").value = "Jane";
-     document.getElementById("tg-cart-contact").value = "jane@e.com";`
-  );
-  console.log("PROBE:", "radio=", !!page.$("input[name='tg-delivery']"), "addr=", !!page.$("#tg-delivery-address"), "date=", !!page.$("#tg-delivery-date"));
-  page.$("input[name='tg-delivery']").checked = true;
-  page.$("input[name='tg-delivery']").dispatchEvent(new page.window.Event("change", { bubbles: true }));
-  await page.settle();
-  page.$("#tg-delivery-address").value = "22 Haywood Rd";
-  page.$("#tg-delivery-check").click();
-  await page.settle();
-  await page.eval(
-    `document.getElementById("tg-cart-checkout").click()`
-  );
-  await page.settle();
-
-  const body = page.requestBody(page.calls.findIndex((c) => c.path === "/api/v1/orders"));
-  assert.equal(body.drop_id, "2026-10-25-black-mountain");
-  await page.close();
-});
-
-test("a non-market day shows the note and does not change the drop", async () => {
+test("any day two or more days out is a valid delivery day", async () => {
+  // Delivery runs any day >= two days out, not only market days: the date
+  // is its own field riding the order, there is no market-day note, and
+  // the drop the checkout rides stays the quote-anchored one.
   const page = await deliveryCartPage();
   await page.waitFor("#tg-cart-checkout");
 
-  const input = page.$("#tg-delivery-date");
-  input.value = isoDaysFromNow(6); // a Thursday: no delivery drop
-  input.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  const picker = page.$("#tg-delivery-date");
+  picker.value = isoDaysFromNow(6); // a mid-week day with no delivery drop
+  picker.dispatchEvent(new page.window.Event("change", { bubbles: true }));
   await page.settle();
 
-  assert.match(page.text("[data-market-days-note]"), /market days/);
-  // binding unchanged: the original drop survives
-  assert.equal(page.$("input[name='tg-delivery']").value, page.eval("tgDeliveryState.dropId") !== "" ? page.eval("tgDeliveryState.dropId") : "2026-09-29");
+  assert.ok(!page.has("[data-market-days-note]"), "no market-days note anywhere");
+  assert.equal(page.$("input[name='tg-delivery']").value, "2026-09-29");
+  assert.match(page.bodyText("[data-delivery-date-note]"), /two or more days out/);
+  await page.close();
+});
+
+test("min blocks the two-day notice window in the popup", async () => {
+  const page = await deliveryCartPage();
+  await page.waitFor("#tg-cart-checkout");
+
+  // the browser constrains typing through the min attribute: anything
+  // closer than two days is rejected by the form itself, not by our JS
+  assert.equal(page.$("#tg-delivery-date").getAttribute("min"), isoDaysFromNow(2));
   await page.close();
 });
 

@@ -889,38 +889,28 @@ function tgRenderDeliveryGroup(root, availability, cart) {
   });
 
   if (!informational) {
-    // the delivery day: a native popup calendar, restricted to market days
-    // by validation on change (a plain date min can only guard the floor)
+    // the delivery day: a native popup calendar. Delivery runs any day at
+    // least two days out (the date rides the order as its own field) — the
+    // min attr is the only restriction, which the browser enforces
     const dateRow = document.createElement("div");
     dateRow.className = "tg-delivery-date";
     dateRow.hidden = !tgDeliveryState.checked;
-    const fallbackDates = validDates.slice(0, 3).map((v) => v.label).join(", ");
     dateRow.innerHTML = `
     <input type="date" id="tg-delivery-date"
       min="${floor}" value="${tgDeliveryState.deliveryDateISO}"
       aria-label="Delivery date">
-    <p class="tg-delivery-date-status" data-delivery-date-status></p>
-    <span class="tg-delivery-date-note" hidden data-market-days-note>
-      We deliver on market days: ${fallbackDates}
+    <span class="tg-delivery-date-note" data-delivery-date-note>
+      Any day two or more days out.
     </span>
   `;
     group.appendChild(dateRow);
 
-    // delivery date — native calendar popup; on choice it must be a market
-    // day carrying a delivery option, and the delivery radio's value rebinds
+    // delivery date — native calendar popup; the chosen day is only the
+    // date, not a drop switcher: the order posts the quote's drop with the
+    // date attached, and the server owns the two-day floor
     const dateInput = dateRow.querySelector("#tg-delivery-date");
     dateInput.addEventListener("change", () => {
-      const picked = dateInput.value;
-      tgDeliveryState.deliveryDateISO = picked;
-      const note = dateRow.querySelector("[data-market-days-note]");
-      const match = validDates.find((v) => v.iso === picked);
-      if (picked && match) {
-        tgDeliveryState.dropId = match.dropId;
-        radio.value = match.dropId;
-        note.hidden = true;
-      } else if (picked) {
-        note.hidden = false;
-      }
+      tgDeliveryState.deliveryDateISO = dateInput.value;
     });
 
     const addressInput = addressRow.querySelector("#tg-delivery-address");
@@ -1172,6 +1162,8 @@ async function checkout(root, availability) {
           drop_id: dropId,
           fulfillment_type: "delivery",
           address,
+          // any day >= two days out; the server re-checks the floor
+          delivery_date: (root.querySelector("#tg-delivery-date") || {}).value || null,
           lines: deliverable.map((i) => ({ item: i.slug, unit: i.unit, quantity: i.qty })),
           name,
           contact,

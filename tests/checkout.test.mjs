@@ -10,7 +10,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { availability, deliveryOptionFixture, marketsMap, mount, reply } from "./harness.mjs";
+import {
+  availability,
+  deliveryOptionFixture,
+  isoDaysFromNow,
+  marketsMap,
+  mount,
+  reply,
+} from "./harness.mjs";
 
 /** Cart page with a filled cart, ready for checkout. */
 async function cart({ payload = availability(), orderReply, cart, fill = true } = {}) {
@@ -247,17 +254,6 @@ async function deliveryCheckoutPage() {
 
 test("delivery checkout posts the delivery contract shape", async () => {
   const page = await deliveryCheckoutPage();
-  console.log(
-    "PROBE:",
-    "roots=", page.eval("document.querySelectorAll('#tg-cart-root').length"),
-    "btns=", page.eval("document.querySelectorAll('#tg-cart-checkout').length"),
-    "bodyHasBtn=", page.eval("document.body.innerHTML.includes('tg-cart-checkout')"),
-    "len=", page.eval("document.body.innerHTML.length"),
-    "docId=", page.eval("document.getElementById('tg-cart-name')?.id || 'none'"),
-    "calls=", page.calls.map((c) => c.route).join(","),
-    "unavail=", page.eval("document.body.innerHTML.includes('unavailable')"),
-    "emptyCart=", page.eval("!!document.querySelector('.tg-cart-empty')"),
-  );
   page.eval(
     `document.getElementById("tg-cart-name").value = "Jane Doe";
      document.getElementById("tg-cart-contact").value = "jane@example.com";`
@@ -266,8 +262,14 @@ test("delivery checkout posts the delivery contract shape", async () => {
   radio.checked = true;
   radio.dispatchEvent(new page.window.Event("change", { bubbles: true }));
   await page.settle();
+  // pick a delivery day later than the fixture default: any date >= the
+  // two-day min is valid, and it rides the order
   const input = page.$("#tg-delivery-address");
   input.value = "22 Haywood Rd, Asheville, NC 28806";
+  const dateInput = page.$("#tg-delivery-date");
+  dateInput.value = isoDaysFromNow(10);
+  dateInput.dispatchEvent(new page.window.Event("change", { bubbles: true }));
+  await page.settle();
   page.$("#tg-delivery-check").click();
   await page.settle();
   await clickCheckout(page);
@@ -278,6 +280,7 @@ test("delivery checkout posts the delivery contract shape", async () => {
     drop_id: "2026-09-29",
     fulfillment_type: "delivery",
     address: "22 Haywood Rd, Asheville, NC 28806",
+    delivery_date: isoDaysFromNow(10),
     lines: [{ item: "german-cheesecake", unit: "whole", quantity: 1 }],
     name: "Jane Doe",
     contact: "jane@example.com",
