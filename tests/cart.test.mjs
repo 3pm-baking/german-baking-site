@@ -444,15 +444,17 @@ test("the rule text is rendered from the drop's numbers, not baked copy", async 
   await page.close();
 });
 
-test("too far: names the distance and keeps pickup open, no fee row", async () => {
+test("too far: short refusal, no distance, keeps pickup open", async () => {
   const page = await deliveryCartPage();
   await page.waitFor("#tg-cart-checkout");
   page.eval(
-    "tgShowDeliveryResult(document, { ok: false, reason: 'too_far', minutes_one_way: 45 })"
+    "tgShowDeliveryResult(document, { ok: false, reason: 'too_far', minutes_one_way: 592 })"
   );
 
-  assert.match(page.text("[data-delivery-status]"), /45 minutes away/);
-  assert.match(page.text("[data-delivery-status]"), /30-minute delivery range/);
+  const status = page.text("[data-delivery-status]");
+  assert.match(status, /outside our delivery range/);
+  assert.match(status, /Pickup is still open/);
+  assert.doesNotMatch(status, /592|minutes away/);
   assert.ok(!page.has(".tg-delivery-fee"));
   assert.equal(page.$$(".tg-pickup-option").length, 1);
   await page.close();

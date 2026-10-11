@@ -993,8 +993,7 @@ function tgShowDeliveryResult(root, quote) {
     }
   } else if (quote.reason === "too_far") {
     status.textContent =
-      `${quote.minutes_one_way} minutes away is outside our ` +
-      `${quote.max_one_way_minutes || 30}-minute delivery range. Pickup is still open.`;
+      "That address is outside our delivery range. Pickup is still open.";
     checkoutButton.disabled = false;
   } else {
     status.textContent =
