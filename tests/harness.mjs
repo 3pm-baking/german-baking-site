@@ -35,6 +35,10 @@ const PREORDER_JS = path.join(SITE_ROOT, "preorder.js");
 /** Where each surface lives in the built site, and what it needs in the DOM. */
 export const PAGES = {
   index: { file: "index.html", url: "https://germanbakingasheville.com/" },
+  thanks: {
+    file: "thanksgiving/index.html",
+    url: "https://germanbakingasheville.com/thanksgiving/",
+  },
   cart: { file: "cart/index.html", url: "https://germanbakingasheville.com/cart/" },
   status: {
     file: "order-status/index.html",

@@ -1286,6 +1286,59 @@ def build_order_status_page(env: Environment) -> None:
     print("✓ templates/order-status.html → order-status/index.html")
 
 
+# Seasonal Thanksgiving preorder page. The subset lives in the Tailgate drop
+# (whole cakes only); these slugs must match the drop's item list exactly.
+# Order is the display order of the menu.
+THANKSGIVING_SLUGS = [
+    "german-cheesecake",
+    "russian-pull-cake",
+    "baked-apple-cheesecake",
+    "cinnamon-bun-cheesecake",
+    "opa-karls-apple-cake",
+    "pear-walnut-cake",
+    "pumpkin-coffee-cake",
+    "pear-chocolate-cake",
+]
+# Flip to False once the drop closes: the page switches to its closed state
+# (newsletter capture) and the URL stays live year over year.
+THANKSGIVING_OPEN = True
+# Customer-facing window copy; keep in step with the drop's cutoff/pickup.
+THANKSGIVING_ORDER_CLOSE = "Saturday, November 21"
+THANKSGIVING_PICKUP_DAY = "Tuesday, November 24"
+
+
+def build_thanksgiving_page(env: Environment, categories: dict) -> None:
+    """Generate thanksgiving.html — seasonal preorder landing page.
+
+    Reuses the standard product cards and preorder.js steppers; the subset is
+    enforced by the open Tailgate drop, so this page deliberately carries no
+    prices of its own."""
+    template = env.get_template("thanksgiving.html")
+    by_slug = {p["slug"]: p for p in categories["catalog"]}
+    missing = [s for s in THANKSGIVING_SLUGS if s not in by_slug]
+    if missing:
+        raise SystemExit(f"Error: thanksgiving slugs missing from catalog: {missing}")
+    products = [by_slug[s] for s in THANKSGIVING_SLUGS]
+    html = template.render(
+        products=products,
+        badge_icons=BADGE_ICONS,
+        badge_labels=BADGE_LABELS,
+        # Served one directory deep (/thanksgiving/), so cards need ../
+        root="../",
+        thanksgiving_open=THANKSGIVING_OPEN,
+        order_close=THANKSGIVING_ORDER_CLOSE,
+        pickup_day=THANKSGIVING_PICKUP_DAY,
+        tailgate_api_base=TAILGATE_API_BASE,
+    )
+    # /thanksgiving/ directory, matching /cart/ and /orders/ so the URL
+    # resolves identically on GitHub Pages and any static preview server.
+    output_file = Path(__file__).parent / "thanksgiving" / "index.html"
+    output_file.parent.mkdir(exist_ok=True)
+    output_file.write_text(html, encoding="utf-8")
+    state = "open" if THANKSGIVING_OPEN else "closed"
+    print(f"\u2713 templates/thanksgiving.html \u2192 thanksgiving/index.html ({len(products)} items, {state})")
+
+
 def build_orders_page(env: Environment) -> None:
     """Generate /orders/ — find-my-order recovery (client-side)."""
     template = env.get_template("orders.html")
@@ -1393,6 +1446,9 @@ def build_all():
     # Build static pages (privacy, terms, etc.)
     pages_dir = base_dir / "content" / "pages"
     page_count = build_static_pages(env, pages_dir)
+
+    # Seasonal Thanksgiving preorder page (URL is permanent; state via flag)
+    build_thanksgiving_page(env, categories)
 
     # Update sitemap lastmod for homepage and regenerate product entries
     update_sitemap(base_dir, product_slugs=all_product_slugs)

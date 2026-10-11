@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include 'partials/analytics.html' %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+          content="Order whole German cakes for Thanksgiving from 3pm German Baking in Asheville, NC. Baked from scratch, delivered frozen. Thaw, serve, done. Order before Tuesday, November 24.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="3pm German Baking">
+    <meta property="og:title"
+          content="Thanksgiving Cakes | 3pm German Baking — Asheville, NC">
+    <meta property="og:description"
+          content="Whole gluten-free cakes for your Thanksgiving table. Baked from scratch, delivered frozen. Thaw, serve, done.">
+    <meta property="og:url" content="https://germanbakingasheville.com/thanksgiving/">
+    <meta property="og:image"
+          content="https://germanbakingasheville.com/images/logo.png">
+    <meta property="og:image:alt"
+          content="3pm German Baking logo — authentic German baking in Asheville, NC">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"
+          content="Thanksgiving Cakes | 3pm German Baking — Asheville, NC">
+    <meta name="twitter:description"
+          content="Whole gluten-free cakes for your Thanksgiving table. Baked from scratch, delivered frozen. Thaw, serve, done.">
+    <meta name="twitter:image"
+          content="https://germanbakingasheville.com/images/logo.png">
+    <meta name="twitter:image:alt"
+          content="3pm German Baking logo — authentic German baking in Asheville, NC">
+    <link rel="canonical" href="https://germanbakingasheville.com/thanksgiving/">
+    <title>Thanksgiving Cakes | 3pm German Baking — Asheville, NC</title>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="apple-touch-icon" href="/images/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+          media="print"
+          onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+    </noscript>
+    <link rel="stylesheet" href="/styles.min.css">
+    <meta name="theme-color" content="#1a1a1a">
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://germanbakingasheville.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Thanksgiving Cakes",
+        "item": "https://germanbakingasheville.com/thanksgiving"
+      }
+    ]
+  }
+    </script>
+    <style>
+      /* Page-scoped styles; keeps out of the shared stylesheet pipeline. */
+      .thanks-hero {
+        min-height: 72vh;
+        background-image: url('../images/pull-cake.jpg');
+      }
+      .thanks-hero__kicker { font-family: 'Inter', sans-serif; font-size: 0.85rem;
+        letter-spacing: 0.12em; text-transform: uppercase; color: #555; }
+      .thanks-hero__sub { max-width: 40rem; margin: 0.75rem auto 0; }
+      .thanks-hero__cta { display: inline-block;
+        font-family: var(--font-heading); font-size: 1.25rem;
+        color: var(--color-text); border: 2px solid var(--color-border);
+        padding: var(--spacing-sm) var(--spacing-md); margin-top: 1.25rem;
+        transition: all 0.2s ease; text-decoration: none; }
+      .thanks-hero__cta:hover { background-color: var(--color-text);
+        color: var(--color-background); }
+      /* Tail sections hold little content; the global section padding
+         (--spacing-xl, 6rem) stacks to ~192px between them. A tighter
+         rhythm keeps the close + FAQ grouped. */
+      .thanks-order, .thanks-faq { padding: var(--spacing-lg) 0; }
+      .thanks-order-box { border: 1px solid #1a1a1a; border-radius: 1rem;
+        padding: 1.5rem 1.25rem; max-width: 42rem; margin: 0 auto; text-align: center; }
+      .thanks-order-box h2 { margin-top: 0; }
+      .thanks-order-box p { margin: 0.4rem 0; }
+      .thanks-faq details { border-top: 1px solid #e0dcd7; padding: 0.75rem 0; }
+      .thanks-faq details:last-child { border-bottom: 1px solid #e0dcd7; }
+      .thanks-faq summary { cursor: pointer; font-weight: 500; }
+      .thanks-faq p { color: #555; margin: 0.5rem 0 0; }
+      .thanks-closed { border: 1px dashed #555; border-radius: 1rem;
+        padding: 1.5rem 1.25rem; max-width: 42rem; margin: 0 auto; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    {# Site-root base so the nav's anchor links land on the homepage. #}
+    {% set nav_base = "/" %}
+    {% include 'partials/nav.html' %}
+    <main id="main-content">
+      {# Hero reuses the homepage hero pattern (background image + white
+         wash) with the Russian Pull Cake photo drawing people in. #}
+      <section class="hero hero--with-image thanks-hero">
+        <div class="container">
+          <div class="hero__content">
+            <p class="thanks-hero__kicker">Thanksgiving preorder</p>
+            <h1>Thanksgiving Cakes</h1>
+            <div class="divider">
+              <span class="divider__icon">✿</span>
+            </div>
+            <p class="thanks-hero__sub thanks-hero__sub--lead">
+              Baked from scratch, delivered frozen. <em>Thaw, serve, done.</em>
+            </p>
+            <p class="thanks-hero__sub">
+              We bake a small set of our cakes as whole cakes for the holiday,
+              all gluten-free, straight from our German family recipes. Order
+              online below, then pick up at our market stand or get them
+              delivered to your door before Thanksgiving.
+            </p>
+            <a href="#menu" class="thanks-hero__cta">See the menu &darr;</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="products">
+        <div class="container">
+          {% if thanksgiving_open %}
+          <h2 class="text-center" id="menu">The Menu</h2>
+          {% else %}
+          <h2 class="text-center">This Year's Menu</h2>
+          {% endif %}
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
+          {% if thanksgiving_open %}
+          <p class="available-now__intro">
+            Whole cakes only. Thawing instructions are on every label.
+          </p>
+          {% endif %}
+          <div class="products__grid">
+            {# Whole cakes only — the drop lets the server refuse slices; this
+               attribute keeps the slice steppers off the holiday page. #}
+            {% set tg_units = "whole" %}
+            {% for product in products %}
+              {% include 'partials/product-card.html' %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <section class="thanks-order">
+        <div class="container">
+          {% if thanksgiving_open %}
+          <div class="thanks-order-box">
+            <h2>Order Before Thanksgiving</h2>
+            <p><strong>Last day to order: {{ order_close }}.</strong></p>
+            <p>Pickup at our market stand, or delivery to your door, by
+              {{ pickup_day }}.</p>
+            <p>The order window shuts a few days before Thanksgiving so we
+              have time to bake, and it may close sooner if the cakes sell
+              out.</p>
+          </div>
+          {% else %}
+          <div class="thanks-closed">
+            <h2>See You Next November</h2>
+            <p>Thanksgiving preorders are closed. Thank you to everyone who
+              ordered this year.</p>
+            <p>We'll take orders again next fall. You're warmly welcome to
+              find us at the farmers market before then.</p>
+            <a href="https://newsletter.germanbakingasheville.com"
+               class="btn"
+               onclick="gtag('event', 'newsletter_cta_click');">Join our
+              mailing list for the announcement &rarr;</a>
+          </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="thanks-faq">
+        <div class="container">
+          <h2 class="text-center">Good to Know</h2>
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
+          <details>
+            <summary>Why frozen?</summary>
+            <p>German cakes freeze beautifully, it keeps us from baking out of
+              panic the night before, and it lets you stash dessert days early.
+              Thawing instructions are provided on every label.</p>
+          </details>
+          <details>
+            <summary>Can I order slices?</summary>
+            <p>Thanksgiving is whole cakes only. Slices are always available at
+              our farmers market stand.</p>
+          </details>
+          <details>
+            <summary>What does pickup look like?</summary>
+            <p>Pickup is at our market stand. After checkout you get an email
+              with the exact stand details and window. Home delivery is quoted
+              at checkout based on your address.</p>
+          </details>
+          <details>
+            <summary>I need more than the site allows, or something not on the list.</summary>
+            <p>Email <a
+              href="mailto:mary@germanbakingasheville.com">mary@germanbakingasheville.com</a>
+              and we'll see what we can do.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+    <script>window.TAILGATE_API_BASE = "{{ tailgate_api_base }}";</script>
+    <script src="/preorder.js?v={{ js_version }}"></script>
+    {% include 'partials/footer.html' %}
+    <script>
+  (function() {
+    var toggle = document.getElementById('nav-toggle');
+    window.addEventListener('scroll', function() {
+      if (toggle.checked) toggle.checked = false;
+    });
+    window.addEventListener('click', function(event) {
+      if (toggle.checked && !event.target.closest('nav')) toggle.checked = false;
+    });
+  })();
+    </script>
+  </body>
+</html>

@@ -1,25 +1,44 @@
 {% if tomorrow_markets %}
-{% set m = tomorrow_markets[0] %}
-<div id="market-popup" class="popup popup--hidden" role="dialog" aria-modal="true" aria-label="Upcoming market"{% if m.end_time %} data-end="{{ m.end_time }}"{% endif %}{% if m.date %} data-date="{{ m.date }}"{% endif %}>
-  <div class="popup__backdrop"></div>
-  <div class="popup__card">
-    <span class="popup__icon" aria-hidden="true">🍰</span>
-    <p class="popup__heading">{% if m.when == 'today' %}See you today!{% else %}See you tomorrow!{% endif %}</p>
-    <p class="popup__market-name">{{ m.name }}</p>
-    <p class="popup__market-time">{{ m.time }}</p>
-    <p class="popup__market-address"><a href="https://www.google.com/maps/search/?api=1&amp;query={{ m.address | urlencode }}" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'maps_click', {market: '{{ m.name | e }}'});">{{ m.address }}</a></p>
-    <div class="popup__actions">
-      {% if m.url %}
-      <a href="{{ m.url }}" class="popup__cta" target="_blank" rel="noopener noreferrer">View Location</a>
-      {% else %}
-      <a href="#find-us" class="popup__cta">View Location</a>
-      {% endif %}
-      <button class="popup__dismiss">Not now</button>
+  {% set m = tomorrow_markets[0] %}
+  <div id="market-popup"
+       class="popup popup--hidden"
+       role="dialog"
+       aria-modal="true"
+       aria-label="Upcoming market"
+       {% if m.end_time %}data-end="{{ m.end_time }}"{% endif %}
+       {% if m.date %}data-date="{{ m.date }}"{% endif %}>
+    <div class="popup__backdrop"></div>
+    <div class="popup__card">
+      <span class="popup__icon" aria-hidden="true">🍰</span>
+      <p class="popup__heading">
+        {% if m.when == 'today' %}
+          See you today!
+        {% else %}
+          See you tomorrow!
+        {% endif %}
+      </p>
+      <p class="popup__market-name">{{ m.name }}</p>
+      <p class="popup__market-time">{{ m.time }}</p>
+      <p class="popup__market-address">
+        <a href="https://www.google.com/maps/search/?api=1&amp;query={{ m.address | urlencode }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           onclick="gtag('event', 'maps_click', {market: '{{ m.name | e }}'});">{{ m.address }}</a>
+      </p>
+      <div class="popup__actions">
+        {% if m.url %}
+          <a href="{{ m.url }}"
+             class="popup__cta"
+             target="_blank"
+             rel="noopener noreferrer">View Location</a>
+        {% else %}
+          <a href="#find-us" class="popup__cta">View Location</a>
+        {% endif %}
+        <button class="popup__dismiss">Not now</button>
+      </div>
     </div>
   </div>
-</div>
-
-<style>
+  <style>
   .popup {
     position: fixed;
     inset: 0;
@@ -134,9 +153,8 @@
       display: none !important;
     }
   }
-</style>
-
-<script>
+  </style>
+  <script>
 (function() {
   if (document.cookie.indexOf('popup_dismissed=1') !== -1) return;
   var popup = document.getElementById('market-popup');
@@ -203,5 +221,5 @@
   };
   window.addEventListener('scroll', onScroll);
 })();
-</script>
+  </script>
 {% endif %}

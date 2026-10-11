@@ -12,7 +12,8 @@
           content="Full Menu | 3pm German Baking — Asheville, NC">
     <meta property="og:description"
           content="Our full menu: in-season baking, frozen staples, and everything available by order.">
-    <meta property="og:url" content="https://germanbakingasheville.com/products/">
+    <meta property="og:url"
+          content="https://germanbakingasheville.com/products/">
     <meta property="og:image"
           content="https://germanbakingasheville.com/images/logo.png">
     <meta property="og:image:alt"
@@ -103,15 +104,15 @@
           <div class="divider">
             <span class="divider__icon">✿</span>
           </div>
-          <p class="products-index__intro">
-            Everything we bake — in season, in the freezer, and available by order.
-          </p>
+          <p class="products-index__intro">Everything we bake — in season, in the freezer, and available by order.</p>
         </div>
       </section>
       <section class="products">
         <div class="container">
           <h2 class="text-center">In Season</h2>
-          <div class="divider"><span class="divider__icon">✿</span></div>
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
           <p class="available-now__intro">What we're baking this season — fresh, fruit-driven, and rotating with the harvest.</p>
           <div class="products__grid">
             {% for product in in_season %}
@@ -123,7 +124,9 @@
       <section class="products">
         <div class="container">
           <h2 class="text-center">Always Available</h2>
-          <div class="divider"><span class="divider__icon">✿</span></div>
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
           <p class="available-now__intro">Kept in our freezer year-round — you can always get these.</p>
           <div class="products__grid">
             {% for product in always_available %}
@@ -135,7 +138,9 @@
       <section class="products">
         <div class="container">
           <h2 class="text-center">Previously Available</h2>
-          <div class="divider"><span class="divider__icon">✿</span></div>
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
           <p class="available-now__intro">Everything we've made — all available by order. Email us and we'll bake it for you.</p>
           <div class="products__grid">
             {% for product in previously %}
@@ -147,7 +152,9 @@
       <section class="pantry">
         <div class="container">
           <h2 class="text-center">From Our Pantry</h2>
-          <div class="divider"><span class="divider__icon">✿</span></div>
+          <div class="divider">
+            <span class="divider__icon">✿</span>
+          </div>
           <div class="pantry__grid">
             {% for product in pantry %}
               {% include 'partials/product-card.html' %}
@@ -160,14 +167,14 @@
       <div class="container">
         <img src="../images/logo.png" alt="3pm German Baking" class="footer__logo">
         <div class="footer__contact">
-          <a href="mailto:info@germanbakingasheville.com" class="footer__email" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
+          <a href="mailto:info@germanbakingasheville.com"
+             class="footer__email"
+             onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
         </div>
         <div class="footer__newsletter">
           <a href="https://newsletter.germanbakingasheville.com"
              class="footer__newsletter-link"
-             onclick="gtag('event', 'newsletter_footer_click');">
-            Join our mailing list &rarr;
-          </a>
+             onclick="gtag('event', 'newsletter_footer_click');">Join our mailing list &rarr;</a>
         </div>
         <div class="footer__social">
           <a href="https://facebook.com/3pmgermanbaking"

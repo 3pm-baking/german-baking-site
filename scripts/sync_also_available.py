@@ -73,6 +73,7 @@ def slugify(name: str) -> str:
 
 def main() -> None:
     import sys as _sys
+
     print(
         "WARNING: sync_also_available.py is DEPRECATED.",
         file=_sys.stderr,

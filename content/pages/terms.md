@@ -66,7 +66,7 @@ If you have questions about these terms, please contact us:
 
 **Email:** info@germanbakingasheville.com
 
-**3pm German Baking, LLC**  
+**3pm German Baking, LLC**
 Asheville, North Carolina
 
 *Last updated: June 2026*

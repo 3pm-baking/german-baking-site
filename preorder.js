@@ -295,9 +295,17 @@ async function initAddToCartButtons() {
     const item = drop["items"].find((i) => i.slug === slug);
     if (!item || item.sold_out) continue;
 
+    // `data-tg-units` narrows a group to specific sellable units (e.g. the
+    // thanksgiving page offers whole cakes only). Unmentioned units never
+    // render — the drop still owns what the server will actually sell.
+    const wantedUnits = group.dataset.tgUnits
+      ? new Set(group.dataset.tgUnits.split(/\s*,\s*/).filter(Boolean))
+      : null;
+
     // one stepper box per sellable unit: click to add, − to remove
     group.hidden = false;
     for (const unit of item.units) {
+      if (wantedUnits && !wantedUnits.has(unit.name)) continue;
       tgAddBoxInfo.set(`${slug}:${unit.name}`, {
         unitName: unit.name,
         priceCents: unit.price_cents,

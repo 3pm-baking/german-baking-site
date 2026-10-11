@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LSQR5YT04Y"></script>
-<script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LSQR5YT04Y"></script>
+  <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-LSQR5YT04Y');
-</script>
+  </script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,6 +45,9 @@
         <a href="/#products" class="nav__link">Products</a>
       </li>
       <li class="nav__item">
+        <a href="/thanksgiving/" class="nav__link">Thanksgiving</a>
+      </li>
+      <li class="nav__item">
         <a href="/#blog" class="nav__link">Blog</a>
       </li>
       <li class="nav__item">
@@ -66,8 +69,16 @@
           </p>
           <div id="tg-orders-root">
             <form id="tg-lookup-form" class="tg-lookup-form">
-              <label class="tg-cart-field"><span>Email</span> <input type="email" id="tg-lookup-email" maxlength="200" required></label>
-              <input type="text" name="tg_verify" class="tg-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <label class="tg-cart-field">
+                <span>Email</span>
+                <input type="email" id="tg-lookup-email" maxlength="200" required>
+              </label>
+              <input type="text"
+                     name="tg_verify"
+                     class="tg-hp"
+                     tabindex="-1"
+                     autocomplete="off"
+                     aria-hidden="true">
               <button type="submit" id="tg-lookup-btn" class="tg-cart-checkout-btn">Email me my links</button>
               <p class="tg-lookup-result" id="tg-lookup-result" hidden></p>
             </form>
@@ -83,14 +94,14 @@
          height="400"
          class="footer__logo">
     <div class="footer__contact">
-      <a href="mailto:info@germanbakingasheville.com" class="footer__email" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
+      <a href="mailto:info@germanbakingasheville.com"
+         class="footer__email"
+         onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
     </div>
     <div class="footer__newsletter">
       <a href="https://newsletter.germanbakingasheville.com"
          class="footer__newsletter-link"
-         onclick="gtag('event', 'newsletter_footer_click');">
-        Join our mailing list &rarr;
-      </a>
+         onclick="gtag('event', 'newsletter_footer_click');">Join our mailing list &rarr;</a>
     </div>
     <div class="footer__social">
       <a href="https://facebook.com/3pmgermanbaking"
@@ -100,7 +111,7 @@
          aria-label="Follow us on Facebook"
          title="Follow us on Facebook"
          onclick="gtag('event', 'social_click', {network: 'facebook'});">
-         <img src="/images/facebook.svg" alt="" width="24" height="24">
+        <img src="/images/facebook.svg" alt="" width="24" height="24">
         <span class="social-icon__text">3pm German Baking</span>
       </a>
     </div>
@@ -112,7 +123,7 @@
          aria-label="Follow us on Instagram @3pmgermanbaking"
          title="Follow us on Instagram"
          onclick="gtag('event', 'social_click', {network: 'instagram'});">
-         <img src="/images/instagram.svg" alt="" width="24" height="24">
+        <img src="/images/instagram.svg" alt="" width="24" height="24">
         <span class="social-icon__text">@3pmgermanbaking</span>
       </a>
     </div>
@@ -128,6 +139,6 @@
   </div>
 </footer>
     <script>window.TAILGATE_API_BASE = "https://order.germanbakingasheville.com";</script>
-    <script src="/preorder.js?v=1791718898"></script>
+    <script src="/preorder.js?v=1791739398"></script>
   </body>
 </html>

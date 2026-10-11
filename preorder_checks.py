@@ -25,6 +25,7 @@ from pathlib import Path
 # such as the per-product detail pages) rather than one exact file.
 ORDERING_PAGES = {
     "index.html": "landing page (product grid steppers)",
+    "thanksgiving/index.html": "thanksgiving preorder page (product grid steppers)",
     "cart/index.html": "cart",
     "order-status/index.html": "order status",
     "orders/index.html": "find my order",

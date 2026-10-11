@@ -52,8 +52,11 @@
      one stepper per sellable unit (slice / whole), with prices. They sit
      OUTSIDE the card link so ordering clicks never navigate; the link
      stretches over the card via CSS instead. #}
+  {# `tg_units` (optional, set by the includer) narrows the steppers to
+     particular units, e.g. the thanksgiving page sells whole cakes only. #}
   <div class="tg-add-group"
        data-tg-add-group
        data-slug="{{ product.slug }}"
+       {% if tg_units %}data-tg-units="{{ tg_units }}"{% endif %}
        hidden></div>
 </article>

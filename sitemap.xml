@@ -2,11 +2,7 @@
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://germanbakingasheville.com/</loc>
-<<<<<<< HEAD
-    <lastmod>2026-06-25</lastmod>
-=======
-    <lastmod>2026-06-26</lastmod>
->>>>>>> 4f0cf0a (add privacy policy, terms of service, and also-available items)
+    <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -21,6 +17,12 @@
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://germanbakingasheville.com/thanksgiving/</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
   </url>
   <!-- PRODUCT_START -->
   <url>

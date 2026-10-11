@@ -215,3 +215,45 @@ test("corrupt cart state does not break the page", async () => {
   assert.ok(page.$("#products"));
   await page.close();
 });
+
+test("the thanksgiving page offers whole cakes only, the homepage both units", async () => {
+  // Build an availability payload the registry slugs fit into: the first
+  // catalog slug sells slice AND whole from the drop, so the only way the
+  // page shows whole-only is its own data-tg-units narrowing.
+  const build = (pageKey) => {
+    const page = mount({
+      page: pageKey,
+      routes: { "GET /api/v1/availability": { drops: [] } },
+      load: false,
+    });
+    const slugs = cardSlugs(page);
+    const payload = availability({ items: twoUnits(slugs) });
+    page.setRoute("GET /api/v1/availability", payload, { rerun: false });
+    page.load();
+    return { settle: page.settle(), page, slugs };
+  };
+
+  const indexView = build("index");
+  await indexView.settle;
+  assert.ok(
+    indexView.page.$(`.tg-add-box[data-slug="${indexView.slugs[0]}"][data-unit="slice"]`)
+  );
+  assert.ok(
+    indexView.page.$(`.tg-add-box[data-slug="${indexView.slugs[0]}"][data-unit="whole"]`)
+  );
+  await indexView.page.close();
+
+  const thanksView = build("thanks");
+  await thanksView.settle;
+  assert.ok(thanksView.slugs.length > 0, "the thanksgiving grid must expose add-to-cart hooks");
+  assert.ok(
+    thanksView.page.$(`.tg-add-box[data-slug="${thanksView.slugs[0]}"][data-unit="whole"]`),
+    "whole must be orderable on the thanksgiving page"
+  );
+  assert.equal(
+    thanksView.page.$(`.tg-add-box[data-slug="${thanksView.slugs[0]}"][data-unit="slice"]`),
+    null,
+    "slice steppers must not render on the thanksgiving page"
+  );
+  await thanksView.page.close();
+});

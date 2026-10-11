@@ -1,4 +1,6 @@
-<div class="market-calendar" data-month="{{ cal.month_num }}" data-year="{{ cal.year }}">
+<div class="market-calendar"
+     data-month="{{ cal.month_num }}"
+     data-year="{{ cal.year }}">
   <h4 class="market-calendar__title">{{ cal.month_name }}</h4>
   <table class="market-calendar__table">
     <thead>
@@ -14,18 +16,16 @@
     </thead>
     <tbody>
       {% for week in cal.weeks %}
-      <tr>
-        {% for cell in week %}
-        <td class="market-calendar__cell{% if cell.kind %} market-calendar__cell--{{ cell.kind }}{% endif %}">
-          {% if cell.day %}
-          <span class="market-calendar__day">{{ cell.day }}</span>
-          {% if cell.markets %}
-          <span class="market-calendar__tooltip">{{ cell.markets | join('<br>') }}</span>
-          {% endif %}
-          {% endif %}
-        </td>
-        {% endfor %}
-      </tr>
+        <tr>
+          {% for cell in week %}
+            <td class="market-calendar__cell{% if cell.kind %} market-calendar__cell--{{ cell.kind }}{% endif %}">
+              {% if cell.day %}
+                <span class="market-calendar__day">{{ cell.day }}</span>
+                {% if cell.markets %}<span class="market-calendar__tooltip">{{ cell.markets | join("<br>") }}</span>{% endif %}
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
       {% endfor %}
     </tbody>
   </table>

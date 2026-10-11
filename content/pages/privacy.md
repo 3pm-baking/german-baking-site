@@ -99,7 +99,7 @@ If you have questions about this Privacy Policy or your data, please contact us:
 
 **Email:** info@germanbakingasheville.com
 
-**3pm German Baking, LLC**  
+**3pm German Baking, LLC**
 Asheville, North Carolina
 
 *Last updated: June 2026*
