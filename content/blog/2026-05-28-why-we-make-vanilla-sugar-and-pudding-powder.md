@@ -6,6 +6,7 @@ slug: why-we-make-vanilla-sugar-and-pudding-powder
 image: vanilla-sugar.jpg
 excerpt: In Germany, pudding powder and vanilla sugar are pantry staples, the kind every Oma makes herself. When I moved to the US and read the ingredient lists on the American versions, I knew we'd have to make our own.
 meta_description: Why 3pm German Baking makes vanilla sugar and pudding powders from scratch, and what's wrong with the American grocery store versions.
+page_title: "What Is Pudding Powder? German Puddingpulver and Vanilla Sugar, Explained"
 related_products:
   - vanilla-sugar
   - pudding-powder

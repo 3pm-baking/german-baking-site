@@ -5,7 +5,7 @@ slug: strudel-vs-streusel-vs-striezel
 author: William
 excerpt: We sell Apple Strudel and Apple Streusel side by side, and people mix them up constantly, including myself. A quick field guide to strudel, streusel, and striezel.
 meta_description: Strudel, streusel, and striezel sound alike but are three different German baked goods. We sell Apple Strudel and Apple Streusel, so here is a short field guide from 3pm German Baking in Asheville, NC.
-page_title: "Strudel vs. Streusel vs. Striezel | 3pm German Baking, Asheville, NC"
+page_title: "Strudel vs Streusel vs Striezel: What Sets Them Apart"
 og_description: We sell Apple Strudel and Apple Streusel side by side, and people mix them up constantly, including myself. A quick field guide to strudel, streusel, and striezel.
 image: poppy-roll.jpg
 hide_featured_image: true
