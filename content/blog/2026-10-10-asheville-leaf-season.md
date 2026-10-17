@@ -21,6 +21,8 @@ that stretch of warm days after the first cold spell. In German, it is
   textbook version of it or not, her mom came at the right month, because the
   leaves are about to do the thing the Blue Ridge Mountains are famous for.
 
+## The Color Moves Downhill
+
 How the leaves do it is worth knowing before you plan a drive, because
 Asheville's fall color is not one peak, it is a cascade. The color starts
 high and works its way down. Late September brings the first golds to the
@@ -33,17 +35,23 @@ season this year, because September ran warm and the trees turn more slowly
 when it does. For once, the timing works in our favor: whenever your week
 comes free, something is turning.
 
+## Where to Drive
+
 For driving, the Blue Ridge Parkway is the obvious answer, and the visitor
 advice from everyone who does this every year is the same: check the
 [official closure status](https://www.nps.gov/blri/planyourvisit/conditions.htm)
 before you leave. Sections of the Parkway open and close with weather and
 season, and the NPS page is the only reliable source for it.
 
+## End the Day the German Way
+
 After a morning of overlooks, there is exactly one sensible way to end the
 day, and it is a German habit: *Kaffee und Kuchen*, coffee and cake in the
 afternoon. I wrote [more about that tradition here](/blog/why-3pm-kaffee-und-kuchen.html),
 and about why our bakery is named 3pm. A leaf drive in the morning, coffee
 and cake before the light goes. The plan writes itself.
+
+## See You at the Tailgate Market
 
 If you are building a leaf weekend around it, we are at the Black Mountain
 Tailgate Market on Saturday mornings through the season. Black Mountain sits
