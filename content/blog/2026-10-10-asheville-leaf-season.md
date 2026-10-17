@@ -53,8 +53,9 @@ and cake before the light goes. The plan writes itself.
 
 ## See You at the Tailgate Market
 
-If you are building a leaf weekend around it, we are at the Black Mountain
-Tailgate Market on Saturday mornings through the season. Black Mountain sits
+If you are building a leaf weekend around it, we are at the
+[Black Mountain Tailgate Market](https://blackmountainmarket.org/)
+on Saturday mornings through the season. Black Mountain sits
 in the same mountains the Parkway runs along, so the drive and the market
 stop can happen in one trip. Come by the stand, ask Mary's mom how Germany
 does autumn. She will tell you, and then she will ask you about the leaves.
