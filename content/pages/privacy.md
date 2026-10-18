@@ -28,7 +28,7 @@ where to bring it. It is never used to place you on a mailing list.
 
 **When you browse our website**, we collect:
 
-- Anonymous usage data via Google Analytics (pages visited, time on site, browser type)
+- Anonymous usage data via Google Analytics (pages visited, time on site, browser type). Google Analytics loads automatically for visitors from the United States and other countries outside the EU, UK, and Switzerland. If you are visiting from one of those regions, analytics loads only after you choose "Allow" on the consent notice — if you decline or dismiss it, your visit is not measured or recorded.
 - Cookies (see our Cookie section below)
 
 We do **not** collect or store payment card information. Payments are processed at market, via invoice, or through external payment processors.
@@ -70,7 +70,7 @@ Mailing list subscriptions remain active until you unsubscribe.
 
 ## Cookies
 
-Our website uses Google Analytics, which places anonymous cookies to help us understand how visitors use our site. These cookies do not identify you personally.
+Our website uses Google Analytics for visitors outside the EU, UK, and Switzerland, which places anonymous cookies to help us understand how visitors use our site. These cookies do not identify you personally. Visitors from the EU, UK, and Switzerland are asked whether they allow measurement: analytics loads only if they opt in, and their choice is remembered in the browser (you can clear it anytime via your browser's site data settings). Determining which notice applies is done through a cookieless request that returns only a country code — no personal data is stored or shared in that check.
 
 You can disable cookies in your browser settings, but this may affect your browsing experience.
 

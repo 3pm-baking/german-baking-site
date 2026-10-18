@@ -2,14 +2,87 @@
 <html lang="en">
   <head>
     
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LSQR5YT04Y"></script>
-  <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-LSQR5YT04Y');
-  </script>
+<!-- Analytics: GA4 loads immediately for visitors outside the EU/UK/Switzerland
+     (Google EU user consent policy). Visitors from those regions get a small
+     opt-in banner; GA4 loads only if they accept. The country check is a
+     cookieless request that returns only a country code. If the country can't
+     be determined, we fail closed: no tracking, no banner. dataLayer and
+     gtag() are always defined so inline event calls (footer links, popup,
+     etc.) are safe no-ops for visitors who haven't opted in. -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+(function () {
+  var CONSENT_KEY = 'analytics-consent';
+  // EEA member states + UK + Switzerland. Cloudflare reports the UK as "GB".
+  var RESTRICTED = /^(AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE|IS|LI|NO|GB|CH|EU)$/;
+
+  function storedConsent() {
+    try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
+  }
+
+  function loadGA() {
+    if (window.__gaLoaded) return;
+    window.__gaLoaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-LSQR5YT04Y';
+    document.head.appendChild(s);
+    gtag('js', new Date());
+    gtag('config', 'G-LSQR5YT04Y');
+  }
+
+  function showBanner() {
+    var bar = document.createElement('div');
+    bar.setAttribute('role', 'dialog');
+    bar.setAttribute('aria-label', 'Analytics consent');
+    bar.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;' +
+      'max-width:520px;margin:0 auto;padding:16px 20px;z-index:9999;' +
+      'background:#1a1a1a;color:#f5f1e8;border-radius:8px;' +
+      'font-family:Inter,sans-serif;font-size:14px;line-height:1.5;' +
+      'box-shadow:0 4px 16px rgba(0,0,0,.25);';
+    bar.innerHTML =
+      '<p style="margin:0 0 12px;">We use Google Analytics to see which ' +
+      'pages and recipes are popular. Nothing is sold or shared, and no ads ' +
+      'are personalized. May we measure your visit?</p>';
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;justify-content:flex-end;';
+    var decline = document.createElement('button');
+    decline.textContent = 'No thanks';
+    decline.style.cssText = 'padding:6px 14px;border-radius:6px;' +
+      'border:1px solid #f5f1e8;background:transparent;color:#f5f1e8;' +
+      'cursor:pointer;font-size:14px;';
+    var allow = document.createElement('button');
+    allow.textContent = 'Allow';
+    allow.style.cssText = 'padding:6px 14px;border-radius:6px;' +
+      'border:1px solid #f5f1e8;background:#f5f1e8;color:#1a1a1a;' +
+      'cursor:pointer;font-size:14px;';
+    row.appendChild(decline);
+    row.appendChild(allow);
+    bar.appendChild(row);
+    document.body.appendChild(bar);
+    function choose(value) {
+      try { localStorage.setItem(CONSENT_KEY, value); } catch (e) {}
+      bar.remove();
+      if (value === 'granted') loadGA();
+    }
+    allow.addEventListener('click', function () { choose('granted'); });
+    decline.addEventListener('click', function () { choose('denied'); });
+  }
+
+  fetch('https://www.cloudflare.com/cdn-cgi/trace')
+    .then(function (r) { return r.text(); })
+    .then(function (t) {
+      var m = t.match(/^loc=(\w{2,3})$/m);
+      if (!m) return; // fail closed: unknown country, no tracking
+      if (!RESTRICTED.test(m[1])) { loadGA(); return; }
+      var consent = storedConsent();
+      if (consent === 'granted') loadGA();
+      else if (consent !== 'denied') showBanner();
+    })
+    .catch(function () {}); // fail closed
+})();
+</script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
