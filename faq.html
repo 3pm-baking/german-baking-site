@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+<!-- Analytics: GA4 loads immediately for visitors outside the EU/UK/Switzerland
+     (Google EU user consent policy). Visitors from those regions get a small
+     opt-in banner; GA4 loads only if they accept. The country check is a
+     cookieless request that returns only a country code. If the country can't
+     be determined, we fail closed: no tracking, no banner. dataLayer and
+     gtag() are always defined so inline event calls (footer links, popup,
+     etc.) are safe no-ops for visitors who haven't opted in. -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+(function () {
+  var CONSENT_KEY = 'analytics-consent';
+  // EEA member states + UK + Switzerland. Cloudflare reports the UK as "GB".
+  var RESTRICTED = /^(AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE|IS|LI|NO|GB|CH|EU)$/;
+
+  function storedConsent() {
+    try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
+  }
+
+  function loadGA() {
+    if (window.__gaLoaded) return;
+    window.__gaLoaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-LSQR5YT04Y';
+    document.head.appendChild(s);
+    gtag('js', new Date());
+    gtag('config', 'G-LSQR5YT04Y');
+  }
+
+  function showBanner() {
+    var bar = document.createElement('div');
+    bar.setAttribute('role', 'dialog');
+    bar.setAttribute('aria-label', 'Analytics consent');
+    bar.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;' +
+      'max-width:520px;margin:0 auto;padding:16px 20px;z-index:9999;' +
+      'background:#1a1a1a;color:#f5f1e8;border-radius:8px;' +
+      'font-family:Inter,sans-serif;font-size:14px;line-height:1.5;' +
+      'box-shadow:0 4px 16px rgba(0,0,0,.25);';
+    bar.innerHTML =
+      '<p style="margin:0 0 12px;">We use Google Analytics to see which ' +
+      'pages and recipes are popular. Nothing is sold or shared, and no ads ' +
+      'are personalized. May we measure your visit?</p>';
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;justify-content:flex-end;';
+    var decline = document.createElement('button');
+    decline.textContent = 'No thanks';
+    decline.style.cssText = 'padding:6px 14px;border-radius:6px;' +
+      'border:1px solid #f5f1e8;background:transparent;color:#f5f1e8;' +
+      'cursor:pointer;font-size:14px;';
+    var allow = document.createElement('button');
+    allow.textContent = 'Allow';
+    allow.style.cssText = 'padding:6px 14px;border-radius:6px;' +
+      'border:1px solid #f5f1e8;background:#f5f1e8;color:#1a1a1a;' +
+      'cursor:pointer;font-size:14px;';
+    row.appendChild(decline);
+    row.appendChild(allow);
+    bar.appendChild(row);
+    document.body.appendChild(bar);
+    function choose(value) {
+      try { localStorage.setItem(CONSENT_KEY, value); } catch (e) {}
+      bar.remove();
+      if (value === 'granted') loadGA();
+    }
+    allow.addEventListener('click', function () { choose('granted'); });
+    decline.addEventListener('click', function () { choose('denied'); });
+  }
+
+  fetch('https://www.cloudflare.com/cdn-cgi/trace')
+    .then(function (r) { return r.text(); })
+    .then(function (t) {
+      var m = t.match(/^loc=(\w{2,3})$/m);
+      if (!m) return; // fail closed: unknown country, no tracking
+      if (!RESTRICTED.test(m[1])) { loadGA(); return; }
+      var consent = storedConsent();
+      if (consent === 'granted') loadGA();
+      else if (consent !== 'denied') showBanner();
+    })
+    .catch(function () {}); // fail closed
+})();
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Questions about 3pm German Baking in Asheville, NC. Where to find us at farmers markets, direct orders with local delivery, custom cakes, gluten-free options, and allergens.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="3pm German Baking">
+    <meta property="og:title" content="FAQ | 3pm German Baking">
+    <meta property="og:description" content="Questions about 3pm German Baking in Asheville, NC. Where to find us at farmers markets, direct orders with local delivery, custom cakes, gluten-free options, and allergens.">
+    <meta property="og:url"
+          content="https://germanbakingasheville.com/faq.html">
+    <meta property="og:image"
+          content="https://germanbakingasheville.com/images/logo.png">
+    <meta property="og:image:width" content="400">
+    <meta property="og:image:height" content="400">
+    <meta property="og:image:alt"
+          content="3pm German Baking logo — authentic German baking in Asheville, NC">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FAQ | 3pm German Baking">
+    <meta name="twitter:description" content="Questions about 3pm German Baking in Asheville, NC. Where to find us at farmers markets, direct orders with local delivery, custom cakes, gluten-free options, and allergens.">
+    <meta name="twitter:image"
+          content="https://germanbakingasheville.com/images/logo.png">
+    <meta name="twitter:image:alt"
+          content="3pm German Baking — authentic German baking in Asheville, NC">
+    <link rel="canonical"
+          href="https://germanbakingasheville.com/faq.html">
+    <title>FAQ | 3pm German Baking</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+          media="print"
+          onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap">
+    </noscript>
+    <link rel="stylesheet" href="styles.min.css">
+    <meta name="theme-color" content="#1a1a1a">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Where can I buy 3pm German Baking in Asheville?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Three ways: at local farmers markets, by direct order with local delivery\nthroughout the Asheville area, and as custom cakes ordered by email. See\nthe market schedule on our homepage for this\nseason's days and times, or write to\ninfo@germanbakingasheville.com to arrange an order."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which markets do you attend?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We sell at farmers markets around Asheville and the surrounding towns, and\nwhich market on which day changes with the season. The current schedule is\nalways on our homepage, and we also post updates on\nInstagram when it moves."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you deliver?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Direct orders can be delivered locally throughout the Asheville area.\nEmail info@germanbakingasheville.com with what you would like and we will\narrange delivery time and details with you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What payment do you accept at the market?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cash, card, Venmo, Apple Pay, and market tokens. No need to hit an ATM\nbefore you stop by; bring what you have and we can take it from there."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I order ahead instead of buying at the market?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Some products are available to preorder online, and anything else can\nbe arranged by email in advance of a market day. Ordering ahead is the\nsurest way to get exactly what you want, especially for whole cakes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you make custom cakes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. We bake custom cakes for birthdays, dinner parties, and special\noccasions, and we also work with recurring private clients who want\nauthentic German baking regularly. Email\ninfo@germanbakingasheville.com or find us at a market to talk through what\nyou have in mind."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How far in advance should I order a custom cake?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A couple of days is usually enough for most cakes, but the exact timing\ndepends on the upcoming market schedule, because market days set when we\nbake. Reach out as early as you can and we will tell you honestly whether\nyour date works."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you sell to coffee shops or restaurants?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, we supply wholesale customers in the Asheville area. Email\ninfo@germanbakingasheville.com and we will send our current wholesale\nlist."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are your cakes gluten-free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Some are and some are not, and that is a choice we make on purpose. When a\nrecipe can be made gluten-free and still taste like itself, we make it\nthat way. When it cannot, like apple strudel, we leave it alone rather\nthan serve a version we are not proud of. Read the full story in\nwhy we do not make everything gluten-free."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which products are gluten-free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our Lemon Cake is gluten-free and dairy-free. German cheesecake, Donauwelle,\nand our summer sheet cakes are gluten-free when the swap does not change\nthe taste, so ask at the market for the current lineup. Our spinach\ntartlets use a gluten-free crust, and our pantry items, pudding powder and\nvanilla sugar, are naturally gluten-free."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the apple strudel gluten-free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Real strudel dough must be rolled paper-thin, and gluten is what holds\nit together, so we do not make a gluten-free strudel. We made it work for\nanother dietary need instead: our apple strudel is vegan, with a\ndairy-free filling and gluten-free bread crumbs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the apple strudel contain eggs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Our apple strudel is vegan, so it contains no eggs and no dairy. It\nalso uses gluten-free bread crumbs in the filling, though the dough itself\ncontains wheat gluten."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does anything contain nuts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Several products do, including items with almonds, marzipan, or hazelnuts.\nEach product page says what is inside. We bake in a shared\ncommercial kitchen, so cross-contact with other allergens is possible and\nwe cannot guarantee any product is completely free of traces. If you have\na serious allergy, please talk to us at the market or by email before\nordering; we would rather find you something safe than guess."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is quark?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Quark is a fresh German dairy product somewhere between yogurt and cottage\ncheese, and it is the base of a true German cheesecake. We looked hard for\nit in the United States, which is why our cheesecake tastes the way it\ndoes. More in what is quark."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is kaffee und kuchen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is the German tradition of coffee and cake in the afternoon, closer to\na daily institution than a weekend treat. Our whole menu is built for it.\nRead more in why 3pm kaffee und kuchen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between strudel, streusel, and striezel?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Strudel is a rolled pastry stretched paper-thin. Streusel is a crumbly\nbutter-sugar topping baked over a cake. Striezel is a braided yeast bread,\nlike our Poppy Roll. We sell all three. The field guide:\nstrudel vs. streusel vs. striezel."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header class="blog-header">
+      <div class="container">
+        <a href="index.html" class="blog-header__logo-link">
+          <img src="images/logo.png"
+               alt="3pm German Baking"
+               width="400"
+               height="400"
+               class="blog-header__logo">
+        </a>
+      </div>
+    </header>
+    <main id="main-content" class="blog-post">
+      <div class="container container--narrow">
+        <article>
+          <header class="blog-post__header">
+            <h1 class="blog-post__title">FAQ</h1>
+            <div class="divider">
+              <span class="divider__icon">✿</span>
+            </div>
+          </header>
+          <div class="blog-post__content"><p>Short answer: 3pm German Baking is a German bakery in Asheville, NC. We
+sell German cakes, pastries, and pantry goods at area farmers markets, take
+direct orders with local delivery, and bake custom cakes for special
+occasions. A few of our cakes are gluten-free; some products, like our
+apple strudel, are vegan.</p>
+<h2>Where to Find Us</h2>
+<h3>Where can I buy 3pm German Baking in Asheville?</h3>
+<p>Three ways: at local farmers markets, by direct order with local delivery
+throughout the Asheville area, and as custom cakes ordered by email. See
+<a href="/index.html#find-us">the market schedule on our homepage</a> for this
+season's days and times, or write to
+<a href="mailto:info@germanbakingasheville.com" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a> to arrange an order.</p>
+<h3>Which markets do you attend?</h3>
+<p>We sell at farmers markets around Asheville and the surrounding towns, and
+which market on which day changes with the season. The current schedule is
+always on <a href="/index.html#find-us">our homepage</a>, and we also post updates on
+<a href="https://instagram.com/3pmgermanbaking">Instagram</a> when it moves.</p>
+<h3>Do you deliver?</h3>
+<p>Yes. Direct orders can be delivered locally throughout the Asheville area.
+Email <a href="mailto:info@germanbakingasheville.com" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a> with what you would like and we will
+arrange delivery time and details with you.</p>
+<h3>What payment do you accept at the market?</h3>
+<p>Cash, card, Venmo, Apple Pay, and market tokens. No need to hit an ATM
+before you stop by; bring what you have and we can take it from there.</p>
+<h3>Can I order ahead instead of buying at the market?</h3>
+<p>Yes. Some products are available to preorder online, and anything else can
+be arranged by email in advance of a market day. Ordering ahead is the
+surest way to get exactly what you want, especially for whole cakes.</p>
+<h2>Ordering and Custom Cakes</h2>
+<h3>Do you make custom cakes?</h3>
+<p>Yes. We bake custom cakes for birthdays, dinner parties, and special
+occasions, and we also work with recurring private clients who want
+authentic German baking regularly. Email
+<a href="mailto:info@germanbakingasheville.com" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a> or find us at a market to talk through what
+you have in mind.</p>
+<h3>How far in advance should I order a custom cake?</h3>
+<p>A couple of days is usually enough for most cakes, but the exact timing
+depends on the upcoming market schedule, because market days set when we
+bake. Reach out as early as you can and we will tell you honestly whether
+your date works.</p>
+<h3>Do you sell to coffee shops or restaurants?</h3>
+<p>Yes, we supply wholesale customers in the Asheville area. Email
+<a href="mailto:info@germanbakingasheville.com" onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a> and we will send our current wholesale
+list.</p>
+<h2>Gluten-Free</h2>
+<h3>Are your cakes gluten-free?</h3>
+<p>Some are and some are not, and that is a choice we make on purpose. When a
+recipe can be made gluten-free and still taste like itself, we make it
+that way. When it cannot, like apple strudel, we leave it alone rather
+than serve a version we are not proud of. Read the full story in
+<a href="/blog/why-we-dont-make-everything-gluten-free.html">why we do not make everything gluten-free</a>.</p>
+<h3>Which products are gluten-free?</h3>
+<p>Our Lemon Cake is gluten-free and dairy-free. German cheesecake, Donauwelle,
+and our summer sheet cakes are gluten-free when the swap does not change
+the taste, so ask at the market for the current lineup. Our spinach
+tartlets use a gluten-free crust, and our pantry items, pudding powder and
+vanilla sugar, are naturally gluten-free.</p>
+<h3>Is the apple strudel gluten-free?</h3>
+<p>No. Real strudel dough must be rolled paper-thin, and gluten is what holds
+it together, so we do not make a gluten-free strudel. We made it work for
+another dietary need instead: our apple strudel is vegan, with a
+dairy-free filling and gluten-free bread crumbs.</p>
+<h2>Allergens</h2>
+<h3>Does the apple strudel contain eggs?</h3>
+<p>No. Our apple strudel is vegan, so it contains no eggs and no dairy. It
+also uses gluten-free bread crumbs in the filling, though the dough itself
+contains wheat gluten.</p>
+<h3>Does anything contain nuts?</h3>
+<p>Several products do, including items with almonds, marzipan, or hazelnuts.
+Each <a href="/products/">product page</a> says what is inside. We bake in a shared
+commercial kitchen, so cross-contact with other allergens is possible and
+we cannot guarantee any product is completely free of traces. If you have
+a serious allergy, please talk to us at the market or by email before
+ordering; we would rather find you something safe than guess.</p>
+<h2>The German Bit</h2>
+<h3>What is quark?</h3>
+<p>Quark is a fresh German dairy product somewhere between yogurt and cottage
+cheese, and it is the base of a true German cheesecake. We looked hard for
+it in the United States, which is why our cheesecake tastes the way it
+does. More in <a href="/blog/what-is-quark.html">what is quark</a>.</p>
+<h3>What is kaffee und kuchen?</h3>
+<p>It is the German tradition of coffee and cake in the afternoon, closer to
+a daily institution than a weekend treat. Our whole menu is built for it.
+Read more in <a href="/blog/why-3pm-kaffee-und-kuchen.html">why 3pm kaffee und kuchen</a>.</p>
+<h3>What is the difference between strudel, streusel, and striezel?</h3>
+<p>Strudel is a rolled pastry stretched paper-thin. Streusel is a crumbly
+butter-sugar topping baked over a cake. Striezel is a braided yeast bread,
+like our Poppy Roll. We sell all three. The field guide:
+<a href="/blog/strudel-vs-streusel-vs-striezel.html">strudel vs. streusel vs. striezel</a>.</p></div>
+        </article>
+      </div>
+    </main>
+    <footer class="footer">
+  <div class="container">
+    <img src="/images/logo.png"
+         alt="3pm German Baking"
+         width="400"
+         height="400"
+         class="footer__logo">
+    <div class="footer__contact">
+      <a href="mailto:info@germanbakingasheville.com"
+         class="footer__email"
+         onclick="gtag('event', 'email_click', {email_to: 'info'});">info@germanbakingasheville.com</a>
+    </div>
+    <div class="footer__newsletter">
+      <a href="https://newsletter.germanbakingasheville.com"
+         class="footer__newsletter-link"
+         onclick="gtag('event', 'newsletter_footer_click');">Join our mailing list &rarr;</a>
+    </div>
+    <div class="footer__social">
+      <a href="https://facebook.com/3pmgermanbaking"
+         class="social-icon social-icon--facebook"
+         target="_blank"
+         rel="noopener noreferrer"
+         aria-label="Follow us on Facebook"
+         title="Follow us on Facebook"
+         onclick="gtag('event', 'social_click', {network: 'facebook'});">
+        <img src="/images/facebook.svg" alt="" width="24" height="24">
+        <span class="social-icon__text">3pm German Baking</span>
+      </a>
+    </div>
+    <div class="footer__social">
+      <a href="https://instagram.com/3pmgermanbaking"
+         class="social-icon social-icon--instagram"
+         target="_blank"
+         rel="noopener noreferrer"
+         aria-label="Follow us on Instagram @3pmgermanbaking"
+         title="Follow us on Instagram"
+         onclick="gtag('event', 'social_click', {network: 'instagram'});">
+        <img src="/images/instagram.svg" alt="" width="24" height="24">
+        <span class="social-icon__text">@3pmgermanbaking</span>
+      </a>
+    </div>
+    <p class="footer__legal">
+      <a href="/orders/">Manage your pre-order</a>
+      <span class="footer__separator">·</span>
+      <a href="/faq.html">FAQ</a>
+      <span class="footer__separator">·</span>
+      <a href="/privacy.html">Privacy Policy</a>
+      <span class="footer__separator">·</span>
+      <a href="/terms.html">Terms of Service</a>
+    </p>
+    <p class="footer__copyright">© 2026 3pm German Baking.</p>
+    <p class="footer__copyright">All rights reserved.</p>
+  </div>
+</footer>
+  </body>
+</html>

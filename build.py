@@ -1194,12 +1194,23 @@ def build_static_pages(env: Environment, pages_dir: Path) -> int:
             print(f"  (skipping empty file: {md_file.name})")
             continue
 
-        frontmatter["content_html"] = md.markdown(
-            markdown_body,
-            extensions=["extra"],
+        frontmatter["content_html"] = _tag_mailto_links(
+            md.markdown(
+                markdown_body,
+                extensions=["extra"],
+            )
         )
 
         html = template.render(page=frontmatter)
+        if frontmatter.get("faq_schema"):
+            faq_ld = _faq_schema_jsonld(frontmatter["content_html"])
+            if faq_ld:
+                html = html.replace(
+                    "</head>",
+                    f'  <script type="application/ld+json">\n{faq_ld}\n  </script>\n</head>',
+                )
+            else:
+                print(f"  warning: {md_file.name} has faq_schema but no h3-question/p-answer pairs found")
         slug = frontmatter.get("slug", md_file.stem)
         output_file = Path(__file__).parent / f"{slug}.html"
         output_file.write_text(html, encoding="utf-8")
@@ -1207,6 +1218,54 @@ def build_static_pages(env: Environment, pages_dir: Path) -> int:
         built_count += 1
 
     return built_count
+
+
+def _tag_mailto_links(content_html: str) -> str:
+    """Add the GA4 email_click event to mailto links in rendered markdown.
+
+    Markdown cannot carry inline onclick attributes, so static pages get
+    them post-render, matching the pattern the hand-written templates use
+    (e.g. the landing page's email links).
+    """
+    onclick = "gtag('event', 'email_click', {email_to: 'info'});"
+    return re.sub(
+        r'<a href="(mailto:[^"]+)">',
+        lambda m: f'<a href="{m.group(1)}" onclick="{onclick}">',
+        content_html,
+    )
+
+
+def _faq_schema_jsonld(content_html: str) -> str | None:
+    """Build FAQPage JSON-LD from an h3-question / p-answer markdown page.
+
+    Pairs every h3 followed by one or more p tags into a Question with its
+    acceptedAnswer. Answer text is the visible text only (tags stripped),
+    per Google's structured-data policy that markup must match visible
+    content. Returns None when no question/answer pairs exist.
+    """
+    questions: list[dict[str, str]] = []
+    pair_re = re.compile(r"<h3>(?P<q>.*?)</h3>\s*(?P<a>(?:<p>.*?</p>\s*)+)", re.DOTALL)
+    tag_re = re.compile(r"<[^>]+>")
+    for match in pair_re.finditer(content_html):
+        question = tag_re.sub("", match["q"]).strip()
+        answer = " ".join(tag_re.sub("", p).strip() for p in re.findall(r"<p>(.*?)</p>", match["a"], re.DOTALL))
+        if question and answer:
+            questions.append({
+                "@type": "Question",
+                "name": question,
+                "acceptedAnswer": {"@type": "Answer", "text": answer},
+            })
+    if not questions:
+        return None
+    return json.dumps(
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": questions,
+        },
+        indent=2,
+        ensure_ascii=False,
+    )
 
 
 def emit_brand_artifacts(base_dir: Path) -> None:
