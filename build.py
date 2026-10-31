@@ -172,7 +172,7 @@ def format_schedule_display(sched: dict) -> str | None:
         return d.strftime("%B %d").replace(" 0", " ")
 
     if start and end:
-        date_str = f"{_fmt_date(start)} – {_fmt_date(end)}"
+        date_str = f"{_fmt_date(start)} - {_fmt_date(end)}"
     elif start:
         date_str = f"Starting {_fmt_date(start)}"
     else:
@@ -202,7 +202,7 @@ def format_schedule_display(sched: dict) -> str | None:
 
     start_time = _fmt_time(sched.get("start_time"))
     end_time = _fmt_time(sched.get("end_time"))
-    time_str = f" · {start_time}–{end_time}" if start_time and end_time else ""
+    time_str = f" · {start_time}-{end_time}" if start_time and end_time else ""
 
     return f"{day_prefix}, {date_str}{time_str}"
 
@@ -564,6 +564,8 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
         return []
 
     schedules: list[dict] = []
+    popup_schedules: list[dict] = []
+    popup_date_count = 0
     for yaml_file in sorted(locations_dir.glob("*.yml")):
         raw = yaml.safe_load(yaml_file.read_text(encoding="utf-8"))
         if not raw:
@@ -571,7 +573,23 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
         sched = raw.get("schedule")
         if isinstance(sched, dict):
             schedules.append({"name": raw.get("name", ""), "schedule": sched})
+        elif raw.get("dates"):
+            # Pop-ups carry an explicit `dates` list instead of a recurring
+            # schedule. Turn each occurrence into a one-day pseudo-schedule
+            # so the calendar highlights it like a market day.
+            for d in raw["dates"]:
+                d_parsed = _parse_date(d)
+                popup_schedules.append({
+                    "name": raw.get("name", ""),
+                    "schedule": {
+                        "start_date": d_parsed,
+                        "end_date": d_parsed,
+                        "frequency": {"interval_weeks": 1, "offset_weeks": 0},
+                    },
+                })
+                popup_date_count += 1
 
+    schedules += popup_schedules
     if not schedules:
         return []
 
@@ -590,7 +608,18 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
                 if d.month != m:
                     week.append({"day": None, "kind": None, "markets": []})
                 else:
-                    kind = _classify_cell(d, [e["schedule"] for e in schedules])
+                    regular_kind = _classify_cell(
+                        d, [e["schedule"] for e in schedules if e not in popup_schedules]
+                    )
+                    is_popup = any(
+                        _is_market_day(d, e["schedule"]) for e in popup_schedules
+                    )
+                    if is_popup and regular_kind == "active":
+                        kind = regular_kind  # regular market day wins styling
+                    elif is_popup:
+                        kind = "popup"
+                    else:
+                        kind = regular_kind
                     markets = _get_active_markets(d, schedules)
                     week.append({"day": d.day, "kind": kind, "markets": markets})
             weeks.append(week)
@@ -602,7 +631,9 @@ def build_market_calendars(locations_dir: Path) -> list[dict]:
             "weeks": weeks,
         })
 
-    print(f"Built market calendars for {months[0]['month_name']} and {months[1]['month_name']}")
+    popup_note = f" (incl. {popup_date_count} pop-up date(s))" if popup_date_count else ""
+    print(f"Built market calendars for {months[0]['month_name']} and "
+          f"{months[1]['month_name']}{popup_note}")
     return months
 
 
@@ -807,7 +838,7 @@ def _popup_time_str(sched: dict) -> str:
     start = _fmt(sched.get("start_time"))
     end = _fmt(sched.get("end_time"))
     if start and end:
-        return f"{start}–{end}"
+        return f"{start}-{end}"
     return start or end or ""
 
 

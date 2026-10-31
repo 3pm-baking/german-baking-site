@@ -29,10 +29,11 @@
         {% if m.url %}
           <a href="{{ m.url }}"
              class="popup__cta"
+             data-market="{{ m.name | e }}"
              target="_blank"
              rel="noopener noreferrer">View Location</a>
         {% else %}
-          <a href="#find-us" class="popup__cta">View Location</a>
+          <a href="#find-us" class="popup__cta" data-market="{{ m.name | e }}">View Location</a>
         {% endif %}
         <button class="popup__dismiss">Not now</button>
       </div>
@@ -161,9 +162,21 @@
   if (!popup) return;
 
   var marketDate = popup.getAttribute('data-date');
+  var etToday = null;
   if (marketDate) {
-    var etToday = new Date().toLocaleDateString('en-CA', {timeZone: 'America/New_York'});
+    etToday = new Date().toLocaleDateString('en-CA', {timeZone: 'America/New_York'});
     if (etToday > marketDate) return;
+  }
+
+  // Relative wording is computed from the visitor's ET date, not the build
+  // date, so a stale build still says "today" on the market day itself.
+  var heading = popup.querySelector('.popup__heading');
+  if (heading && marketDate && etToday) {
+    if (etToday === marketDate) {
+      heading.textContent = 'See you today!';
+    } else if (etToday === isoPlusDays(marketDate, -1)) {
+      heading.textContent = 'See you tomorrow!';
+    }
   }
 
   var endTime = popup.getAttribute('data-end');
@@ -173,6 +186,12 @@
     var etNow = new Date(new Date().toLocaleString('en-US', {timeZone: 'America/New_York'}));
     var nowMinutes = etNow.getHours() * 60 + etNow.getMinutes();
     if (nowMinutes >= endMinutes) return;
+  }
+
+  function isoPlusDays(iso, days) {
+    var d = new Date(iso + 'T12:00:00Z');
+    d.setUTCDate(d.getUTCDate() + days);
+    return d.toISOString().slice(0, 10);
   }
 
   var shown = false;
@@ -203,9 +222,26 @@
   if (dismissBtn) dismissBtn.addEventListener('click', dismiss);
 
   if (cta) {
-    cta.addEventListener('click', function() {
+    cta.addEventListener('click', function(e) {
       if (typeof gtag !== 'undefined') {
         gtag('event', 'popup_click', {popup_type: 'market'});
+      }
+      /* Close the banner and jump to the market's Find Us card,
+         mirroring the calendar-date click. Falls back to the normal
+         link when no matching card exists. */
+      var name = cta.getAttribute('data-market');
+      if (!name) return;
+      var cards = document.querySelectorAll('.location-card[data-name]');
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].getAttribute('data-name') === name) {
+          e.preventDefault();
+          hide();
+          cards[i].scrollIntoView({behavior: 'smooth', block: 'center'});
+          cards[i].classList.remove('location-card--flash');
+          void cards[i].offsetWidth; /* restart animation on repeat clicks */
+          cards[i].classList.add('location-card--flash');
+          break;
+        }
       }
     });
   }

@@ -331,7 +331,7 @@
             <h3 class="find-us__subheading">At Local Markets</h3>
             <div class="locations-grid">
               {% for location in locations %}
-                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}">
+                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}" data-name="{{ location.name | e }}">
                   {% if location.upcoming %}<span class="location-card__badge">Upcoming</span>{% endif %}
                   <p class="location-card__name">
                     {% if location.url %}
@@ -363,7 +363,7 @@
             <h3 class="find-us__subheading">At Pop-Up Markets</h3>
             <div class="locations-grid">
               {% for location in popups %}
-                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}">
+                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}" data-name="{{ location.name | e }}">
                   <p class="location-card__name">
                     {% if location.url %}
                       <a href="{{ location.url }}" target="_blank" rel="noopener noreferrer">{{ location.name }}</a>
@@ -397,6 +397,12 @@
                 {% include 'partials/market-calendar.html' %}
               {% endfor %}
             </div>
+            <p class="market-calendar__legend">
+              <span class="market-calendar__legend-swatch market-calendar__legend-swatch--market"></span>
+              Weekly markets
+              <span class="market-calendar__legend-swatch market-calendar__legend-swatch--popup">✱</span>
+              One-time events
+            </p>
             <p class="market-calendar__disclaimer">
               Schedule may change — follow us on
               <a href="https://instagram.com/3pmgermanbaking"

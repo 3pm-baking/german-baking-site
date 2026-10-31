@@ -18,10 +18,11 @@
       {% for week in cal.weeks %}
         <tr>
           {% for cell in week %}
-            <td class="market-calendar__cell{% if cell.kind %} market-calendar__cell--{{ cell.kind }}{% endif %}">
+            <td class="market-calendar__cell{% if cell.kind %} market-calendar__cell--{{ cell.kind }}{% endif %}"
+                {% if cell.markets %}tabindex="0" data-markets="{{ cell.markets | join('|') | e }}"{% endif %}>
               {% if cell.day %}
-                <span class="market-calendar__day">{{ cell.day }}</span>
-                {% if cell.markets %}<span class="market-calendar__tooltip">{{ cell.markets | join("<br>") }}</span>{% endif %}
+                <span class="market-calendar__day">{{ cell.day }}{% if cell.kind == 'popup' %}<span class="market-calendar__star">✱</span>{% endif %}</span>
+                {% if cell.markets %}<span class="market-calendar__tooltip">{{ cell.markets | map('e') | join('<br>') | safe }}</span>{% endif %}
               {% endif %}
             </td>
           {% endfor %}
@@ -31,6 +32,33 @@
   </table>
 </div>
 <script>
-(function(){var d=new Date();var m=d.getMonth()+1;var els=document.querySelectorAll('.market-calendar[data-year="'+d.getFullYear()+'"][data-month="'+m+'"]');for(var i=0;i<els.length;i++){var cells=els[i].querySelectorAll('.market-calendar__cell');for(var j=0;j<cells.length;j++){var s=cells[j].querySelector('.market-calendar__day');if(s&&parseInt(s.textContent)===d.getDate()){cells[j].classList.add('market-calendar__cell--today');}}}
+(function(){
+var d=new Date();var m=d.getMonth()+1;
+var els=document.querySelectorAll('.market-calendar[data-year="'+d.getFullYear()+'"][data-month="'+m+'"]');
+for(var i=0;i<els.length;i++){var cells=els[i].querySelectorAll('.market-calendar__cell');for(var j=0;j<cells.length;j++){var s=cells[j].querySelector('.market-calendar__day');if(s&&parseInt(s.textContent)===d.getDate()){cells[j].classList.add('market-calendar__cell--today');}}}
+/* Click/tap a highlighted date -> scroll to its location card and flash it. */
+var linked=document.querySelectorAll('.market-calendar__cell[data-markets]');
+for(var k=0;k<linked.length;k++){
+  (function(cell){
+    var jump=function(){
+      var names=cell.getAttribute('data-markets').split('|');
+      var cards=document.querySelectorAll('.location-card[data-name]');
+      for(var a=0;a<names.length;a++){
+        for(var b=0;b<cards.length;b++){
+          if(cards[b].getAttribute('data-name')===names[a]){
+            cards[b].scrollIntoView({behavior:'smooth',block:'center'});
+            cards[b].classList.remove('location-card--flash');
+            void cards[b].offsetWidth; /* restart the animation on repeat clicks */
+            cards[b].classList.add('location-card--flash');
+            if(window.gtag){gtag('event','calendar_card_click',{market:names[a]});}
+            return;
+          }
+        }
+      }
+    };
+    cell.addEventListener('click',jump);
+    cell.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();jump();}});
+  })(linked[k]);
+}
 })();
 </script>

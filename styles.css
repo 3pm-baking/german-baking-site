@@ -675,6 +675,7 @@ section {
 
 .market-calendar__table {
   border-collapse: collapse;
+  table-layout: fixed; /* equal-width columns; content can't shift them */
   width: 100%;
   max-width: 280px;
   font-size: 0.85rem;
@@ -703,6 +704,50 @@ section {
   color: #ffffff;
   font-weight: 600;
   border-radius: 3px;
+}
+
+/* One-off / pop-up market days: same gold, outlined instead of solid,
+   so they read as a special appearance next to the regular markets. */
+.market-calendar__cell--popup {
+  background-color: transparent;
+  color: #b17a2a;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 2px #d4a04a;
+  border-radius: 3px;
+}
+
+.market-calendar__star {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.6em;
+  line-height: 1;
+}
+
+.market-calendar__legend {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  margin-top: var(--spacing-xs);
+  margin-bottom: 0;
+}
+
+.market-calendar__legend-swatch {
+  display: inline-block;
+  margin: 0 var(--spacing-xs);
+}
+
+.market-calendar__legend-swatch--market {
+  width: 0.75em;
+  height: 0.75em;
+  background-color: #d4a04a;
+  border-radius: 2px;
+  vertical-align: -0.05em;
+}
+
+.market-calendar__legend-swatch--popup {
+  color: #b17a2a;
+  font-weight: 700;
 }
 
 .market-calendar__day {
@@ -737,9 +782,50 @@ section {
   pointer-events: none;
 }
 
+/* Marked dates (active / popup) link to their location card above. */
+.market-calendar__cell--active,
+.market-calendar__cell--popup {
+  cursor: pointer;
+}
+
+.market-calendar__cell:focus-visible {
+  outline: 2px solid #d4a04a;
+  outline-offset: 1px;
+}
+
+.location-card--flash {
+  animation: location-flash 1.8s ease-out;
+}
+
+@keyframes location-flash {
+  0% {
+    box-shadow: 0 0 0 3px #d4a04a;
+    background-color: #fdf6e7;
+  }
+  100% {
+    box-shadow: 0 0 0 3px transparent;
+    background-color: transparent;
+  }
+}
+
 .market-calendar__cell--active:hover .market-calendar__tooltip,
+.market-calendar__cell--popup:hover .market-calendar__tooltip,
 .market-calendar__cell--today:hover .market-calendar__tooltip {
   display: block;
+}
+
+/* Touch devices have no hover: show tooltips on tap/focus instead. */
+@media (hover: none) {
+  .market-calendar__cell--active:focus .market-calendar__tooltip,
+  .market-calendar__cell--popup:focus .market-calendar__tooltip,
+  .market-calendar__cell--active:focus-within .market-calendar__tooltip,
+  .market-calendar__cell--popup:focus-within .market-calendar__tooltip {
+    display: block;
+  }
+  .market-calendar__cell--active,
+  .market-calendar__cell--popup {
+    cursor: pointer;
+  }
 }
 
 .market-calendar__cell--excluded:hover .market-calendar__tooltip {
