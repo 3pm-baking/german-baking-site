@@ -1,6 +1,7 @@
 name: Build & Deploy
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 5 * * *'  # 5am UTC = midnight ET (EST) / 1am ET (EDT)
 
