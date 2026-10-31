@@ -2,7 +2,7 @@ name: Build & Deploy
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # 8am ET (UTC-5)
+    - cron: '0 5 * * *'  # 5am UTC = midnight ET (EST) / 1am ET (EDT)
 
 jobs:
   build:
