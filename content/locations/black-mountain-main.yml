@@ -8,6 +8,9 @@ schedule:
   day_of_week: Saturday
   end_date: '2026-11-28'
   end_time: '12:00'
+  exclude_dates:
+  - '2026-11-14'
+  - '2026-11-28'
   frequency:
     interval_weeks: 2
     offset_weeks: 0
