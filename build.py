@@ -483,7 +483,11 @@ def _parse_date(value: object) -> date:
 
 
 def _is_market_day(d: date, schedule: dict) -> bool:
-    """Check if *d* falls on a market day according to *schedule*."""
+    """Check if *d* falls on a market day according to *schedule*.
+
+    A date counts if it lands on the recurring cycle or is listed in the
+    schedule's ``extra_dates`` (one-off added market days).
+    """
     start = _parse_date(schedule["start_date"])
     end = _parse_date(schedule["end_date"])
     if d < start or d > end:
@@ -492,7 +496,10 @@ def _is_market_day(d: date, schedule: dict) -> bool:
     interval = int(freq.get("interval_weeks", 1)) * 7
     offset = int(freq.get("offset_weeks", 0)) * 7
     first = start + timedelta(days=offset)
-    return (d - first).days % interval == 0
+    if (d - first).days % interval == 0:
+        return True
+    extra = schedule.get("extra_dates", [])
+    return d in {_parse_date(x) for x in extra}
 
 
 def _classify_cell(d: date, schedules: list[dict]) -> str | None:
