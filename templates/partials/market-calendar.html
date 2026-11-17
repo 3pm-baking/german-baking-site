@@ -43,18 +43,20 @@ for(var k=0;k<linked.length;k++){
     var jump=function(){
       var names=cell.getAttribute('data-markets').split('|');
       var cards=document.querySelectorAll('.location-card[data-name]');
+      var first=null;
       for(var a=0;a<names.length;a++){
         for(var b=0;b<cards.length;b++){
           if(cards[b].getAttribute('data-name')===names[a]){
-            cards[b].scrollIntoView({behavior:'smooth',block:'center'});
+            if(!first){first=cards[b];}
             cards[b].classList.remove('location-card--flash');
             void cards[b].offsetWidth; /* restart the animation on repeat clicks */
             cards[b].classList.add('location-card--flash');
             if(window.gtag){gtag('event','calendar_card_click',{market:names[a]});}
-            return;
+            break;
           }
         }
       }
+      if(first){first.scrollIntoView({behavior:'smooth',block:'center'});}
     };
     cell.addEventListener('click',jump);
     cell.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();jump();}});
