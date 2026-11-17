@@ -22,7 +22,7 @@
                 {% if cell.markets %}tabindex="0" data-markets="{{ cell.markets | join('|') | e }}"{% endif %}>
               {% if cell.day %}
                 <span class="market-calendar__day">{{ cell.day }}{% if cell.kind == 'popup' %}<span class="market-calendar__star">✱</span>{% endif %}</span>
-                {% if cell.markets %}<span class="market-calendar__tooltip">{{ cell.markets | map('e') | join('<br>') | safe }}</span>{% endif %}
+                {% if cell.markets %}<span class="market-calendar__tooltip">{% for m in cell.markets %}{{ m | e }}{% if not loop.last %}<br>{% endif %}{% endfor %}</span>{% endif %}
               {% endif %}
             </td>
           {% endfor %}
