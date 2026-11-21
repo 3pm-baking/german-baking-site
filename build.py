@@ -1400,7 +1400,7 @@ THANKSGIVING_SLUGS = [
 # (newsletter capture) and the URL stays live year over year.
 THANKSGIVING_OPEN = True
 # Customer-facing window copy; keep in step with the drop's cutoff/pickup.
-THANKSGIVING_ORDER_CLOSE = "Saturday, November 21"
+THANKSGIVING_ORDER_CLOSE = "Sunday, November 22, 3:30 PM"
 THANKSGIVING_PICKUP_DAY = "Tuesday, November 24"
 
 
