@@ -609,6 +609,19 @@ section {
   border-style: dashed;
 }
 
+.location-card--past {
+  border-style: dashed;
+  opacity: 0.75;
+  background-color: var(--color-background-warm);
+}
+
+.location-card--past .location-card__farewell {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
 .location-card--upcoming .location-card__name {
   padding-right: 6rem;
 }
