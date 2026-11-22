@@ -331,7 +331,7 @@
             <h3 class="find-us__subheading">At Local Markets</h3>
             <div class="locations-grid">
               {% for location in locations %}
-                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}" data-name="{{ location.name | e }}">
+                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}{% if location.stale %} location-card--past{% endif %}" data-name="{{ location.name | e }}">
                   {% if location.upcoming %}<span class="location-card__badge">Upcoming</span>{% endif %}
                   <p class="location-card__name">
                     {% if location.url %}
@@ -354,6 +354,10 @@
                       <br>
                       <em>{{ location.note }}</em>
                     {% endif %}
+                    {% if location.stale %}
+                      <br>
+                      <em class="location-card__farewell">We had a great season serving you!</em>
+                    {% endif %}
                   </p>
                 </div>
               {% endfor %}
@@ -363,7 +367,7 @@
             <h3 class="find-us__subheading">At Pop-Up Markets</h3>
             <div class="locations-grid">
               {% for location in popups %}
-                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}" data-name="{{ location.name | e }}">
+                <div class="location-card{% if location.upcoming %} location-card--upcoming{% endif %}{% if location.stale %} location-card--past{% endif %}" data-name="{{ location.name | e }}">
                   <p class="location-card__name">
                     {% if location.url %}
                       <a href="{{ location.url }}" target="_blank" rel="noopener noreferrer">{{ location.name }}</a>
@@ -384,6 +388,10 @@
                     {% if location.note %}
                       <br>
                       <em>{{ location.note }}</em>
+                    {% endif %}
+                    {% if location.stale %}
+                      <br>
+                      <em class="location-card__farewell">We had a great season serving you!</em>
                     {% endif %}
                   </p>
                 </div>

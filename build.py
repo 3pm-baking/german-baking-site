@@ -221,6 +221,11 @@ class Location(BaseModel):
     # Pop-ups: explicit occurrence dates (ISO strings) instead of a recurring
     # schedule. Stale when every date is in the past.
     dates: list[date] | None = None
+    # Hoisted from a structured schedule block (recurring markets)
+    exclude_dates: list[date] | None = None
+    extra_dates: list[date] | None = None
+    interval_weeks: int = 1
+    offset_weeks: int = 0
     # Computed at validation time — not read from YAML
     upcoming: bool = False
     active: bool = True
@@ -256,6 +261,13 @@ class Location(BaseModel):
                 data["start_date"] = sched["start_date"]
             if "end_date" not in data and sched.get("end_date"):
                 data["end_date"] = sched["end_date"]
+            freq = sched.get("frequency", {})
+            data["interval_weeks"] = int(freq.get("interval_weeks", 1))
+            data["offset_weeks"] = int(freq.get("offset_weeks", 0))
+            if sched.get("exclude_dates"):
+                data["exclude_dates"] = sched["exclude_dates"]
+            if sched.get("extra_dates"):
+                data["extra_dates"] = sched["extra_dates"]
             # Derive display string from structured data (with fallback)
             derived = format_schedule_display(sched)
             if derived:
@@ -281,10 +293,35 @@ class Location(BaseModel):
             self.stale = max(self.dates) < today
         elif self.start_date and self.end_date:
             today = _today_et()
-            self.upcoming = self.start_date > today
-            self.active = self.start_date <= today <= self.end_date
-            self.stale = self.end_date < today
+            # Actual market days: the recurring cycle minus excludes plus
+            # extras. "Season over" means the last one is in the past —
+            # an excluded final end_date does not keep the card active.
+            occurrences = self.occurrence_dates()
+            if occurrences:
+                self.upcoming = min(occurrences) > today
+                self.active = today in occurrences
+                self.stale = max(occurrences) < today
+            else:
+                self.upcoming = self.start_date > today
+                self.active = self.start_date <= today <= self.end_date
+                self.stale = self.end_date < today
         return self
+
+    def occurrence_dates(self) -> set[date]:
+        """Actual market days for a recurring schedule: on-cycle dates
+        minus exclude_dates, plus extra_dates."""
+        if not self.start_date or not self.end_date:
+            return set()
+        first = self.start_date + timedelta(weeks=self.offset_weeks)
+        step = timedelta(weeks=self.interval_weeks)
+        days = set()
+        d = first
+        while d <= self.end_date:
+            days.add(d)
+            d += step
+        days -= set(self.exclude_dates or [])
+        days |= set(self.extra_dates or [])
+        return days
 
 
 class BlogPost(BaseModel):
@@ -442,7 +479,9 @@ def parse_location(filepath: Path) -> dict:
 def load_locations(content_dir: Path) -> list:
     """Load farmers market / location data from content/locations/.
 
-    Stale locations (past end_date) are excluded from the returned list.
+    Stale locations (past their last market day) are excluded from the
+    returned list, except recurring markets: those linger as greyed-out
+    thank-you cards. Pop-ups drop off once all their dates pass.
 
     Returns:
         list of active/upcoming location dicts, sorted by filename
@@ -459,7 +498,8 @@ def load_locations(content_dir: Path) -> list:
     for yaml_file in yaml_files:
         try:
             location_data = parse_location(yaml_file)
-            if location_data["stale"]:
+            is_popup = location_data.get("type") == "popup"
+            if location_data["stale"] and is_popup:
                 print(f"  (skipping stale location: {location_data['name']})")
                 continue
             locations.append(location_data)
