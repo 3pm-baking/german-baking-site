@@ -485,7 +485,9 @@ def load_locations(content_dir: Path) -> list:
 
     Returns:
         list of active/upcoming location dicts, sorted by filename
-        (01-, 02- prefix = display order)
+        (01-, 02- prefix = display order). One card per market name:
+        when several seasons share a name (e.g. spring + main), only
+        the latest season is kept.
     """
     locations_dir = content_dir.parent / "locations"
     if not locations_dir.exists():
@@ -506,6 +508,23 @@ def load_locations(content_dir: Path) -> list:
         except Exception as e:
             print(f"✗ Error loading {yaml_file.name}: {e}")
 
+    # One card per market: multiple registry seasons (spring, main, ...)
+    # can share a name. Keep only the latest season so past seasons do
+    # not stack up as repeated greyed cards.
+    latest: dict[str, dict] = {}
+    for loc in locations:
+        name = loc["name"]
+        current = latest.get(name)
+        if current is None or (loc["end_date"] or date.min) > (
+            current["end_date"] or date.min
+        ):
+            if current is not None:
+                print(f"  (dropping older season of {name})")
+            latest[name] = loc
+        else:
+            print(f"  (dropping older season of {name})")
+
+    locations = list(latest.values())
     print(f"Loaded {len(locations)} location(s) from locations/")
     return locations
 
