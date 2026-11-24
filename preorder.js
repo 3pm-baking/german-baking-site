@@ -749,7 +749,7 @@ function renderCart(root, { cart, issues }, availability) {
     <input type="text" name="tg_verify" class="tg-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     ${availability.newsletter_enabled ? `
     <label class="tg-cart-field tg-cart-newsletter">
-      <input type="checkbox" id="tg-cart-newsletter">
+      <input type="checkbox" id="tg-cart-newsletter" disabled>
       Also send me the monthly newsletter
     </label>` : ""}
     <button type="button" id="tg-cart-checkout" class="tg-cart-checkout-btn">Checkout</button>
@@ -770,6 +770,22 @@ function renderCart(root, { cart, issues }, availability) {
       rerenderCart(root, availability);
     });
   });
+
+  // newsletter opt-in needs an email: the contact field accepts phone too,
+  // and Listmonk subscribes an address. The checkbox stays disabled until
+  // the contact field looks like an email, and unticks itself if the email
+  // is removed.
+  const contactInput = root.querySelector("#tg-cart-contact");
+  const newsletterToggle = root.querySelector("#tg-cart-newsletter");
+  if (contactInput && newsletterToggle) {
+    const looksLikeEmail = (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim());
+    const syncNewsletter = () => {
+      newsletterToggle.disabled = !looksLikeEmail(contactInput.value);
+      if (newsletterToggle.disabled) newsletterToggle.checked = false;
+    };
+    contactInput.addEventListener("input", syncNewsletter);
+    syncNewsletter();
+  }
 
   // checkout
   const checkoutButton = root.querySelector("#tg-cart-checkout");
